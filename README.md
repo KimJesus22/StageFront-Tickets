@@ -6,7 +6,9 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 
 - **Landing Page Premium** — Diseño oscuro con estética Glassmorphism, gradientes de neón contextuales y micro-animaciones
 - **Artistas Dinámicos** — Grid Bento alimentado desde PostgreSQL con tarjetas interactivas (BTS, TXT, Blackpink, Twenty One Pilots)
-- **Rutas Dinámicas** — Páginas individuales por artista con generación estática (SSG)
+- **Perfiles de Artista** — Rutas dinámicas `/[slug]` con lista de eventos y diseño blur-background
+- **Checkout Interactivo** — Selección de asientos por zona en `/event/[id]` con actualización de precios en tiempo real
+- **Bloqueo de Concurrencia** — Prevención de doble venta en base de datos al seleccionar asientos
 - **Backend InsForge** — Base de datos PostgreSQL, autenticación, almacenamiento y funciones serverless
 - **Server Actions** — Consultas a la base de datos desde Server Components de Next.js
 - **Tipado Estricto** — Interfaces TypeScript que reflejan el esquema SQL
@@ -27,9 +29,11 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 ```
 ├── app/
 │   ├── (fandoms)/
-│   │   └── [artist]/page.tsx        → /bts, /txt, /blackpink, /twenty-one-pilots
+│   │   └── [slug]/page.tsx          → Perfil del artista dinámico (/bts, /txt, etc.)
 │   ├── (checkout)/
-│   │   ├── seats/page.tsx           → /seats
+│   │   ├── event/[id]/
+│   │   │   ├── page.tsx             → Layout principal de selección de asientos (Server Component)
+│   │   │   └── SeatSelector.tsx     → Componente interactivo de cuadrícula de asientos (Client Component)
 │   │   └── payment/page.tsx         → /payment
 │   ├── api/insforge/route.ts        → Health-check del backend
 │   ├── globals.css
@@ -43,7 +47,9 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 ├── lib/
 │   ├── insforge.ts                  → Cliente público + cliente admin
 │   ├── actions/
-│   │   └── artists.ts               → Server Actions (getArtists, getArtistBySlug)
+│   │   ├── artists.ts               → Server Actions (getArtists, getArtistBySlug)
+│   │   ├── events.ts                → Server Actions (getEventsByArtistSlug)
+│   │   └── tickets.ts               → Server Actions (getEventById, getTicketsByEventId, lockTicket)
 │   └── types/
 │       └── database.ts              → Tipos TypeScript del esquema SQL
 ├── tailwind.config.ts               → Tokens del sistema de diseño Ethereal Tech
