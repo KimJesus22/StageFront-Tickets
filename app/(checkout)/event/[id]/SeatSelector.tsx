@@ -76,8 +76,10 @@ export default function SeatSelector({ event, initialTickets }: SeatSelectorProp
   const totalPrice = selectedTickets.reduce((sum, ticket) => sum + Number(ticket.price), 0);
 
   const handleCheckout = () => {
-    console.log("Procediendo al pago con los asientos:", selectedTickets);
+    if (selectedTickets.length === 0) return;
     showToast("Redirigiendo a pasarela de pagos...", "success");
+    // Redirigir a la página de pago del primer ticket seleccionado
+    window.location.href = `/payment/${selectedTickets[0].id}`;
   };
 
   return (

@@ -34,7 +34,9 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   │   ├── event/[id]/
 │   │   │   ├── page.tsx             → Layout principal de selección de asientos (Server Component)
 │   │   │   └── SeatSelector.tsx     → Componente interactivo de cuadrícula de asientos (Client Component)
-│   │   └── payment/page.tsx         → /payment
+│   │   ├── payment/[ticket_id]/
+│   │   │   └── page.tsx             → Formulario de pago simulado
+│   │   └── success/page.tsx         → Confirmación de compra exitosa
 │   ├── api/insforge/route.ts        → Health-check del backend
 │   ├── globals.css
 │   ├── layout.tsx                   → Layout raíz (fuentes, metadatos, dark mode)
@@ -49,7 +51,8 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   ├── actions/
 │   │   ├── artists.ts               → Server Actions (getArtists, getArtistBySlug)
 │   │   ├── events.ts                → Server Actions (getEventsByArtistSlug)
-│   │   └── tickets.ts               → Server Actions (getEventById, getTicketsByEventId, lockTicket)
+│   │   ├── tickets.ts               → Server Actions (getEventById, getTicketsByEventId, lockTicket)
+│   │   └── checkout.ts              → Server Actions (processPayment)
 │   └── types/
 │       └── database.ts              → Tipos TypeScript del esquema SQL
 ├── tailwind.config.ts               → Tokens del sistema de diseño Ethereal Tech
@@ -63,7 +66,7 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 ### Esquema
 
 ```
-artists ──────< events ──────< tickets_inventory
+artists ──────< events ──────< tickets_inventory ──────< orders
 ```
 
 | Tabla | Columnas principales |
@@ -71,6 +74,7 @@ artists ──────< events ──────< tickets_inventory
 | **artists** | `id` (UUID), `name`, `slug` (unique), `genre`, `image_url`, `display_order` |
 | **events** | `id` (UUID), `artist_id` (FK), `title`, `venue`, `city`, `date`, `status` |
 | **tickets_inventory** | `id` (UUID), `event_id` (FK), `zone`, `seat_number`, `price`, `status` |
+| **orders** | `id` (UUID), `user_name`, `user_email`, `ticket_id` (FK), `amount_paid`, `created_at` |
 
 ### Enums
 
