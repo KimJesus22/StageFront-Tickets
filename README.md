@@ -2,6 +2,8 @@
 
 El ecosistema de boletos premium para los eventos más esperados. Un servicio de conserjería de alta tecnología diseñado para verdaderos fans.
 
+🚀 **Demo en Vivo:** [https://stage-front-tickets.vercel.app/](https://stage-front-tickets.vercel.app/)
+
 ## ✨ Características
 
 - **Landing Page Premium** — Diseño oscuro con estética Glassmorphism, gradientes de neón contextuales y micro-animaciones
@@ -9,6 +11,10 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Perfiles de Artista** — Rutas dinámicas `/[slug]` con lista de eventos y diseño blur-background
 - **Checkout Interactivo** — Selección de asientos por zona en `/event/[id]` con actualización de precios en tiempo real
 - **Bloqueo de Concurrencia** — Prevención de doble venta en base de datos al seleccionar asientos
+- **Autenticación Segura** — Inicio de sesión y registro impulsado por InsForge Auth y Server Actions
+- **Billetera Digital** — Ruta `/wallet` con boletos de diseño Skeuomorphic (perforaciones y QR simulados)
+- **Panel de Administración** — Dashboard en `/admin` con métricas clave, control de acceso y ventas recientes
+- **Protección de Rutas** — Enrutamiento protegido por middleware (`proxy.ts` de Next.js 16)
 - **Backend InsForge** — Base de datos PostgreSQL, autenticación, almacenamiento y funciones serverless
 - **Server Actions** — Consultas a la base de datos desde Server Components de Next.js
 - **Tipado Estricto** — Interfaces TypeScript que reflejan el esquema SQL
@@ -28,12 +34,20 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 
 ```
 ├── app/
+│   ├── (admin)/
+│   │   ├── layout.tsx               → Layout fijo con barra lateral para el administrador
+│   │   └── page.tsx                 → Dashboard general con tarjetas de métricas y tabla de ventas
+│   ├── (auth)/
+│   │   └── login/
+│   │       ├── page.tsx             → Layout principal de acceso (Server Component)
+│   │       └── LoginForm.tsx        → Componente interactivo de inicio de sesión/registro
 │   ├── (fandoms)/
+│   │   ├── wallet/page.tsx          → Billetera digital de boletos con diseño premium
 │   │   └── [slug]/page.tsx          → Perfil del artista dinámico (/bts, /txt, etc.)
 │   ├── (checkout)/
 │   │   ├── event/[id]/
-│   │   │   ├── page.tsx             → Layout principal de selección de asientos (Server Component)
-│   │   │   └── SeatSelector.tsx     → Componente interactivo de cuadrícula de asientos (Client Component)
+│   │   │   ├── page.tsx             → Layout principal de selección de asientos
+│   │   │   └── SeatSelector.tsx     → Componente interactivo de cuadrícula de asientos
 │   │   ├── payment/[ticket_id]/
 │   │   │   └── page.tsx             → Formulario de pago simulado
 │   │   └── success/page.tsx         → Confirmación de compra exitosa
@@ -42,21 +56,25 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   ├── layout.tsx                   → Layout raíz (fuentes, metadatos, dark mode)
 │   └── page.tsx                     → Landing page (async, datos dinámicos)
 ├── components/
-│   ├── Navbar.tsx                   → Barra de navegación con glassmorphism
+│   ├── Navbar.tsx                   → Barra de navegación con control de sesión
 │   ├── HeroSection.tsx              → Sección hero con búsqueda
 │   ├── ArtistGrid.tsx               → Grid Bento dinámico (recibe Artist[])
 │   └── Footer.tsx                   → Pie de página
 ├── lib/
 │   ├── insforge.ts                  → Cliente público + cliente admin
 │   ├── actions/
+│   │   ├── admin.ts                 → Server Actions (getDashboardStats)
 │   │   ├── artists.ts               → Server Actions (getArtists, getArtistBySlug)
+│   │   ├── auth.ts                  → Server Actions (login, signup, logout, getSession)
 │   │   ├── events.ts                → Server Actions (getEventsByArtistSlug)
 │   │   ├── tickets.ts               → Server Actions (getEventById, getTicketsByEventId, lockTicket)
-│   │   └── checkout.ts              → Server Actions (processPayment)
+│   │   ├── checkout.ts              → Server Actions (processPayment)
+│   │   └── orders.ts                → Server Actions (getUserTickets)
 │   └── types/
 │       └── database.ts              → Tipos TypeScript del esquema SQL
 ├── tailwind.config.ts               → Tokens del sistema de diseño Ethereal Tech
 ├── next.config.ts                   → Dominios de imágenes permitidos
+├── proxy.ts                         → Middleware de autorización para rutas sensibles
 ├── .env.local                       → Variables de entorno (no versionado)
 └── .env.example                     → Plantilla de variables de entorno
 ```
