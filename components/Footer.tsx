@@ -9,13 +9,13 @@ export default function Footer() {
         </div>
         <div className="flex flex-wrap justify-center gap-6 md:gap-8">
           <Link
-            href="#"
+            href="/privacy"
             className="text-zinc-500 hover:text-white transition-colors duration-200"
           >
             Política de Privacidad
           </Link>
           <Link
-            href="#"
+            href="/terms"
             className="text-zinc-500 hover:text-white transition-colors duration-200"
           >
             Términos de Servicio
@@ -33,8 +33,10 @@ export default function Footer() {
             Soporte
           </Link>
         </div>
-        <div className="text-zinc-500 text-xs tracking-normal">
-          © 2026 StageFront Tickets Ecosystem. Todos los derechos reservados.
+        <div className="text-zinc-500 text-xs tracking-normal text-center md:text-right">
+          © 2026 StageFront Tickets. <br className="md:hidden" />
+          Desarrollada por el CEO KimJesus 21. <br className="md:hidden" />
+          Sede en Celaya, Guanajuato, México.
         </div>
       </div>
     </footer>

@@ -8,6 +8,23 @@ interface PageProps {
   params: Promise<{ ticket_id: string }>;
 }
 
+const getCurrency = (city: string) => {
+  if (city.includes("MX")) return "MXN";
+  if (city.includes("SK")) return "KRW";
+  if (city.includes("UK")) return "GBP";
+  if (city.includes("JP")) return "JPY";
+  return "USD";
+};
+
+const formatPrice = (price: number, city: string) => {
+  const currency = getCurrency(city);
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: currency === 'KRW' || currency === 'JPY' ? 0 : 2
+  }).format(price);
+};
+
 export default async function PaymentPage({ params }: PageProps) {
   const { ticket_id } = await params;
 
@@ -88,16 +105,16 @@ export default async function PaymentPage({ params }: PageProps) {
                 </div>
                 <div className="flex justify-between items-center font-body-md text-zinc-300 border-t border-white/5 pt-4 mt-4">
                   <span>Precio del boleto</span>
-                  <span className="font-semibold text-white">${Number(ticket.price).toFixed(2)}</span>
+                  <span className="font-semibold text-white">{formatPrice(Number(ticket.price), eventCity)}</span>
                 </div>
                 <div className="flex justify-between items-center font-body-md text-zinc-300 pb-4 border-b border-white/10">
                   <span>Cargos por servicio</span>
-                  <span className="font-semibold text-white">$0.00</span>
+                  <span className="font-semibold text-white">{formatPrice(0, eventCity)}</span>
                 </div>
                 <div className="flex justify-between items-end pt-2">
                   <span className="font-headline-md text-xl text-white">Total</span>
                   <span className="font-display-md text-3xl font-bold text-primary">
-                    ${Number(ticket.price).toFixed(2)}
+                    {formatPrice(Number(ticket.price), eventCity)}
                   </span>
                 </div>
               </div>
@@ -155,7 +172,7 @@ export default async function PaymentPage({ params }: PageProps) {
                 type="submit"
                 className="w-full bg-primary text-on-primary py-4 rounded-xl font-body-md font-bold text-lg hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.3)] flex items-center justify-center gap-2 mt-4"
               >
-                Pagar ${Number(ticket.price).toFixed(2)}
+                Pagar {formatPrice(Number(ticket.price), eventCity)}
                 <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </form>

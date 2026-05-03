@@ -9,6 +9,23 @@ interface SeatSelectorProps {
   initialTickets: TicketInventory[];
 }
 
+const getCurrency = (city: string) => {
+  if (city.includes("MX")) return "MXN";
+  if (city.includes("SK")) return "KRW";
+  if (city.includes("UK")) return "GBP";
+  if (city.includes("JP")) return "JPY";
+  return "USD";
+};
+
+const formatPrice = (price: number, city: string) => {
+  const currency = getCurrency(city);
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: currency === 'KRW' || currency === 'JPY' ? 0 : 2
+  }).format(price);
+};
+
 export default function SeatSelector({ event, initialTickets }: SeatSelectorProps) {
   const [tickets, setTickets] = useState<TicketInventory[]>(initialTickets);
   const [selectedTickets, setSelectedTickets] = useState<TicketInventory[]>([]);
@@ -113,7 +130,7 @@ export default function SeatSelector({ event, initialTickets }: SeatSelectorProp
                 </p>
               </div>
               <div className="text-primary font-body-md font-medium">
-                ${Number(zoneTickets[0]?.price || 0).toFixed(2)} c/u
+                {formatPrice(Number(zoneTickets[0]?.price || 0), event.city)} c/u
               </div>
             </div>
 
@@ -141,7 +158,7 @@ export default function SeatSelector({ event, initialTickets }: SeatSelectorProp
                     onClick={() => toggleSeat(ticket)}
                     disabled={(ticket.status !== "disponible" && !isSelected) || isLoading}
                     className={btnClasses}
-                    title={`${ticket.zone} - ${ticket.seat_number} ($${ticket.price})`}
+                    title={`${ticket.zone} - ${ticket.seat_number} (${formatPrice(ticket.price, event.city)})`}
                     aria-label={`Asiento ${ticket.seat_number} ${ticket.status}`}
                   >
                     {isLoading ? (
@@ -185,7 +202,7 @@ export default function SeatSelector({ event, initialTickets }: SeatSelectorProp
                 {selectedTickets.length} {selectedTickets.length === 1 ? "asiento reservado" : "asientos reservados"}
               </p>
               <p className="font-headline-md text-xl text-white font-bold">
-                Total: ${totalPrice.toFixed(2)}
+                Total: {formatPrice(totalPrice, event.city)}
               </p>
             </div>
           </div>

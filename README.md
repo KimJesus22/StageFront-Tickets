@@ -57,6 +57,10 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   ├── events/
 │   │   └── page.tsx                 → Cartelera completa de próximos eventos
 │   ├── api/insforge/route.ts        → Health-check del backend
+│   ├── privacy/
+│   │   └── page.tsx                 → Política de privacidad (Server Component estático)
+│   ├── terms/
+│   │   └── page.tsx                 → Términos de servicio (Server Component estático)
 │   ├── globals.css
 │   ├── layout.tsx                   → Layout raíz (fuentes, metadatos, dark mode)
 │   └── page.tsx                     → Landing page (async, datos dinámicos)
