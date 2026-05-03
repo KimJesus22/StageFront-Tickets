@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { getSession } from "@/lib/actions/auth";
+import { logout } from "@/lib/actions/auth";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const session = await getSession();
+
   return (
     <nav className="fixed top-0 w-full z-50 bg-zinc-950/60 backdrop-blur-lg border-b border-white/10 shadow-none font-headline-md font-medium tracking-tight">
       <div className="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
@@ -14,7 +18,7 @@ export default function Navbar() {
         {/* Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-8">
           <Link
-            href="#"
+            href="/"
             className="text-white border-b border-white pb-1 hover:text-white hover:backdrop-blur-2xl transition-all duration-300 active:scale-95"
           >
             Descubrir
@@ -43,21 +47,45 @@ export default function Navbar() {
         <div className="flex items-center gap-4">
           {/* Search (desktop only) */}
           <div className="relative hidden lg:block">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">
               search
             </span>
             <input
-              className="bg-surface-container-high/50 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-white/30 focus:bg-surface-container-high transition-colors w-64 font-body-md"
+              className="bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-colors w-64 font-body-md"
               placeholder="Buscar eventos..."
               type="text"
             />
           </div>
-          <button className="text-zinc-400 hover:text-white font-body-md text-sm transition-colors">
-            Iniciar Sesión
-          </button>
-          <button className="bg-primary text-on-primary px-6 py-2 rounded-full font-body-md text-sm font-semibold hover:bg-white/90 transition-colors">
-            Unirse a la lista
-          </button>
+          
+          {session ? (
+            <div className="flex items-center gap-4 ml-4">
+              <div className="hidden sm:flex flex-col items-end mr-2">
+                <span className="text-white text-sm font-semibold">{session.name}</span>
+                <span className="text-zinc-500 text-xs">{session.email}</span>
+              </div>
+              <Link 
+                href="/wallet"
+                className="bg-white/10 text-white px-4 py-2 rounded-full font-body-md text-sm font-semibold hover:bg-white/20 transition-colors border border-white/10 flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">account_balance_wallet</span>
+                Billetera
+              </Link>
+              <form action={logout}>
+                <button type="submit" className="text-zinc-400 hover:text-red-400 font-body-md text-sm transition-colors p-2 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-xl">logout</span>
+                </button>
+              </form>
+            </div>
+          ) : (
+            <>
+              <Link href="/login" className="text-zinc-400 hover:text-white font-body-md text-sm transition-colors px-2">
+                Iniciar Sesión
+              </Link>
+              <Link href="/login" className="bg-primary text-on-primary px-6 py-2 rounded-full font-body-md text-sm font-semibold hover:bg-white/90 transition-colors">
+                Unirse a la lista
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

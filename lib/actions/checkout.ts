@@ -2,17 +2,20 @@
 
 import { insforge } from "@/lib/insforge";
 import { redirect } from "next/navigation";
+import { getSession } from "./auth";
 
 /**
  * Procesa el pago de un boleto simulando una pasarela y confirma la orden.
  */
 export async function processPayment(ticketId: string, formData: FormData) {
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
+  const session = await getSession();
   
-  if (!name || !email) {
-    throw new Error("Nombre y correo son requeridos.");
+  if (!session?.email || !session?.name) {
+    throw new Error("Usuario no autenticado o información incompleta.");
   }
+
+  const name = session.name;
+  const email = session.email;
 
   // 1. Simular retraso de procesamiento de pago (2 segundos)
   await new Promise((resolve) => setTimeout(resolve, 2000));

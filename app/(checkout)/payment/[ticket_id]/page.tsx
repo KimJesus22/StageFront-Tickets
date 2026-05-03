@@ -112,32 +112,6 @@ export default async function PaymentPage({ params }: PageProps) {
             
             <form action={processPaymentWithId} className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 space-y-6">
               
-              {/* Información Personal */}
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-body-md text-zinc-400 mb-2">Nombre completo</label>
-                  <input 
-                    type="text" 
-                    id="name" 
-                    name="name" 
-                    required 
-                    placeholder="Ej. Jane Doe"
-                    className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-body-md text-zinc-400 mb-2">Correo electrónico</label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    required 
-                    placeholder="correo@ejemplo.com"
-                    className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                  />
-                </div>
-              </div>
-
               {/* Datos de Tarjeta Simulados */}
               <div className="pt-4 border-t border-white/10 space-y-4">
                 <p className="text-sm font-body-md text-zinc-500 mb-4 flex items-center gap-2">
