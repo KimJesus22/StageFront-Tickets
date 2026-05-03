@@ -5,9 +5,11 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 ## ✨ Características
 
 - **Landing Page Premium** — Diseño oscuro con estética Glassmorphism, gradientes de neón contextuales y micro-animaciones
-- **Artistas Exclusivos** — Grid Bento con tarjetas interactivas para BTS, TXT, Blackpink y Twenty One Pilots
+- **Artistas Dinámicos** — Grid Bento alimentado desde PostgreSQL con tarjetas interactivas (BTS, TXT, Blackpink, Twenty One Pilots)
 - **Rutas Dinámicas** — Páginas individuales por artista con generación estática (SSG)
 - **Backend InsForge** — Base de datos PostgreSQL, autenticación, almacenamiento y funciones serverless
+- **Server Actions** — Consultas a la base de datos desde Server Components de Next.js
+- **Tipado Estricto** — Interfaces TypeScript que reflejan el esquema SQL
 - **Diseño Responsivo** — Adaptado para móvil, tablet y escritorio
 
 ## 🛠️ Stack Tecnológico
@@ -25,24 +27,66 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 ```
 ├── app/
 │   ├── (fandoms)/
-│   │   └── [artist]/page.tsx      → /bts, /txt, /blackpink, /twenty-one-pilots
+│   │   └── [artist]/page.tsx        → /bts, /txt, /blackpink, /twenty-one-pilots
 │   ├── (checkout)/
-│   │   ├── seats/page.tsx         → /seats
-│   │   └── payment/page.tsx       → /payment
-│   ├── api/insforge/route.ts      → API endpoint InsForge
+│   │   ├── seats/page.tsx           → /seats
+│   │   └── payment/page.tsx         → /payment
+│   ├── api/insforge/route.ts        → Health-check del backend
 │   ├── globals.css
-│   ├── layout.tsx                 → Layout raíz con fuentes y metadatos
-│   └── page.tsx                   → Landing page principal
+│   ├── layout.tsx                   → Layout raíz (fuentes, metadatos, dark mode)
+│   └── page.tsx                     → Landing page (async, datos dinámicos)
 ├── components/
-│   ├── Navbar.tsx                 → Barra de navegación con glassmorphism
-│   ├── HeroSection.tsx            → Sección hero con búsqueda
-│   ├── ArtistGrid.tsx             → Grid Bento de artistas
-│   └── Footer.tsx                 → Pie de página
+│   ├── Navbar.tsx                   → Barra de navegación con glassmorphism
+│   ├── HeroSection.tsx              → Sección hero con búsqueda
+│   ├── ArtistGrid.tsx               → Grid Bento dinámico (recibe Artist[])
+│   └── Footer.tsx                   → Pie de página
 ├── lib/
-│   └── insforge.ts                → Cliente InsForge inicializado
-├── tailwind.config.ts             → Tokens del sistema de diseño
-├── next.config.ts                 → Configuración de Next.js
-└── .env.local                     → Variables de entorno (no versionado)
+│   ├── insforge.ts                  → Cliente público + cliente admin
+│   ├── actions/
+│   │   └── artists.ts               → Server Actions (getArtists, getArtistBySlug)
+│   └── types/
+│       └── database.ts              → Tipos TypeScript del esquema SQL
+├── tailwind.config.ts               → Tokens del sistema de diseño Ethereal Tech
+├── next.config.ts                   → Dominios de imágenes permitidos
+├── .env.local                       → Variables de entorno (no versionado)
+└── .env.example                     → Plantilla de variables de entorno
+```
+
+## 🗄️ Base de Datos (InsForge / PostgreSQL)
+
+### Esquema
+
+```
+artists ──────< events ──────< tickets_inventory
+```
+
+| Tabla | Columnas principales |
+|---|---|
+| **artists** | `id` (UUID), `name`, `slug` (unique), `genre`, `image_url`, `display_order` |
+| **events** | `id` (UUID), `artist_id` (FK), `title`, `venue`, `city`, `date`, `status` |
+| **tickets_inventory** | `id` (UUID), `event_id` (FK), `zone`, `seat_number`, `price`, `status` |
+
+### Enums
+
+- **`event_status`**: `programado`, `en_venta`, `agotado`, `cancelado`, `finalizado`
+- **`ticket_status`**: `disponible`, `bloqueado`, `vendido`
+
+## 🔌 Conexión con InsForge
+
+El proyecto usa dos clientes definidos en `lib/insforge.ts`:
+
+| Cliente | Variable de entorno | Uso |
+|---|---|---|
+| `insforge` | `NEXT_PUBLIC_INSFORGE_ANON_KEY` | Server/Client Components (operaciones públicas con RLS) |
+| `insforgeAdmin` | `INSFORGE_ADMIN_API_KEY` | Solo Route Handlers y Server Actions (operaciones admin) |
+
+### Variables de entorno
+
+```bash
+# .env.local
+NEXT_PUBLIC_INSFORGE_URL=https://tu-proyecto.region.insforge.app
+NEXT_PUBLIC_INSFORGE_ANON_KEY=eyJhbGciOi...   # JWT público (get-anon-key)
+INSFORGE_ADMIN_API_KEY=ik_tu-api-key           # Solo servidor
 ```
 
 ## 🚀 Inicio Rápido
