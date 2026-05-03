@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Focus ring reset for search inputs */
+  input[type="text"]:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}

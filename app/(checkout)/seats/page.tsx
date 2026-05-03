@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Selección de asientos | BiasPass Ticketing",
+  title: "Selección de asientos | StageFront Tickets",
   description: "Elige tus asientos para el concierto",
 };
 

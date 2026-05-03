@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pago | BiasPass Ticketing",
+  title: "Pago | StageFront Tickets",
   description: "Finaliza la compra de tus boletos",
 };
 

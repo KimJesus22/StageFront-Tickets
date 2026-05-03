@@ -34,8 +34,8 @@ export async function generateMetadata({
   const info = ARTISTS[artist];
   return {
     title: info
-      ? `${info.name} | BiasPass Ticketing`
-      : "Artista | BiasPass Ticketing",
+      ? `${info.name} | StageFront Tickets`
+      : "Artista | StageFront Tickets",
     description: info?.description ?? "Página del artista",
   };
 }

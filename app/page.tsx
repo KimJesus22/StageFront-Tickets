@@ -1,7 +1,17 @@
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
+import ArtistGrid from "@/components/ArtistGrid";
+import Footer from "@/components/Footer";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1 className="text-4xl font-bold">BiasPass Ticketing</h1>
-    </main>
+    <>
+      <Navbar />
+      <main className="flex-grow pt-24">
+        <HeroSection />
+        <ArtistGrid />
+      </main>
+      <Footer />
+    </>
   );
 }
