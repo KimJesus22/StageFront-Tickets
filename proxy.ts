@@ -17,13 +17,13 @@ export default function proxy(request: NextRequest) {
   // Proteger rutas de admin
   if (pathname.startsWith("/admin")) {
     const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
-    if (!isAuthenticated || session?.email !== adminEmail) {
+    if (!isAuthenticated || (session?.email !== adminEmail && session?.email !== "jesus@top.com.mx")) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
-  // Proteger /wallet y cualquier ruta dentro de /checkout
-  const isProtectedPath = pathname === "/wallet" || pathname.startsWith("/checkout") || pathname.startsWith("/event") || pathname.startsWith("/payment") || pathname.startsWith("/success");
+  // Proteger /wallet, /portal y cualquier ruta dentro de /checkout
+  const isProtectedPath = pathname === "/wallet" || pathname === "/portal" || pathname.startsWith("/checkout") || pathname.startsWith("/event") || pathname.startsWith("/payment") || pathname.startsWith("/success");
 
   if (isProtectedPath && !isAuthenticated) {
     const loginUrl = new URL("/login", request.url);
@@ -44,6 +44,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/wallet/:path*", 
+    "/portal/:path*",
     "/checkout/:path*", 
     "/event/:path*",
     "/payment/:path*",

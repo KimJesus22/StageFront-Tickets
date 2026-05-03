@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Portal de Artistas - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#636565",
+                        "surface-tint": "#c6c6c7",
+                        "tertiary-container": "#e2e2e2",
+                        "primary-container": "#e2e2e2",
+                        "on-error-container": "#ffdad6",
+                        "secondary": "#c8c6c8",
+                        "on-primary-fixed": "#1a1c1c",
+                        "outline": "#8e9192",
+                        "surface-dim": "#141313",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "outline-variant": "#444748",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#353434",
+                        "secondary-fixed": "#e5e1e4",
+                        "inverse-on-surface": "#313030",
+                        "surface-variant": "#353434",
+                        "tertiary-fixed": "#e2e2e2",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "on-error": "#690005",
+                        "on-background": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "on-secondary-fixed-variant": "#474649",
+                        "on-primary": "#2f3131",
+                        "on-tertiary-container": "#636565",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-secondary": "#313032",
+                        "error": "#ffb4ab",
+                        "on-surface-variant": "#c4c7c8",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary": "#2f3131",
+                        "surface-bright": "#3a3939",
+                        "inverse-primary": "#5d5f5f",
+                        "on-primary-fixed-variant": "#454747",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#b7b4b7",
+                        "surface": "#141313",
+                        "secondary-container": "#474649",
+                        "tertiary": "#ffffff",
+                        "surface-container": "#201f1f",
+                        "primary": "#ffffff",
+                        "inverse-surface": "#e5e2e1",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "background": "#141313",
+                        "primary-fixed": "#e2e2e2",
+                        "on-surface": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "gutter": "24px",
+                        "stack-sm": "8px",
+                        "container-max": "1280px",
+                        "stack-md": "24px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Space Grotesk"],
+                        "display-xl": ["Space Grotesk"],
+                        "label-caps": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(32, 31, 31, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel {
+            background: rgba(20, 19, 19, 0.5);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full z-40 flex-col p-6 w-64 border-r border-white/10 bg-zinc-950/50 backdrop-blur-xl">
+<div class="mb-12">
+<h1 class="text-xl font-bold text-white tracking-tighter font-headline-md">Portal Artista</h1>
+<p class="text-surface-tint font-label-caps text-label-caps mt-1">Premium Access</p>
+</div>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 bg-white text-black rounded-lg transition-all duration-300 scale-95 active:scale-90 font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-colors rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+                    Mis Eventos
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-colors rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    Ventas
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-colors rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Configuración
+                </a>
+</li>
+</ul>
+<div class="mt-auto">
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-caps text-label-caps hover:opacity-90 transition-opacity">
+                Crear Evento
+            </button>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-8 py-4 sticky top-0 z-30 bg-zinc-950/30 backdrop-blur-md border-b border-white/5">
+<div class="md:hidden">
+<h1 class="text-lg font-black text-white font-headline-md">Portal Artista</h1>
+</div>
+<div class="flex-1 hidden md:block">
+<h2 class="font-headline-md text-headline-md text-white">Bienvenido, Management de BTS</h2>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-zinc-500 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-zinc-500 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-white/10 cursor-pointer hover:opacity-80 transition-opacity">
+<img alt="Artist Avatar" class="w-10 h-10 rounded-full object-cover border border-white/20" data-alt="A close up portrait of a contemporary K-Pop artist management representative. The lighting is cinematic and moody, with deep shadows and a subtle rim light emphasizing the subject's professional yet edgy aesthetic. The background is a dark, abstract texture fitting a premium digital ecosystem." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0k3b6-dIhOg45cB91vzmTT98qiapENU_ZwhVsbI9gf95eXX92aSof4p6xwB7_0Sib8A8NZ2r7ld3liy3ssx2dqbKV68C2z-WuHVyo2jvUuVAjDQYtumPlsPaK0IRYkmroBOgwuzEnZlgOqOTJDFtRRsgwADc7fM8J6RMfQdrv2IYuHeELRyCg6EVa_eWYub_7BcFtt7TdnNd5RTUd2KKMy_luHGSn-gHVxJDLljE6wZcdzZlbCWCPd5fPb5yVfmnF4JqRxBGBjEM"/>
+<span class="font-label-caps text-label-caps text-white hidden sm:block">Perfil</span>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="p-margin-mobile md:p-margin-desktop flex-1 flex flex-col gap-stack-lg max-w-container-max mx-auto w-full">
+<div class="md:hidden">
+<h2 class="font-headline-md text-headline-md text-white">Bienvenido, Management de BTS</h2>
+</div>
+<!-- KPI Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- KPI 1 -->
+<div class="glass-card rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-16 -mt-16 transition-opacity group-hover:opacity-100 opacity-50"></div>
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-surface-tint">Ingresos Totales</span>
+<span class="material-symbols-outlined text-surface-tint" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-white tracking-tight">$2.4M</div>
+<div class="flex items-center gap-1 mt-2 text-green-400 font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_up">trending_up</span>
+                            +12.5% vs mes anterior
+                        </div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="glass-card rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 transition-opacity group-hover:opacity-100 opacity-50"></div>
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-surface-tint">Boletos Vendidos</span>
+<span class="material-symbols-outlined text-surface-tint" data-icon="confirmation_number">confirmation_number</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-white tracking-tight">45.2K</div>
+<div class="flex items-center gap-1 mt-2 text-surface-tint font-label-caps text-label-caps">
+                            Gira Mundial 2024
+                        </div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="glass-card rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -mr-16 -mt-16 transition-opacity group-hover:opacity-100 opacity-50"></div>
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-surface-tint">Próximo Sold Out</span>
+<span class="material-symbols-outlined text-surface-tint" data-icon="local_fire_department">local_fire_department</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-white tracking-tight">98%</div>
+<div class="flex items-center gap-1 mt-2 text-surface-tint font-label-caps text-label-caps">
+                            Concierto Estadio Azteca
+                        </div>
+</div>
+<!-- Progress Bar Mini -->
+<div class="w-full bg-surface-container-highest rounded-full h-1 mt-auto">
+<div class="bg-orange-400 h-1 rounded-full" style="width: 98%"></div>
+</div>
+</div>
+</section>
+<!-- Active Events Table Area -->
+<section class="flex flex-col gap-stack-sm">
+<div class="flex justify-between items-end mb-4">
+<h3 class="font-headline-md text-headline-md text-white">Eventos Activos</h3>
+<button class="font-label-caps text-label-caps text-surface-tint hover:text-white transition-colors">Ver Todos</button>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-white/10">
+<th class="py-4 px-6 font-label-caps text-label-caps text-surface-tint font-medium">Fecha</th>
+<th class="py-4 px-6 font-label-caps text-label-caps text-surface-tint font-medium">Recinto</th>
+<th class="py-4 px-6 font-label-caps text-label-caps text-surface-tint font-medium">Estado de Ventas</th>
+<th class="py-4 px-6 font-label-caps text-label-caps text-surface-tint font-medium text-right">Acción</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- Row 1 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="py-4 px-6">
+<div class="font-body-md text-body-md text-white">15 Oct, 2024</div>
+</td>
+<td class="py-4 px-6">
+<div class="font-body-md text-body-md text-white">Estadio Azteca</div>
+<div class="font-label-caps text-label-caps text-surface-tint mt-1">Ciudad de México</div>
+</td>
+<td class="py-4 px-6 w-1/3">
+<div class="flex items-center gap-3">
+<div class="w-full bg-surface-container-highest rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 98%"></div>
+</div>
+<span class="font-label-caps text-label-caps text-white w-12 text-right">98%</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="font-label-caps text-label-caps px-4 py-2 rounded border border-white/20 text-white hover:bg-white hover:text-black transition-all">Ver Detalles</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="py-4 px-6">
+<div class="font-body-md text-body-md text-white">22 Oct, 2024</div>
+</td>
+<td class="py-4 px-6">
+<div class="font-body-md text-body-md text-white">Wembley Stadium</div>
+<div class="font-label-caps text-label-caps text-surface-tint mt-1">London, UK</div>
+</td>
+<td class="py-4 px-6 w-1/3">
+<div class="flex items-center gap-3">
+<div class="w-full bg-surface-container-highest rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 85%"></div>
+</div>
+<span class="font-label-caps text-label-caps text-white w-12 text-right">85%</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="font-label-caps text-label-caps px-4 py-2 rounded border border-white/20 text-white hover:bg-white hover:text-black transition-all">Ver Detalles</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="py-4 px-6">
+<div class="font-body-md text-body-md text-white">05 Nov, 2024</div>
+</td>
+<td class="py-4 px-6">
+<div class="font-body-md text-body-md text-white">Tokyo Dome</div>
+<div class="font-label-caps text-label-caps text-surface-tint mt-1">Tokyo, Japan</div>
+</td>
+<td class="py-4 px-6 w-1/3">
+<div class="flex items-center gap-3">
+<div class="w-full bg-surface-container-highest rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 60%"></div>
+</div>
+<span class="font-label-caps text-label-caps text-white w-12 text-right">60%</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="font-label-caps text-label-caps px-4 py-2 rounded border border-white/20 text-white hover:bg-white hover:text-black transition-all">Ver Detalles</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

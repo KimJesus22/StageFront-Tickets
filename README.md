@@ -37,6 +37,11 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   ├── (admin)/
 │   │   ├── layout.tsx               → Layout fijo con barra lateral para el administrador
 │   │   └── page.tsx                 → Dashboard general con tarjetas de métricas y tabla de ventas
+│   ├── (artist)/
+│   │   ├── components/
+│   │   │   └── Sidebar.tsx          → Navegación lateral del panel del artista
+│   │   └── portal/
+│   │       └── page.tsx             → Dashboard de ventas e ingresos por artista
 │   ├── (auth)/
 │   │   ├── login/
 │   │   │   └── page.tsx             → Vista de inicio de sesión (Client Component)
