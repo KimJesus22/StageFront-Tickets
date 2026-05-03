@@ -24,19 +24,19 @@ export default async function Navbar() {
             Descubrir
           </Link>
           <Link
-            href="#"
+            href="/events"
             className="text-zinc-400 hover:text-white hover:backdrop-blur-2xl transition-all duration-300 active:scale-95"
           >
             Eventos
           </Link>
           <Link
-            href="#"
+            href="/artists"
             className="text-zinc-400 hover:text-white hover:backdrop-blur-2xl transition-all duration-300 active:scale-95"
           >
             Artistas
           </Link>
           <Link
-            href="#"
+            href="/wallet"
             className="text-zinc-400 hover:text-white hover:backdrop-blur-2xl transition-all duration-300 active:scale-95"
           >
             Pases
@@ -81,7 +81,7 @@ export default async function Navbar() {
               <Link href="/login" className="text-zinc-400 hover:text-white font-body-md text-sm transition-colors px-2">
                 Iniciar Sesión
               </Link>
-              <Link href="/login" className="bg-primary text-on-primary px-6 py-2 rounded-full font-body-md text-sm font-semibold hover:bg-white/90 transition-colors">
+              <Link href="/register" className="bg-primary text-on-primary px-6 py-2 rounded-full font-body-md text-sm font-semibold hover:bg-white/90 transition-colors">
                 Unirse a la lista
               </Link>
             </>

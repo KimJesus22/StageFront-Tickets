@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageFront - Próximos Eventos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#474649",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-background": "#e5e2e1",
+                        "on-secondary": "#313032",
+                        "inverse-on-surface": "#313030",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "primary": "#ffffff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "outline": "#8e9192",
+                        "surface-dim": "#141313",
+                        "on-secondary-container": "#b7b4b7",
+                        "surface": "#141313",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "surface-container-high": "#2a2a2a",
+                        "tertiary-container": "#e2e2e2",
+                        "on-primary-fixed": "#1a1c1c",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-secondary-fixed-variant": "#474649",
+                        "surface-container-low": "#1c1b1b",
+                        "outline-variant": "#444748",
+                        "primary-fixed": "#e2e2e2",
+                        "on-primary-fixed-variant": "#454747",
+                        "secondary": "#c8c6c8",
+                        "on-primary": "#2f3131",
+                        "background": "#141313",
+                        "on-primary-container": "#636565",
+                        "surface-tint": "#c6c6c7",
+                        "inverse-primary": "#5d5f5f",
+                        "surface-variant": "#353434",
+                        "primary-container": "#e2e2e2",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#ffffff",
+                        "surface-container": "#201f1f",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary-container": "#636565",
+                        "surface-container-highest": "#353434",
+                        "error": "#ffb4ab",
+                        "secondary-fixed": "#e5e1e4",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-surface-variant": "#c4c7c8",
+                        "surface-bright": "#3a3939",
+                        "on-error": "#690005",
+                        "on-tertiary": "#2f3131",
+                        "error-container": "#93000a",
+                        "inverse-surface": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "unit": "4px",
+                        "container-max": "1280px",
+                        "margin-desktop": "48px",
+                        "stack-sm": "8px",
+                        "stack-md": "24px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "display-xl": ["Space Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        /* Custom scrollbar for a premium feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #141313; }
+        ::-webkit-scrollbar-thumb { background: #353434; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #444748; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen antialiased selection:bg-primary/30 selection:text-primary">
+<!-- TopAppBar -->
+<nav class="hidden md:flex bg-zinc-950/80 backdrop-blur-md border-b border-white/10 fixed top-0 left-0 w-full z-50 justify-between items-center px-6 h-16">
+<div class="flex items-center gap-12">
+<a class="font-['Space_Grotesk'] font-bold tracking-tight text-xl font-black text-white tracking-widest uppercase" href="#">StageFront</a>
+<div class="flex gap-8">
+<!-- Active Item -->
+<a class="font-label-caps text-label-caps text-white border-b-2 border-white pb-1 hover:bg-white/5 transition-all duration-300 opacity-80 scale-95" href="#">Eventos</a>
+<!-- Inactive Items -->
+<a class="font-label-caps text-label-caps text-zinc-500 hover:text-zinc-200 transition-colors hover:bg-white/5 transition-all duration-300" href="#">Artistas</a>
+<a class="font-label-caps text-label-caps text-zinc-500 hover:text-zinc-200 transition-colors hover:bg-white/5 transition-all duration-300" href="#">Sedes</a>
+</div>
+</div>
+<div class="flex items-center gap-6 text-white">
+<button aria-label="search" class="hover:text-zinc-300 transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button aria-label="notifications_none" class="hover:text-zinc-300 transition-colors">
+<span class="material-symbols-outlined">notifications_none</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A minimal, high-contrast black and white portrait of a person used as a user profile picture. The lighting is soft yet cinematic, fitting seamlessly into a dark mode, premium digital interface. The background is completely dark to blend perfectly with the UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyRfwyABER4ilU3uWUVUVhskEaBpNeYDB032KE3mt_vB0TUHi5Qh8sr81Xp88AD1zpHRH5T2YMXwIRpumSX74RLioCxvdo2mBAvlYwZqVAiyyS_cebABd-bFD3g0CtfouqO4CzjBA63wovy2nYpNjptCeFdvWNEwT6kcBr5MRjBKhS5gUBLzvrMGURV4gZnF5ck4m6ZTtAxawB3HlAffNoqTF56Uw8JVWHWovvixoSY5OGBX0D66c4YwGNMjZj4Z6WHADYpdow7sU"/>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="pt-24 pb-32 md:pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<!-- Header Section -->
+<header class="mb-stack-lg flex flex-col gap-stack-sm text-center md:text-left mt-8 md:mt-12">
+<h1 class="font-display-xl text-display-xl text-primary drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">Próximos Eventos</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Descubre las fechas de tus artistas favoritos. Vive la experiencia desde la primera fila.</p>
+</header>
+<!-- Event Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Card 1: BTS -->
+<article class="group relative flex flex-col rounded-xl overflow-hidden bg-white/5 backdrop-blur-md border border-white/10 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.1)] transition-all duration-500 ease-out">
+<div class="relative h-64 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-[#141313] via-transparent to-transparent z-10"></div>
+<img alt="BTS Concert" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" data-alt="A cinematic, atmospheric concert photography shot of the K-pop group BTS performing on stage. High contrast lighting with deep shadows and intense neon purple and pink spotlights cutting through stage smoke. The visual style is premium, mysterious, and high-energy, perfectly fitting a cutting-edge ticketing platform. Ethereal tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTVMdjmOs_ROcwa4eZ3G-IMOs2s0DouSyizZUtg6I9gck-qKna6cdQyeRl-Q5Ft4aPVEptNU36ebUxVCoJ3O9zVLB_h4rqxL__BV09oqLWJv_LiiFu6FaQeBdbvazl51Ufvw5gJLTXl6AWfCO5xENd-Nfcd-Q6gAAJ20jBwn9c4DT7rMu105SxM4pegaXhQiW56oXpAdjMC-Gp-_3FNFDKLDGiFLKH3us9DvbIHaLEGx7m1cZJe_u5lqj_V6EeBGPR3U5o9NrPlZo"/>
+<div class="absolute top-4 right-4 z-20">
+<span class="inline-flex items-center justify-center font-label-caps text-label-caps px-3 py-1 rounded-full bg-[#141313]/80 backdrop-blur-md border border-white/20 text-primary shadow-[0_0_12px_rgba(255,255,255,0.1)]">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>Disponible
+                        </span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow z-20 -mt-12">
+<p class="font-label-caps text-label-caps text-primary tracking-widest mb-2 opacity-80">SÁB, 24 NOV • 20:30</p>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">BTS</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                        Estadio Azteca
+                    </p>
+<div class="mt-auto pt-4 border-t border-white/5">
+<button class="w-full py-3 px-4 rounded-lg bg-transparent backdrop-blur-xl border border-white/20 text-primary font-label-caps text-label-caps hover:bg-white hover:text-black transition-all duration-300">Comprar Boletos</button>
+</div>
+</div>
+</article>
+<!-- Card 2: TXT -->
+<article class="group relative flex flex-col rounded-xl overflow-hidden bg-white/5 backdrop-blur-md border border-white/10 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.1)] transition-all duration-500 ease-out">
+<div class="relative h-64 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-[#141313] via-transparent to-transparent z-10"></div>
+<img alt="TXT Concert" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" data-alt="A high-end, dynamic concert image of the group TXT. The scene is illuminated by striking laser lights in cyan and cool white, creating a futuristic, digitally native aesthetic. The background is a deep, immersive black, highlighting the performers in a polished, glassmorphism-ready composition. Ethereal tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFE54u0Ak2aL4JZKrBCZKv7W4x_1tEdrk3QZawX1MUAhTEEZUHTAZvJ2POpsRh92KYBGEGtSNquMkr7Ojb34ESDfnpscNiKk6e5Irs2fXDHD-5WELWVQ162B6BYUFRYV7NXxm31NatG624UJuQ9D_miIA_Q26BeSqTjeUpYQ1icrph07RgndCvFoEiZnLTtw2XCSnkv3UIJy65wSTYQsi3VNhU0h9SBCxUShyxlw3Rmj0W086WaVEj6bjzkE2dNVBuDf4X7BHWi7A"/>
+<div class="absolute top-4 right-4 z-20">
+<span class="inline-flex items-center justify-center font-label-caps text-label-caps px-3 py-1 rounded-full bg-[#141313]/80 backdrop-blur-md border border-white/20 text-primary shadow-[0_0_12px_rgba(255,255,255,0.1)]">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>Disponible
+                        </span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow z-20 -mt-12">
+<p class="font-label-caps text-label-caps text-primary tracking-widest mb-2 opacity-80">MIE, 05 DIC • 21:00</p>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">TXT</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                        Palacio de los Deportes
+                    </p>
+<div class="mt-auto pt-4 border-t border-white/5">
+<button class="w-full py-3 px-4 rounded-lg bg-transparent backdrop-blur-xl border border-white/20 text-primary font-label-caps text-label-caps hover:bg-white hover:text-black transition-all duration-300">Comprar Boletos</button>
+</div>
+</div>
+</article>
+<!-- Card 3: Blackpink -->
+<article class="group relative flex flex-col rounded-xl overflow-hidden bg-white/5 backdrop-blur-md border border-white/10 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.1)] transition-all duration-500 ease-out">
+<div class="relative h-64 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-[#141313] via-transparent to-transparent z-10"></div>
+<img alt="Blackpink Concert" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" data-alt="A sleek, premium concert visual featuring Blackpink on a massive stage. The lighting scheme utilizes intense neon pink and stark white accents against a pitch-black background. The atmosphere is exclusive and high-production, capturing the energy of a sold-out stadium tour in a minimalist, modern style. Ethereal tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFs0XHj0aSiZs3qVvAUorVIpcNzwRSsOyj5cTdTw33sJYyqXFcPX3nbSWmJhGgaUcjxANISW3lrFqV4lZpcSO4NOHsWMUbxRisdRJkjvPie72fGOxN9mF0BlP67EPN7FGGXWtHWQMHmkjNtBNdM7UWzK4SLa6yIxWgim7paMXU4KRSE4n7jl8QJJUkNAB_fP-R_Mh4rzgBtjWK3QRo_WZc-v_qi5iiB0N-oZumosAXRttu3FM60nyz48jyxDoOX2BTmFH-AAyJQDI"/>
+<div class="absolute top-4 right-4 z-20">
+<span class="inline-flex items-center justify-center font-label-caps text-label-caps px-3 py-1 rounded-full bg-[#141313]/80 backdrop-blur-md border border-error/50 text-error shadow-[0_0_12px_rgba(255,180,171,0.1)]">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-2"></span>Agotado
+                        </span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow z-20 -mt-12">
+<p class="font-label-caps text-label-caps text-primary tracking-widest mb-2 opacity-80">VIE, 12 ENE • 20:00</p>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">Blackpink</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                        Foro Sol
+                    </p>
+<div class="mt-auto pt-4 border-t border-white/5">
+<button class="w-full py-3 px-4 rounded-lg bg-surface-variant/50 border border-transparent text-on-surface-variant font-label-caps text-label-caps cursor-not-allowed" disabled="">Lista de Espera</button>
+</div>
+</div>
+</article>
+<!-- Card 4: Twenty One Pilots -->
+<article class="group relative flex flex-col rounded-xl overflow-hidden bg-white/5 backdrop-blur-md border border-white/10 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.1)] transition-all duration-500 ease-out">
+<div class="relative h-64 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-[#141313] via-transparent to-transparent z-10"></div>
+<img alt="Twenty One Pilots Concert" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" data-alt="An atmospheric, moody live music shot of Twenty One Pilots performing. Cinematic lighting with stark contrast, using vibrant yellow and deep red neon highlights piercing through heavy stage fog. The aesthetic is raw yet polished, designed for a high-tech, exclusive event discovery platform. Ethereal tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjgB5fD_Q7EWIkiqcgKm_D_zGHhtaLay-5CeLq8-wtuu704hVCeEfBWkiKpfUYbAvSlBuiXZlZYuVWaCYig-JtriidGMmmqa-jb0HQUjL1Y7a7t0zYWTqiXeCiPWxaUZqWblrLChxh0imU042A9MhGY6P5fkkSUvS0135uoibKRTh3zXBE89ih3NeEYFL8Cq_cccA8jkQF3ahfQdk_FsHTFHOpMqkf8vHoV7_WqoqU1fy9ILjYXYgzZfkyseN0V9AqKiCoY649Bfc"/>
+<div class="absolute top-4 right-4 z-20">
+<span class="inline-flex items-center justify-center font-label-caps text-label-caps px-3 py-1 rounded-full bg-[#141313]/80 backdrop-blur-md border border-white/20 text-primary shadow-[0_0_12px_rgba(255,255,255,0.1)]">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>Disponible
+                        </span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow z-20 -mt-12">
+<p class="font-label-caps text-label-caps text-primary tracking-widest mb-2 opacity-80">JUE, 20 FEB • 21:00</p>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">Twenty One Pilots</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                        Arena CDMX
+                    </p>
+<div class="mt-auto pt-4 border-t border-white/5">
+<button class="w-full py-3 px-4 rounded-lg bg-transparent backdrop-blur-xl border border-white/20 text-primary font-label-caps text-label-caps hover:bg-white hover:text-black transition-all duration-300">Comprar Boletos</button>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-zinc-950/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 h-20 pb-safe rounded-t-2xl">
+<!-- Active Item -->
+<a class="flex flex-col items-center justify-center text-white bg-white/10 rounded-2xl px-4 py-1.5 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1 text-white">Explorar</span>
+</a>
+<!-- Inactive Items -->
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-300" href="#">
+<span class="material-symbols-outlined">confirmation_number</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Tickets</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-300" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Favoritos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-300" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Perfil</span>
+</a>
+</nav>
+</body></html>

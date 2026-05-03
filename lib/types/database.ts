@@ -17,6 +17,7 @@ export interface Artist {
   name: string;
   slug: string;
   genre: string | null;
+  fandom_name: string | null;
   image_url: string | null;
   display_order: number;
   created_at: string;

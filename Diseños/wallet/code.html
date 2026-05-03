@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mi Billetera - Mis Pases</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-primary-container": "#636565",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "secondary-container": "#474649",
+                        "primary": "#ffffff",
+                        "on-surface": "#e5e2e1",
+                        "error": "#ffb4ab",
+                        "primary-container": "#e2e2e2",
+                        "surface-container": "#201f1f",
+                        "secondary": "#c8c6c8",
+                        "on-primary-fixed": "#1a1c1c",
+                        "on-primary": "#2f3131",
+                        "on-secondary-container": "#b7b4b7",
+                        "inverse-primary": "#5d5f5f",
+                        "outline-variant": "#444748",
+                        "on-tertiary": "#2f3131",
+                        "on-error": "#690005",
+                        "surface": "#141313",
+                        "surface-bright": "#3a3939",
+                        "on-secondary-fixed-variant": "#474649",
+                        "tertiary-container": "#e2e2e2",
+                        "background": "#141313",
+                        "surface-dim": "#141313",
+                        "surface-tint": "#c6c6c7",
+                        "surface-container-lowest": "#0e0e0e",
+                        "inverse-surface": "#e5e2e1",
+                        "primary-fixed": "#e2e2e2",
+                        "on-background": "#e5e2e1",
+                        "inverse-on-surface": "#313030",
+                        "surface-variant": "#353434",
+                        "on-primary-fixed-variant": "#454747",
+                        "secondary-fixed": "#e5e1e4",
+                        "outline": "#8e9192",
+                        "on-secondary": "#313032",
+                        "on-tertiary-container": "#636565",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-low": "#1c1b1b",
+                        "on-surface-variant": "#c4c7c8",
+                        "surface-container-highest": "#353434",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#ffffff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "tertiary-fixed-dim": "#c6c6c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "stack-lg": "48px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-md": "24px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "label-caps": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen relative overflow-x-hidden antialiased selection:bg-primary selection:text-background">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-6 py-4">
+<!-- Brand -->
+<div class="text-2xl font-bold text-zinc-50 tracking-tight font-['Space_Grotesk']">
+            Mis Pases
+        </div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="text-zinc-50 hover:opacity-70 transition-opacity active:scale-95 transition-transform duration-200 focus:outline-none">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-zinc-50 hover:opacity-70 transition-opacity active:scale-95 transition-transform duration-200 focus:outline-none">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pt-[100px] pb-[120px] md:pb-[100px] px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex justify-center items-start min-h-screen">
+<!-- Premium Skeuomorphic Ticket -->
+<div class="relative w-full max-w-md mx-auto rounded-[2rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] bg-surface border border-white/10 group">
+<!-- Ticket Background Layer (Concert Vibe) -->
+<div class="absolute inset-0 z-0">
+<img alt="Concierto BTS" class="w-full h-full object-cover opacity-60 mix-blend-screen scale-105 group-hover:scale-110 transition-transform duration-[20s] ease-linear" data-alt="A cinematic, highly atmospheric shot from behind a massive concert stage looking out into a dark stadium. Intense, ethereal neon purple and blue stage lights cut through heavy theatrical fog. The stadium is filled with glowing light sticks creating a sea of stars against the deep pitch-black background. High contrast, premium light-mode style mixed with deep shadows, emphasizing the exclusive, high-energy live music event." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0ZOOzybsknZr8g07ldXvc57Yn80f5VlmIEJ2Lc-bSfqP8oiHCe3lYnsg8xVRaTVVf9UJNRdvhzedifZEdoEMCjfNkg6MqxmWjsn4CKpkbOTm_CBT0-PToGVMDVQNGggyrl5sJ-s0USpB4bU5ZJCNVQdBCb_KRvKb5LnsKuHhEEq3GA5YaMT0QFNrKObH4aqbFbctbv-i7VCTYt5FpyYz4gSnPtegV-VPAt84iyv_hDOU36PB5pLX6e9zUjI_h6hdrPuM07rJL-dU"/>
+<div class="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background backdrop-blur-md"></div>
+</div>
+<!-- Top Section: Event Info -->
+<div class="relative z-10 p-8 flex flex-col h-full">
+<!-- Tour Context -->
+<div class="flex justify-between items-center mb-stack-md">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase bg-white/10 px-3 py-1.5 rounded-full border border-white/20 backdrop-blur-sm shadow-[0_0_12px_rgba(255,255,255,0.1)]">
+                        Gira Mundial
+                    </span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">
+                        SÁB, 24 NOV
+                    </span>
+</div>
+<!-- Artist Main Typography -->
+<div class="mt-2 mb-stack-sm">
+<h1 class="font-display-xl text-display-xl text-primary leading-none drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                        BTS
+                    </h1>
+</div>
+<!-- Venue Info -->
+<div class="flex items-center gap-2 text-on-surface mb-stack-lg">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]" data-icon="location_on" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<span class="font-body-md text-body-md">Estadio Azteca</span>
+</div>
+<!-- Detailed Seat Info Grid -->
+<div class="grid grid-cols-2 gap-gutter bg-surface-container-high/40 p-6 rounded-xl border border-white/5 backdrop-blur-xl mb-4">
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ZONA</span>
+<span class="font-headline-md text-headline-md text-primary">VIP</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ASIENTO</span>
+<span class="font-headline-md text-headline-md text-primary">Fila 1, Asiento 12</span>
+</div>
+</div>
+</div>
+<!-- Skeuomorphic Divider with Punched Holes (Notches) -->
+<div class="relative w-full h-8 flex items-center -my-4 z-20">
+<!-- Left Notch -->
+<div class="absolute -left-4 w-8 h-8 rounded-full bg-background shadow-[inset_-2px_0_5px_rgba(0,0,0,0.5)] border-r border-white/10"></div>
+<!-- Perforated Line -->
+<div class="w-full border-t-[2px] border-dashed border-white/20 mx-6"></div>
+<!-- Right Notch -->
+<div class="absolute -right-4 w-8 h-8 rounded-full bg-background shadow-[inset_2px_0_5px_rgba(0,0,0,0.5)] border-l border-white/10"></div>
+</div>
+<!-- Bottom Section: QR Code -->
+<div class="relative z-10 p-8 pt-10 flex flex-col items-center justify-center bg-gradient-to-t from-surface-container-low to-transparent">
+<div class="bg-primary p-3 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.15)] relative group cursor-pointer">
+<!-- Subtle glow effect behind QR -->
+<div class="absolute inset-0 bg-primary/50 blur-xl rounded-2xl group-hover:bg-primary/70 transition-colors"></div>
+<img alt="Código QR" class="relative w-40 h-40 object-cover rounded-lg border border-black/10 mix-blend-multiply opacity-90" data-alt="A stark, minimalist, high-contrast black and white graphic representing a futuristic, complex QR code. The geometric patterns are sharp and precise, sitting inside a perfectly clean, rounded white square box. The background surrounding the white box is completely isolated and dark. The style is strictly digital, functional, and hyper-modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Ltx9EbHhrAXdWpmyhMFQWajG-d12Zq1tzG6CXTekoQhl5_H4vxVUqwkXlUQqqb3Nno_dtJ_Ww5x1LjCP3_IZIhq3Ao6mvFkVlJmmw9bKJEFjtmbb0RJxh-pCSIl8QjTYTmkLv3Bhs-40OIIOWolR0nhKiZ8oYF6YHL9B_ZDSOMNoWcVCzB9ghgXTphAdP12Ck1bbIN0doZL46F02YBzppZXVxeww5-bVjhdWquURyRZuGhGikd4YnsBVy9I7-OYNcwVvZyTZ-w8"/>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-stack-md text-center">
+                    Presenta este código en el acceso principal
+                </p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-zinc-950/80 backdrop-blur-2xl rounded-t-3xl border-t border-white/5 z-50 shadow-2xl">
+<!-- Wallet (Active) -->
+<button class="flex flex-col items-center justify-center text-zinc-50 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] active:scale-90 transition-transform focus:outline-none">
+<span class="material-symbols-outlined mb-1" data-icon="account_balance_wallet" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-medium uppercase tracking-widest">Wallet</span>
+</button>
+<!-- Events (Inactive) -->
+<button class="flex flex-col items-center justify-center text-zinc-600 hover:text-zinc-300 transition-colors focus:outline-none">
+<span class="material-symbols-outlined mb-1" data-icon="confirmation_number">confirmation_number</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-medium uppercase tracking-widest">Events</span>
+</button>
+<!-- Explore (Inactive) -->
+<button class="flex flex-col items-center justify-center text-zinc-600 hover:text-zinc-300 transition-colors focus:outline-none">
+<span class="material-symbols-outlined mb-1" data-icon="explore">explore</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-medium uppercase tracking-widest">Explore</span>
+</button>
+<!-- Account (Inactive) -->
+<button class="flex flex-col items-center justify-center text-zinc-600 hover:text-zinc-300 transition-colors focus:outline-none">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-medium uppercase tracking-widest">Account</span>
+</button>
+</nav>
+</body></html>

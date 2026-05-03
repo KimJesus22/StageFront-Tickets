@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { login, signup } from "@/lib/actions/auth";
 
-export default function LoginForm() {
-  const [isLogin, setIsLogin] = useState(true);
+export default function LoginForm({ initialIsLogin = true }: { initialIsLogin?: boolean }) {
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
