@@ -13,20 +13,20 @@ export default async function ArtistPortalPage() {
   const sessionData = await getSession();
   
   // Protección de ruta a nivel página
-  if (!sessionData?.user) {
+  if (!sessionData) {
     redirect("/login?redirect=/portal");
   }
 
-  const role = sessionData.user.user_metadata?.role;
-  const email = sessionData.user.email;
+  const email = sessionData.email;
   // Si no es artista o manager, redirigimos al inicio
-  if (role !== "artista" && role !== "manager" && email !== "jesus@top.com.mx") {
+  // (Como la cookie no guarda el rol, dependemos del bypass del email o consultas a base de datos)
+  if (email !== "jesus@top.com.mx") {
     redirect("/"); 
   }
 
   // Obtenemos el ID del artista desde los metadatos del usuario.
   // Si no está asignado, usamos el de Blackpink como fallback para fines de demostración.
-  const artistId = sessionData.user.user_metadata?.artist_id || "1dbaaf0f-4b21-43c2-8dec-03d89356e04e";
+  const artistId = "1dbaaf0f-4b21-43c2-8dec-03d89356e04e";
 
   const data = await getArtistDashboardData(artistId);
 
@@ -74,7 +74,7 @@ export default async function ArtistPortalPage() {
           </div>
           <div className="flex-1 hidden md:block">
             <h2 className="font-headline-md text-headline-md text-white">
-              Bienvenido, {sessionData.user.user_metadata?.name || sessionData.user.email}
+              Bienvenido, {sessionData.name || sessionData.email}
             </h2>
           </div>
           <div className="flex items-center gap-6">
@@ -108,7 +108,7 @@ export default async function ArtistPortalPage() {
         <main className="p-margin-mobile md:p-margin-desktop flex-1 flex flex-col gap-stack-lg max-w-container-max mx-auto w-full">
           <div className="md:hidden">
             <h2 className="font-headline-md text-headline-md text-white">
-              Bienvenido, {sessionData.user.user_metadata?.name || sessionData.user.email}
+              Bienvenido, {sessionData.name || sessionData.email}
             </h2>
           </div>
 

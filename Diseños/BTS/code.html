@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageFront - BTS Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#2f3131",
+                      "tertiary-fixed": "#e2e2e2",
+                      "on-error-container": "#ffdad6",
+                      "tertiary": "#ffffff",
+                      "primary": "#ffffff",
+                      "surface-variant": "#353434",
+                      "on-tertiary-container": "#636565",
+                      "primary-fixed": "#e2e2e2",
+                      "tertiary-fixed-dim": "#c6c6c7",
+                      "surface-container-low": "#1c1b1b",
+                      "surface-container-highest": "#353434",
+                      "on-secondary-fixed-variant": "#474649",
+                      "outline": "#8e9192",
+                      "on-error": "#690005",
+                      "secondary": "#c8c6c8",
+                      "on-tertiary": "#2f3131",
+                      "on-secondary-fixed": "#1c1b1d",
+                      "surface-container": "#201f1f",
+                      "secondary-container": "#474649",
+                      "error-container": "#93000a",
+                      "background": "#141313",
+                      "on-primary-fixed": "#1a1c1c",
+                      "surface-bright": "#3a3939",
+                      "surface-container-high": "#2a2a2a",
+                      "on-primary-fixed-variant": "#454747",
+                      "inverse-on-surface": "#313030",
+                      "primary-fixed-dim": "#c6c6c7",
+                      "on-primary-container": "#636565",
+                      "tertiary-container": "#e2e2e2",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "surface-tint": "#c6c6c7",
+                      "primary-container": "#e2e2e2",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-secondary": "#313032",
+                      "on-surface": "#e5e2e1",
+                      "secondary-fixed": "#e5e1e4",
+                      "on-surface-variant": "#c4c7c8",
+                      "inverse-primary": "#5d5f5f",
+                      "error": "#ffb4ab",
+                      "outline-variant": "#444748",
+                      "secondary-fixed-dim": "#c8c6c8",
+                      "surface-dim": "#141313",
+                      "on-secondary-container": "#b7b4b7",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "inverse-surface": "#e5e2e1",
+                      "surface": "#141313",
+                      "on-background": "#e5e2e1"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "48px",
+                      "container-max": "1280px",
+                      "margin-mobile": "16px",
+                      "unit": "4px",
+                      "stack-sm": "8px",
+                      "margin-desktop": "48px",
+                      "stack-md": "24px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Space Grotesk"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Space Grotesk"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "display-xl": [
+                              "Space Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-xl": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-glow-purple {
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-safe">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-zinc-950/70 backdrop-blur-md shadow-none flex justify-between items-center px-6 py-4 max-w-full">
+<div class="flex items-center gap-8">
+<a class="text-2xl font-black tracking-tighter text-white italic" href="#">StageFront</a>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-zinc-400 hover:text-white transition-colors hover:bg-white/5 transition-all font-['Space_Grotesk'] tracking-tight" href="#">Artists</a>
+<a class="text-zinc-400 hover:text-white transition-colors hover:bg-white/5 transition-all font-['Space_Grotesk'] tracking-tight" href="#">Events</a>
+<a class="text-zinc-400 hover:text-white transition-colors hover:bg-white/5 transition-all font-['Space_Grotesk'] tracking-tight" href="#">Venues</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-zinc-400 hover:text-white transition-colors duration-300 ease-in-out p-2 rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="text-zinc-400 hover:text-white transition-colors duration-300 ease-in-out p-2 rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-zinc-400 hover:text-white transition-colors duration-300 ease-in-out p-2 rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden ml-2 border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close up portrait of a young person in high end futuristic street wear, lit by subtle cool neon lighting in a dark cinematic environment. Professional studio lighting, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLViciTtfC_nVzxNWADln8Pg7YtorAuNqV23VpRH08Ve0PvJs2k81GUANYswYSyzav3Xt6yO2eoaVyKgv5EvuouxqOhtLNfQl66ePbz4qymcTasDo1cBaCfn4KOgWPbDn0PigOzTIetMCuNRLOFrdjjKGIaFywpLzufMc3H6CQTZEsysukoRdSY4Oa6WLDHrt9fi1Qa-gnkDo7d8k5ObW-sXdP8EjrP11spfq5vFnE08VjPnRFWuK8YfvWt4yzF5gvO_XL_MVsMVQ"/>
+</div>
+</div>
+</header>
+<!-- Hero Section -->
+<section class="relative h-[614px] min-h-[500px] w-full flex flex-col justify-end overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="BTS Concert" class="w-full h-full object-cover object-top opacity-70" data-alt="A massive, high-energy stadium concert at night. The stage is bathed in intense, vibrant purple neon lights illuminating a massive crowd holding light sticks. Confetti is falling. The atmosphere is euphoric, exclusive, and visually stunning, fitting a premium ticketing platform aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJxvcU85KqiO3-Va0lRO5-VqYJbGFK4-evVO0h5fJT8nRjQX_TLgrwjqM3kTb0y9lvvFw1Unk6GCwv8wKcGWLdI5GjDKIMJbvr6MKKpENLOrNtZkbjDKEs4zQ299Hp74FzhL9t5OB1iMlS_Yzt6eZvsF8BkNIVdOwOJfEZ_wmgfcjU0iU8WdeXFZx3sfLMijVgJi-ZOnzIzRyBN4MbKuISwrUGRwT58R8AREvEAAp7L4yTvOXjl77p5QiTDRYxTbLRRvJBpCpBXXM"/>
+<!-- Deep bottom gradient -->
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<!-- Subtle purple radial glow -->
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-purple-900/20 blur-[100px] rounded-full pointer-events-none"></div>
+</div>
+<div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pb-stack-lg">
+<span class="inline-block px-3 py-1 rounded-full bg-surface-variant/50 backdrop-blur-md border border-outline-variant text-on-surface font-label-caps text-label-caps mb-4 shadow-[0_0_12px_rgba(168,85,247,0.3)]">
+                K-Pop
+            </span>
+<h1 class="font-display-xl text-display-xl text-primary text-glow-purple tracking-tighter">
+                BTS
+            </h1>
+</div>
+</section>
+<!-- Content Canvas -->
+<main class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col gap-stack-lg">
+<!-- Events Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant/30 pb-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Próximos Conciertos</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary/50"></span>
+                2 eventos
+            </div>
+</div>
+<!-- Event Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Card 1 -->
+<article class="group relative flex flex-col p-6 rounded-xl bg-surface-container-low/40 backdrop-blur-xl border border-outline-variant/50 hover:border-outline/80 transition-all duration-300 hover:bg-surface-container/60 hover:-translate-y-1 overflow-hidden">
+<div class="absolute top-0 right-0 p-4 z-10">
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span>
+<span class="font-label-caps text-label-caps text-green-400 tracking-widest">EN VENTA</span>
+</div>
+</div>
+<div class="flex flex-col gap-4 flex-grow relative z-10">
+<div class="flex flex-col gap-1 mt-6">
+<h3 class="font-headline-md text-headline-md text-primary">BTS World Tour: Love Yourself</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="calendar_month">calendar_month</span>
+                            Sábado, 15 De Agosto De 2026, 14:00
+                        </p>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="location_on">location_on</span>
+                            SoFi Stadium, Los Angeles
+                        </p>
+</div>
+<div class="mt-auto pt-6">
+<button class="w-full py-4 px-6 bg-primary text-on-primary font-body-md text-body-md font-semibold rounded-lg hover:bg-primary-fixed transition-colors flex justify-center items-center gap-2 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                            Seleccionar Asientos
+                            <span class="material-symbols-outlined transition-transform group-hover:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Subtle background accent -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[80px] rounded-full pointer-events-none"></div>
+</article>
+<!-- Card 2 -->
+<article class="group relative flex flex-col p-6 rounded-xl bg-surface-container-low/40 backdrop-blur-xl border border-outline-variant/50 hover:border-outline/80 transition-all duration-300 hover:bg-surface-container/60 hover:-translate-y-1 overflow-hidden">
+<div class="absolute top-0 right-0 p-4 z-10">
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-variant/50 border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-on-surface-variant"></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-widest">PROGRAMADO</span>
+</div>
+</div>
+<div class="flex flex-col gap-4 flex-grow relative z-10">
+<div class="flex flex-col gap-1 mt-6">
+<h3 class="font-headline-md text-headline-md text-primary">BTS World Tour: Love Yourself</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="calendar_month">calendar_month</span>
+                            Martes, 20 de Octubre de 2026, 20:00
+                        </p>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="location_on">location_on</span>
+                            Estadio Azteca, CDMX
+                        </p>
+</div>
+<div class="mt-auto pt-6">
+<button class="w-full py-4 px-6 bg-transparent border border-outline-variant text-primary font-body-md text-body-md font-semibold rounded-lg hover:bg-surface-variant transition-colors flex justify-center items-center gap-2">
+                            Seleccionar Asientos
+                            <span class="material-symbols-outlined transition-transform group-hover:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Subtle background accent -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[80px] rounded-full pointer-events-none"></div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-4 bg-zinc-950/80 backdrop-blur-2xl z-50 rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-200 transition-transform duration-200 active:scale-95 group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-white" data-icon="explore">explore</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest group-hover:text-white">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white scale-110 transition-transform duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="search" data-weight="fill" style="font-variation-settings: 'FILL' 1;">search</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-200 transition-transform duration-200 active:scale-95 group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-white" data-icon="confirmation_number">confirmation_number</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest group-hover:text-white">Tickets</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-200 transition-transform duration-200 active:scale-95 group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-white" data-icon="person">person</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest group-hover:text-white">Profile</span>
+</a>
+</nav>
+<!-- Footer -->
+<footer class="bg-zinc-950 w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-8 max-w-7xl mx-auto pb-[100px] md:pb-12">
+<div class="flex flex-col items-center md:items-start">
+<div class="text-lg font-bold text-white mb-4 italic">StageFront</div>
+<p class="font-['Space_Grotesk'] text-xs font-light text-zinc-500 uppercase">© 2024 STAGEFRONT TICKETS. ALL RIGHTS RESERVED.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="font-['Space_Grotesk'] text-xs font-light text-zinc-500 hover:text-white hover:underline transition-all ease-out duration-200" href="#">Privacy Policy</a>
+<a class="font-['Space_Grotesk'] text-xs font-light text-zinc-500 hover:text-white hover:underline transition-all ease-out duration-200" href="#">Terms of Service</a>
+<a class="font-['Space_Grotesk'] text-xs font-light text-zinc-500 hover:text-white hover:underline transition-all ease-out duration-200" href="#">Artist Portal</a>
+<a class="font-['Space_Grotesk'] text-xs font-light text-zinc-500 hover:text-white hover:underline transition-all ease-out duration-200" href="#">Support</a>
+</nav>
+</footer>
+</body></html>

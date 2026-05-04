@@ -30,131 +30,131 @@ export default async function ArtistProfilePage({ params }: PageProps) {
   return (
     <>
       <Navbar />
-      <main className="flex-grow pt-20">
-        {/* Hero Header */}
-        <section className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center overflow-hidden">
-          {/* Fondo borroso con la imagen del artista */}
+      
+      {/* Hero Section */}
+      <section className="relative h-[614px] min-h-[500px] w-full flex flex-col justify-end overflow-hidden pt-20">
+        <div className="absolute inset-0 z-0">
           {artist.image_url && (
-            <>
-              <div className="absolute inset-0 z-0">
-                <Image
-                  src={artist.image_url}
-                  alt={artist.name}
-                  fill
-                  className="object-cover opacity-30 blur-xl scale-110"
-                  priority
-                  unoptimized
-                />
-              </div>
-              <div className="absolute inset-0 z-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
-            </>
+            <Image 
+              src={artist.image_url} 
+              alt={artist.name} 
+              fill
+              className="object-cover object-top opacity-70"
+              priority
+              unoptimized
+            />
           )}
+          {/* Deep bottom gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+          {/* Subtle purple radial glow */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-purple-900/20 blur-[100px] rounded-full pointer-events-none"></div>
+        </div>
+        <div className="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pb-stack-lg">
+          {artist.genre && (
+            <span className="inline-block px-3 py-1 rounded-full bg-surface-variant/50 backdrop-blur-md border border-outline-variant text-on-surface font-label-caps text-label-caps mb-4 shadow-[0_0_12px_rgba(168,85,247,0.3)]">
+              {artist.genre}
+            </span>
+          )}
+          <h1 className="font-display-xl text-display-xl text-primary drop-shadow-[0_0_40px_rgba(168,85,247,0.4)] tracking-tighter">
+            {artist.name}
+          </h1>
+        </div>
+      </section>
 
-          {/* Contenido del Hero */}
-          <div className="relative z-10 text-center px-6">
-            {artist.genre && (
-              <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 font-label-caps text-xs tracking-widest text-zinc-300 mb-4">
-                {artist.genre}
-              </span>
-            )}
-            <h1 className="font-display-xl text-5xl md:text-7xl font-bold text-white drop-shadow-lg mb-2">
-              {artist.name}
-            </h1>
-            <p className="font-body-lg text-zinc-400 max-w-2xl mx-auto">
-              Descubre los próximos eventos y asegura tu lugar en la historia.
-            </p>
+      {/* Content Canvas */}
+      <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col gap-stack-lg min-h-screen">
+        {/* Events Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant/30 pb-4">
+          <div>
+            <h2 className="font-headline-lg text-headline-lg text-primary">Próximos Conciertos</h2>
           </div>
-        </section>
-
-        {/* Lista de Eventos */}
-        <section className="px-margin-mobile md:px-margin-desktop py-stack-lg max-w-container-max mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="font-headline-lg text-3xl font-semibold text-white">
-              Próximos Conciertos
-            </h2>
-            <div className="text-sm text-zinc-400 font-body-md bg-white/5 px-4 py-2 rounded-full border border-white/10">
-              {events.length} {events.length === 1 ? "evento" : "eventos"}
-            </div>
+          <div className="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-primary/50"></span>
+            {events.length} {events.length === 1 ? "evento" : "eventos"}
           </div>
+        </div>
 
-          {events.length > 0 ? (
-            <div className="flex flex-col gap-4">
-              {events.map((event) => {
-                const isActive = event.status === "en_venta" || event.status === "programado";
-                
-                return (
-                  <div
-                    key={event.id}
-                    className="flex flex-col md:flex-row items-center justify-between p-6 rounded-2xl bg-surface-container-low border border-white/5 hover:border-white/20 hover:bg-white/[0.02] transition-all duration-300 gap-6 group"
-                  >
-                    <div className="flex flex-col flex-grow w-full md:w-auto">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="material-symbols-outlined text-primary text-xl">
-                          calendar_month
+        {/* Event Cards Grid */}
+        {events.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+            {events.map((event) => {
+              const isActive = event.status === "en_venta" || event.status === "programado";
+              const isEnVenta = event.status === "en_venta";
+              
+              return (
+                <article key={event.id} className="group relative flex flex-col p-6 rounded-xl bg-surface-container-low/40 backdrop-blur-xl border border-outline-variant/50 hover:border-outline/80 transition-all duration-300 hover:bg-surface-container/60 hover:-translate-y-1 overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 z-10">
+                    {isEnVenta ? (
+                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span>
+                        <span className="font-label-caps text-label-caps text-green-400 tracking-widest uppercase">
+                          {event.status.replace("_", " ")}
                         </span>
-                        <p className="font-body-md text-sm text-primary font-medium capitalize">
-                          {dateFormatter.format(new Date(event.date))}
-                        </p>
                       </div>
-                      <h3 className="font-headline-md text-xl text-white font-semibold mb-1 group-hover:text-primary transition-colors">
-                        {event.title}
-                      </h3>
-                      <div className="flex items-center gap-2 text-zinc-400 text-sm font-body-md">
-                        <span className="material-symbols-outlined text-sm">
-                          location_on
+                    ) : (
+                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-variant/50 border border-outline-variant">
+                        <span className="w-2 h-2 rounded-full bg-on-surface-variant"></span>
+                        <span className="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase">
+                          {event.status.replace("_", " ")}
                         </span>
-                        <span>{event.venue}, {event.city}</span>
                       </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col gap-4 flex-grow relative z-10">
+                    <div className="flex flex-col gap-1 mt-6">
+                      <h3 className="font-headline-md text-headline-md text-primary">{event.title}</h3>
+                      <p className="font-body-md text-body-md text-on-surface-variant flex items-center gap-2 capitalize">
+                        <span className="material-symbols-outlined text-[18px]">calendar_month</span>
+                        {dateFormatter.format(new Date(event.date))}
+                      </p>
+                      <p className="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[18px]">location_on</span>
+                        {event.venue}, {event.city}
+                      </p>
                     </div>
-
-                    <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-4 shrink-0 border-t border-white/5 md:border-0 pt-4 md:pt-0 mt-2 md:mt-0">
-                      <div className="text-xs font-label-caps uppercase tracking-widest text-zinc-500">
-                        {event.status.replace("_", " ")}
-                      </div>
+                    <div className="mt-auto pt-6">
                       {isActive ? (
-                        <Link
-                          href={`/event/${event.id}`}
-                          className="px-8 py-3 rounded-full font-body-md font-semibold transition-all duration-300 flex items-center gap-2 whitespace-nowrap bg-primary text-on-primary hover:bg-white/90 hover:scale-105"
-                        >
+                        <Link href={`/event/${event.id}`} className={`w-full py-4 px-6 font-body-md text-body-md font-semibold rounded-lg transition-colors flex justify-center items-center gap-2 ${isEnVenta ? "bg-primary text-on-primary hover:bg-primary-fixed group-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]" : "bg-transparent border border-outline-variant text-primary hover:bg-surface-variant"}`}>
                           Seleccionar Asientos
-                          <span className="material-symbols-outlined text-sm">
-                            arrow_forward
-                          </span>
+                          <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
                         </Link>
                       ) : (
-                        <div
-                          className="px-8 py-3 rounded-full font-body-md font-semibold flex items-center gap-2 whitespace-nowrap bg-surface-container-highest text-zinc-500 cursor-not-allowed border border-white/5"
-                          aria-disabled="true"
-                        >
-                          Seleccionar Asientos
+                        <div className="w-full py-4 px-6 bg-transparent border border-outline-variant text-zinc-500 font-body-md text-body-md font-semibold rounded-lg flex justify-center items-center gap-2 cursor-not-allowed">
+                          No Disponible
                         </div>
                       )}
                     </div>
                   </div>
-                );
-              })}
+                  
+                  {/* Subtle background accent */}
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[80px] rounded-full pointer-events-none"></div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          /* Empty State */
+          <div className="flex flex-col items-center justify-center py-24 px-6 text-center bg-surface-container-low/40 backdrop-blur-xl border border-outline-variant/50 rounded-3xl mt-4">
+            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-white/5">
+              <span className="material-symbols-outlined text-4xl text-on-surface-variant">
+                event_busy
+              </span>
             </div>
-          ) : (
-            /* Empty State */
-            <div className="flex flex-col items-center justify-center py-24 px-6 text-center bg-surface-container-low border border-white/5 rounded-3xl">
-              <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-4xl text-zinc-500">
-                  event_busy
-                </span>
-              </div>
-              <h3 className="font-headline-md text-2xl text-white mb-2">
-                No hay eventos programados
-              </h3>
-              <p className="font-body-md text-zinc-400 max-w-md mx-auto mb-8">
-                El artista no tiene conciertos próximos por el momento. Únete a la lista de espera para ser el primero en saber.
-              </p>
-              <button className="px-8 py-3 rounded-full bg-white/10 border border-white/20 text-white font-body-md font-medium hover:bg-white/20 transition-all duration-300">
-                Avisarme cuando haya eventos
-              </button>
-            </div>
-          )}
-        </section>
+            <h3 className="font-headline-md text-2xl text-primary mb-2">
+              No hay fechas anunciadas por el momento
+            </h3>
+            <p className="font-body-md text-on-surface-variant max-w-md mx-auto mb-8">
+              Sé el primero en saber cuándo anuncien nuevas fechas. Te notificaremos antes de que salgan a la venta general.
+            </p>
+            <button className="px-8 py-4 rounded-lg bg-transparent border border-outline-variant text-primary font-body-md font-semibold hover:bg-surface-variant transition-colors flex items-center gap-2">
+              <span className="material-symbols-outlined">notifications_active</span>
+              Notificarme
+            </button>
+          </div>
+        )}
       </main>
+
       <Footer />
     </>
   );

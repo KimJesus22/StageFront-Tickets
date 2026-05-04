@@ -21,13 +21,13 @@ export default function Footer() {
             Términos de Servicio
           </Link>
           <Link
-            href="#"
+            href="/portal"
             className="text-zinc-500 hover:text-white transition-colors duration-200"
           >
             Portal de Artistas
           </Link>
           <Link
-            href="#"
+            href="/support"
             className="text-zinc-500 hover:text-white transition-colors duration-200"
           >
             Soporte

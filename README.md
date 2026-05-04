@@ -34,7 +34,7 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 
 ```
 ├── app/
-│   ├── (admin)/
+│   ├── admin/
 │   │   ├── layout.tsx               → Layout fijo con barra lateral para el administrador
 │   │   └── page.tsx                 → Dashboard general con tarjetas de métricas y tabla de ventas
 │   ├── (artist)/
@@ -57,6 +57,11 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   │   ├── payment/[ticket_id]/
 │   │   │   └── page.tsx             → Formulario de pago simulado
 │   │   └── success/page.tsx         → Confirmación de compra exitosa
+│   ├── support/
+│   │   ├── components/
+│   │   │   ├── ContactForm.tsx      → Formulario de contacto (Client Component)
+│   │   │   └── FAQAccordion.tsx     → Acordeón interactivo de preguntas (Client Component)
+│   │   └── page.tsx                 → Centro de ayuda y soporte técnico
 │   ├── artists/
 │   │   └── page.tsx                 → Directorio de todos los artistas
 │   ├── events/
