@@ -113,7 +113,8 @@ export default function SeatSelectionPage() {
     if (selectedSeats.length === 0) return;
     // Store selection in sessionStorage for the checkout page
     sessionStorage.setItem('stagefront_seats', JSON.stringify(selectedSeats));
-    router.push('/checkout');
+    // Redirigir a la página de pago usando el ID del primer asiento seleccionado
+    router.push(`/payment/${selectedSeats[0].id}`);
   }, [selectedSeats, router]);
 
   const isZoneSelected = (zoneId: string) =>

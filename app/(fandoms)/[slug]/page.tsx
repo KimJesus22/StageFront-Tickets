@@ -17,6 +17,22 @@ export default async function ArtistProfilePage({ params }: PageProps) {
     notFound();
   }
 
+  // ── Accent color mapping per artist ──────────────────────────────
+  // Each entry holds the Tailwind bg class for the radial glow,
+  // the card accent, and the raw RGB tuple for inline rgba() styles.
+  const accentMap: Record<string, { glow: string; card: string; rgb: string }> = {
+    bts:                 { glow: "bg-purple-900/20",  card: "bg-purple-500/5",  rgb: "168,85,247"  },
+    txt:                 { glow: "bg-cyan-900/20",    card: "bg-cyan-500/5",    rgb: "6,182,212"   },
+    blackpink:           { glow: "bg-pink-900/20",    card: "bg-pink-500/5",    rgb: "236,72,153"  },
+    "twenty-one-pilots": { glow: "bg-yellow-900/20",  card: "bg-yellow-500/5",  rgb: "234,179,8"   },
+    stray_kids:          { glow: "bg-red-900/20",     card: "bg-red-500/5",     rgb: "239,68,68"   },
+    ateez:               { glow: "bg-sky-900/20",     card: "bg-sky-500/5",     rgb: "14,165,233"  },
+    enhypen:             { glow: "bg-orange-900/20",  card: "bg-orange-500/5",  rgb: "249,115,22"  },
+  };
+
+  const defaultAccent = { glow: "bg-zinc-800/20", card: "bg-zinc-500/5", rgb: "161,161,170" };
+  const accent = accentMap[slug] ?? defaultAccent;
+
   // Formateador de fechas
   const dateFormatter = new Intl.DateTimeFormat("es-ES", {
     weekday: "long",
@@ -46,16 +62,22 @@ export default async function ArtistProfilePage({ params }: PageProps) {
           )}
           {/* Deep bottom gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-          {/* Subtle purple radial glow */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-purple-900/20 blur-[100px] rounded-full pointer-events-none"></div>
+          {/* Dynamic radial glow — color follows artist accent */}
+          <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 ${accent.glow} blur-[100px] rounded-full pointer-events-none`}></div>
         </div>
         <div className="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pb-stack-lg">
           {artist.genre && (
-            <span className="inline-block px-3 py-1 rounded-full bg-surface-variant/50 backdrop-blur-md border border-outline-variant text-on-surface font-label-caps text-label-caps mb-4 shadow-[0_0_12px_rgba(168,85,247,0.3)]">
+            <span
+              className="inline-block px-3 py-1 rounded-full bg-surface-variant/50 backdrop-blur-md border border-outline-variant text-on-surface font-label-caps text-label-caps mb-4"
+              style={{ boxShadow: `0 0 12px rgba(${accent.rgb},0.3)` }}
+            >
               {artist.genre}
             </span>
           )}
-          <h1 className="font-display-xl text-display-xl text-primary drop-shadow-[0_0_40px_rgba(168,85,247,0.4)] tracking-tighter">
+          <h1
+            className="font-display-xl text-display-xl text-primary tracking-tighter"
+            style={{ filter: `drop-shadow(0 0 40px rgba(${accent.rgb},0.4))` }}
+          >
             {artist.name}
           </h1>
         </div>
@@ -127,8 +149,8 @@ export default async function ArtistProfilePage({ params }: PageProps) {
                     </div>
                   </div>
                   
-                  {/* Subtle background accent */}
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[80px] rounded-full pointer-events-none"></div>
+                  {/* Subtle background accent — dynamic per artist */}
+                  <div className={`absolute top-0 right-0 w-64 h-64 ${accent.card} blur-[80px] rounded-full pointer-events-none`}></div>
                 </article>
               );
             })}

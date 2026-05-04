@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageFront - Tu acceso a la primera fila</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800;900&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#8e9192",
+                        "on-tertiary": "#2f3131",
+                        "on-secondary-container": "#b7b4b7",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container": "#201f1f",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "tertiary": "#ffffff",
+                        "primary-container": "#e2e2e2",
+                        "error": "#ffb4ab",
+                        "surface-container-high": "#2a2a2a",
+                        "on-background": "#e5e2e1",
+                        "on-tertiary-container": "#636565",
+                        "on-surface": "#e5e2e1",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "background": "#141313",
+                        "primary-fixed": "#e2e2e2",
+                        "surface": "#141313",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-primary": "#2f3131",
+                        "tertiary-fixed": "#e2e2e2",
+                        "secondary": "#c8c6c8",
+                        "inverse-primary": "#5d5f5f",
+                        "surface-dim": "#141313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "outline-variant": "#444748",
+                        "on-secondary": "#313032",
+                        "secondary-container": "#474649",
+                        "secondary-fixed": "#e5e1e4",
+                        "on-primary-container": "#636565",
+                        "surface-container-highest": "#353434",
+                        "primary": "#ffffff",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "on-primary-fixed-variant": "#454747",
+                        "tertiary-container": "#e2e2e2",
+                        "on-error": "#690005",
+                        "surface-tint": "#c6c6c7",
+                        "on-secondary-fixed-variant": "#474649",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "surface-variant": "#353434",
+                        "on-surface-variant": "#c4c7c8",
+                        "inverse-surface": "#e5e2e1",
+                        "on-primary-fixed": "#1a1c1c",
+                        "inverse-on-surface": "#313030",
+                        "error-container": "#93000a",
+                        "surface-bright": "#3a3939",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "unit": "4px",
+                        "stack-md": "24px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "48px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Space Grotesk"],
+                        "body-lg": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-zinc-950/80 backdrop-blur-lg border-b border-white/10 shadow-none font-['Space_Grotesk'] tracking-tight">
+<div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<!-- Brand -->
+<a class="text-2xl font-black tracking-tighter text-white uppercase active:scale-95 transition-transform" href="#">
+                StageFront
+            </a>
+<!-- Navigation Links (Desktop) -->
+<div class="hidden md:flex items-center gap-8">
+<a class="text-white border-b border-white pb-1 font-headline-md text-headline-md hover:text-white hover:bg-white/5 transition-all duration-300" href="#">Events</a>
+<a class="text-zinc-400 font-medium font-headline-md text-headline-md hover:text-white hover:bg-white/5 transition-all duration-300" href="#">Artists</a>
+<a class="text-zinc-400 font-medium font-headline-md text-headline-md hover:text-white hover:bg-white/5 transition-all duration-300" href="#">Venues</a>
+<a class="text-zinc-400 font-medium font-headline-md text-headline-md hover:text-white hover:bg-white/5 transition-all duration-300" href="#">Exclusives</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="hidden md:block text-white font-medium hover:text-white/80 transition-colors">Sign In</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-headline-md text-[16px] font-semibold hover:bg-primary/90 transition-colors active:scale-95">Get Access</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex flex-col items-center justify-center pt-24 pb-stack-lg px-margin-mobile md:px-margin-desktop">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover object-center" data-alt="A massive, epic stadium concert scene captured from behind the crowd, looking towards a brightly lit stage. The lighting is cinematic and high-contrast, with piercing laser lights and heavy atmospheric fog. The predominant color palette features deep, mysterious dark tones contrasting with vibrant, neon purples and blues. The mood is electrifying, exclusive, and high-energy, perfectly fitting a premium ticketing platform's dark mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdZ5n5DGk5I55ZddyXseu86UinnbD6O2lWmJQL_9WxQpmXq9mMSO5-3fYd6Aypy-_4xGOXHpzPA32AOYuXiv6KPKw0hjT5n5UCzBEHorACFId5883BB_el-WjZ__FbVI83Ogs0kh83yW7Rx8qBmtMlQulZzz93_8Zc79fp8azWwuPRY2xiXnVsx2gD__t1hSrFAYp4WSsrLs7t51XzBG21TsmGi6k6TrZ0Qd-hd9d3p2pKEHYU60tW99194Iz5YqF_H_P97l__BQw"/>
+<div class="absolute inset-0 bg-gradient-to-b from-zinc-950/60 via-zinc-950/80 to-background"></div>
+</div>
+<!-- Hero Content -->
+<div class="relative z-10 w-full max-w-container-max mx-auto flex flex-col items-center text-center mt-stack-lg">
+<h1 class="font-display-xl text-display-xl text-white max-w-4xl mb-stack-md leading-tight">
+                    Tu acceso a la primera fila
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-stack-lg">
+                    Descubre y asegura boletos para los eventos más exclusivos del mundo. Una experiencia premium de inicio a fin.
+                </p>
+<!-- Search Bar -->
+<div class="w-full max-w-3xl glass-panel rounded-full p-2 flex items-center gap-2 mb-stack-lg transition-all duration-300 focus-within:border-white/30 focus-within:bg-white/10">
+<span class="material-symbols-outlined text-on-surface-variant ml-4">search</span>
+<input class="w-full bg-transparent border-none text-white font-body-lg focus:ring-0 placeholder:text-on-surface-variant/50" placeholder="Busca artistas, eventos o venues..." type="text"/>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-headline-md text-[16px] font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap">
+                        Buscar
+                    </button>
+</div>
+<!-- Category Chips -->
+<div class="flex flex-wrap justify-center gap-3">
+<button class="px-6 py-2 rounded-full bg-white text-black font-body-md font-medium">All</button>
+<button class="px-6 py-2 rounded-full glass-panel text-white font-body-md hover:bg-white/10 transition-colors">K-Pop</button>
+<button class="px-6 py-2 rounded-full glass-panel text-white font-body-md hover:bg-white/10 transition-colors">Festivals</button>
+<button class="px-6 py-2 rounded-full glass-panel text-white font-body-md hover:bg-white/10 transition-colors">Sports</button>
+<button class="px-6 py-2 rounded-full glass-panel text-white font-body-md hover:bg-white/10 transition-colors">Theater</button>
+</div>
+</div>
+</section>
+<!-- Featured Events (Bento Grid Style) -->
+<section class="py-stack-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="flex items-end justify-between mb-stack-md">
+<h2 class="font-headline-lg text-headline-lg text-white">Eventos Destacados</h2>
+<a class="text-on-surface-variant hover:text-white font-body-md flex items-center gap-1 transition-colors" href="#">
+                    Ver todos <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[400px]">
+<!-- Large Card -->
+<div class="md:col-span-8 relative rounded-xl overflow-hidden group cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A dynamic, high-energy shot of a massive K-Pop concert stage viewed from the audience. The stage is bathed in intense, glowing pink and purple neon lights. The silhouettes of performers are visible against a massive, bright LED screen displaying abstract visuals. The atmosphere is euphoric, premium, and fits perfectly within a dark-mode, exclusive ticketing platform design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgWFVEwGSFjECxxIdSpKOyXBxtii8JCGihtAw23-E5f5-P_c9zPI9028qXiSLF0SpMXIQai9v_N21tYub2bpxCCqTMRifWpqC8gC9M7fZ32NmU6jcGrz_zBWjqWDoX93u_NuxUVfrOdEbh5wkGYJmnRN0BQKqSJw_aXpuBFSVLP9-JkB81pqz5vAm5VmdomV_1gaW-KZ0Cfm-gBta8gb0y0LFx40Rf1fitzqmwP431-L-5gUQBbf-3wL3ela-wgmKFrOrN6rPSDCM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="glass-panel px-3 py-1 rounded-full text-xs font-label-caps text-white flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-error">local_fire_department</span>
+                            Alta Demanda
+                        </span>
+<span class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-xs font-label-caps text-white border border-white/10">
+                            K-Pop
+                        </span>
+</div>
+<div class="absolute bottom-0 left-0 p-6 w-full glass-panel border-x-0 border-b-0 rounded-b-xl">
+<h3 class="font-headline-lg text-[28px] font-bold text-white mb-1">BLACKPINK - BORN PINK WORLD TOUR</h3>
+<p class="text-on-surface-variant font-body-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span> Foro Sol, CDMX • 26 &amp; 27 Abril
+                        </p>
+<div class="flex justify-between items-center">
+<span class="text-white font-headline-md">Desde $1,200</span>
+<button class="bg-white text-black px-6 py-2 rounded-full font-body-md font-semibold hover:bg-white/90 transition-colors">Comprar</button>
+</div>
+</div>
+</div>
+<!-- Medium Card 1 -->
+<div class="md:col-span-4 relative rounded-xl overflow-hidden group cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="An atmospheric, moody shot of an alternative rock concert. The lighting is dominated by deep reds and stark whites, cutting through heavy stage smoke. A silhouette of a lead singer stands center stage holding a microphone stand. The style is raw yet highly produced, matching a sleek, dark-themed digital ticketing interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjlV7ZOq6Uv5oGoolxnJby1PK7OjHv3cad6lou_OEShIsJ5RH0qXVjlNHw6qSpAb9tmcXJfcep6FlBl7CuHPF_6u9E9-h2w-BaX6v0O_wXErgWiV0_6WxJtl-fM8ujK7hBX3646_GpVFkldETY6pRfTzm2K-LQsmF2cY0zpIbF836emlvHQlwGdLkhLKdj9s0WvXmWE0-IeDUsNbwwkbnRSZ7biJpGKruzw9Ck_ij3N8fxIiNYRj41V8bkfao7iYUY3CJIg67KlR0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
+<div class="absolute top-4 left-4">
+<span class="glass-panel px-3 py-1 rounded-full text-xs font-label-caps text-white flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-error">local_fire_department</span>
+                            Últimos Boletos
+                        </span>
+</div>
+<div class="absolute bottom-0 left-0 p-6 w-full glass-panel border-x-0 border-b-0 rounded-b-xl">
+<h3 class="font-headline-md text-white mb-1">Twenty One Pilots</h3>
+<p class="text-on-surface-variant font-body-md text-sm mb-4">Palacio de los Deportes • 15 Mayo</p>
+<button class="w-full glass-panel text-white py-2 rounded-full font-body-md hover:bg-white/10 transition-colors border-white/20">Ver Fechas</button>
+</div>
+</div>
+<!-- Medium Card 2 -->
+<div class="md:col-span-4 relative rounded-xl overflow-hidden group cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A sweeping view of a massive outdoor music festival at dusk. The sky is a deep, bruised purple transitioning into night. Thousands of fans are visible as silhouettes, with hands raised towards a massive, brightly illuminated main stage structure that shoots beams of light into the sky. The aesthetic is epic, communal, and cinematic, suited for a premium event platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhELlI2qlpjAGiBb-yeONiCs0o5FNdsTOu_u03f_TqOAk5tm3UJoOg0LrHc5qOCAVUsnGdQIO89wVkQJrleReQT5G4UpxFT6S_MkvawhTB8pMOyRF2S2XKmv2ebpbDs6RoKT5E2YymQspnjQpm7SdOEDft6kf6ijSO21hu4KEAnQEeCjkcQjNPULiHU0kf6wCZlJR9vDMxZ2c6xwcp0YalwbrQBOB--Mpa9MFTBAaYWmRnhbWO6jzbgPAiJft3gD5RieS4F5t2Iow"/>
+<div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
+<div class="absolute top-4 left-4">
+<span class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-xs font-label-caps text-white border border-white/10">
+                            Festival
+                        </span>
+</div>
+<div class="absolute bottom-0 left-0 p-6 w-full glass-panel border-x-0 border-b-0 rounded-b-xl">
+<h3 class="font-headline-md text-white mb-1">Corona Capital 2024</h3>
+<p class="text-on-surface-variant font-body-md text-sm mb-4">Autódromo Hnos. Rodríguez • Noviembre</p>
+<button class="w-full glass-panel text-white py-2 rounded-full font-body-md hover:bg-white/10 transition-colors border-white/20">Abonos</button>
+</div>
+</div>
+<!-- Medium Card 3 -->
+<div class="md:col-span-8 relative rounded-xl overflow-hidden group cursor-pointer bg-surface-container-high flex flex-col sm:flex-row items-center border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-full sm:w-2/5 h-48 sm:h-full relative overflow-hidden">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close-up, artistic shot of a DJ performing live. The focus is on their hands manipulating mixing equipment, with the background heavily blurred in a bokeh effect. The lighting is dark with sharp accents of electric blue and stark white LED lights reflecting off the metal gear. The vibe is sleek, modern, and electronic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpCGrNcha3I9wHKZqMAKFDQJ5Qq9tpUEhq-vEmqMZD7WGM45QFgMWDqvj72V493BKnoGZII_4rqxr2IqiEvPO-kjYs05ZDX3jVhrxxecJIxQiTOhgCwT304U1CgsdP16ls2KDzOH_4DFL8PSXvx-3kKYtusq6Psw7zqH7uv0NC6_ulTFrX54YAlz8vm7A0AogKM12X3LzJMiAZMdDYCw21_WnUJ9B3NrL67wAghq9tFX2JMJkUxN2x5jqXLsCxFiv24p5Gzbq8u5A"/>
+</div>
+<div class="p-6 w-full sm:w-3/5 flex flex-col justify-center h-full">
+<div class="flex gap-2 mb-3">
+<span class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-xs font-label-caps text-white border border-white/10">
+                                Electrónica
+                            </span>
+</div>
+<h3 class="font-headline-lg text-[24px] font-bold text-white mb-2">Afterlife Mexico City</h3>
+<p class="text-on-surface-variant font-body-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span> 25 de Mayo, 2024
+                        </p>
+<p class="text-on-surface-variant font-body-md text-sm mb-6 line-clamp-2">
+                            Una experiencia inmersiva audiovisual que desafía la realidad. Únete a Tale Of Us en una noche inolvidable.
+                        </p>
+<div class="flex justify-between items-center mt-auto">
+<button class="text-white font-body-md font-medium border-b border-white pb-1 hover:text-white/80 transition-colors">Más Información</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Artist Directory -->
+<section class="py-stack-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto border-t border-white/5">
+<div class="flex items-end justify-between mb-stack-md">
+<h2 class="font-headline-lg text-headline-lg text-white">Artistas Top</h2>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+<!-- Artist 1 -->
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-4 relative shadow-[0_0_15px_rgba(255,105,180,0.15)] group-hover:shadow-[0_0_25px_rgba(255,105,180,0.3)] transition-all duration-300">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A portrait-style shot of a K-Pop idol group performing. The image focuses closely on the singers under bright, saturated pink and magenta stage lighting. The aesthetic is polished, glamorous, and high-fashion, perfectly suited for a premium artist directory profile picture within a dark-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbrfuzI3Ec6oeeHtRBzqsMqlAXtiB6t9RsMHb0vcnTW81iLsRtIORmzQslE6YRSHwQDWsFiKd040Op-80XhT1Er-U_G2Y5yFlDFJN42413FwyBiSCyPrVdghvoQRx0DrWwG5JrWnSNa0gM7nIAynMcOBNDQ4S3CgQoNP7dndoUD1Z_8luA8qVjSDkiBiqjeTn-YNDPAIKgbazHvhjcKzb7b-aSEVOny7YEjBdw4AhAc7NUOkd8AwuU08I_3yLTEygCSbQhfaDjss8"/>
+<div class="absolute inset-0 bg-zinc-950/20 group-hover:bg-transparent transition-colors"></div>
+</div>
+<h4 class="text-white font-headline-md text-lg">BLACKPINK</h4>
+<p class="text-on-surface-variant font-body-md text-sm">2 Eventos</p>
+</div>
+<!-- Artist 2 -->
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-4 relative shadow-[0_0_15px_rgba(147,112,219,0.15)] group-hover:shadow-[0_0_25px_rgba(147,112,219,0.3)] transition-all duration-300">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A stylized portrait of a male pop group posing confidently. The lighting is cool and moody, utilizing deep purples and crisp whites to highlight their features against a dark background. The image feels exclusive, editorial, and highly produced, fitting for a top-tier music platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6uJvCF2U-ZN5wPOK6bgb0l3NkO5o-suMx5qYV5wcN71407kazkoz1H1hgsM6OGEq0j1xMnpsooTsO_CxYWJMeSY5gYjZU-BRSHsaCMC_mSSEGYszNZf03o9X-qQJIuuFbJ8wmdxlTWFE3AGuiP0yzlp9jnJIl4-71C7n5lBQjHFzldp-mFqkVoigXCQzBXc40YOTvqEoQj5H1kBu9zhv7y11Ch5drTI0j_iTfv0JzMCjXWGyiQwSj3HP4TFyK2otaZJ_B5D7165E"/>
+<div class="absolute inset-0 bg-zinc-950/20 group-hover:bg-transparent transition-colors"></div>
+</div>
+<h4 class="text-white font-headline-md text-lg">BTS</h4>
+<p class="text-on-surface-variant font-body-md text-sm">Sin fechas</p>
+</div>
+<!-- Artist 3 -->
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-4 relative shadow-[0_0_15px_rgba(255,69,0,0.15)] group-hover:shadow-[0_0_25px_rgba(255,69,0,0.3)] transition-all duration-300">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A close-up shot of an alternative music artist performing passionately into a microphone. The lighting is dramatic and warm, with harsh oranges and reds illuminating their face against a pitch-black background. The mood is intense, raw, and energetic, ideal for a dark-themed UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgZvOfjVUw5-n534dpVDCPQYjtrs0irDTbyyED4VHrq12jVTIdMW2kYlbSaNlGLvAkHRAG4o8FalYdrvJR_YhSqqbu0z32xD_qCT0jrw-zIWaU-0vqSLXM98kIrsckJCZBG2Rm8tu_6SWojbZ97G_aZTG_48MBeZlX5jk_MbJ041KcVSmPvrrVYH2JfVqGiCQvCrZ-Kh3EOuC0nDIdnlvw4QNQYitR45XfeZhUV_X_OmySRnhGgsVqpkfhVyf72WSa0U3OsCzZfoc"/>
+<div class="absolute inset-0 bg-zinc-950/20 group-hover:bg-transparent transition-colors"></div>
+</div>
+<h4 class="text-white font-headline-md text-lg">Twenty One Pilots</h4>
+<p class="text-on-surface-variant font-body-md text-sm">1 Evento</p>
+</div>
+<!-- Artist 4 -->
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-4 relative shadow-[0_0_15px_rgba(0,255,255,0.15)] group-hover:shadow-[0_0_25px_rgba(0,255,255,0.3)] transition-all duration-300">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A dynamic stage shot of an electronic or pop group performing. Bright cyan and blue laser lights cut through stage fog, illuminating the silhouettes of the performers. The overall aesthetic is sleek, modern, and highly energetic, designed to pop vibrantly against a dark, minimalist digital background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChRZVXOfO9mOEzr8k2RrK_TK4uG7vkiN75qDDWDc0q69WG6iXkQNKHYRQZY0C9Z5EhmC-h3_02pHpALFYXAqNcjdKPOMGD7Wm9Sj-67cTrgZ90ZY0r9-04kTOEJREK40ceQQS4Na_uDqX-zgB1TCrGn4QI1YuvQB9Yo5sm3TiyuKpizwWOsXDI1UbXky5e4fyU1xaCmfCGXvyNMQUgr0oMdPqPLFNScteOJxCCwo2EfzOEpY32wPV5siHNzatbJXRI6pwukjKh0h0"/>
+<div class="absolute inset-0 bg-zinc-950/20 group-hover:bg-transparent transition-colors"></div>
+</div>
+<h4 class="text-white font-headline-md text-lg">TXT</h4>
+<p class="text-on-surface-variant font-body-md text-sm">Próximamente</p>
+</div>
+</div>
+</section>
+<!-- Trust Banner -->
+<section class="border-t border-white/5 bg-zinc-950 py-12">
+<div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+<div class="flex flex-col items-center gap-3">
+<span class="material-symbols-outlined text-4xl text-white opacity-80">verified_user</span>
+<h4 class="font-headline-md text-white">Boletos 100% Verificados</h4>
+<p class="text-on-surface-variant font-body-md text-sm max-w-xs">Garantía de autenticidad en cada compra mediante tecnología blockchain.</p>
+</div>
+<div class="flex flex-col items-center gap-3">
+<span class="material-symbols-outlined text-4xl text-white opacity-80">security</span>
+<h4 class="font-headline-md text-white">Fila Virtual Segura</h4>
+<p class="text-on-surface-variant font-body-md text-sm max-w-xs">Sistema anti-bots que garantiza un acceso justo a los eventos más demandados.</p>
+</div>
+<div class="flex flex-col items-center gap-3">
+<span class="material-symbols-outlined text-4xl text-white opacity-80">support_agent</span>
+<h4 class="font-headline-md text-white">Soporte 24/7</h4>
+<p class="text-on-surface-variant font-body-md text-sm max-w-xs">Asistencia premium disponible en todo momento para tu tranquilidad.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-zinc-950 text-white font-['Space_Grotesk'] text-sm w-full py-12 border-t border-white/5 shadow-none">
+<div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="text-lg font-bold text-white">
+                StageFront
+            </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-zinc-500 hover:text-white transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Terms of Service</a>
+<a class="text-zinc-500 hover:text-white transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
+<a class="text-zinc-500 hover:text-white transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Artist Portal</a>
+<a class="text-zinc-500 hover:text-white transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Support</a>
+<a class="text-zinc-500 hover:text-white transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Global Access</a>
+</div>
+<div class="text-zinc-500">
+                © 2024 StageFront Ecosystem. All Rights Reserved.
+            </div>
+</div>
+</footer>
+</body></html>

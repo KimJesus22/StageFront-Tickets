@@ -1,186 +1,290 @@
-import { notFound } from "next/navigation";
-import { insforge } from "@/lib/insforge";
-import { processPayment } from "@/lib/actions/checkout";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+'use client';
 
-interface PageProps {
-  params: Promise<{ ticket_id: string }>;
+import { useState, useEffect, useCallback, use } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+
+interface SelectedSeat {
+  id: string;
+  zona: string;
+  label: string;
+  tipo: string;
+  precio: number;
+  color: string;
 }
 
-const getCurrency = (city: string) => {
-  if (city.includes("MX")) return "MXN";
-  if (city.includes("SK")) return "KRW";
-  if (city.includes("UK")) return "GBP";
-  if (city.includes("JP")) return "JPY";
-  return "USD";
-};
+export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: string }> }) {
+  // Use React.use to unwrap params if needed
+  const { ticket_id } = use(params);
+  const router = useRouter();
 
-const formatPrice = (price: number, city: string) => {
-  const currency = getCurrency(city);
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currency,
-    minimumFractionDigits: currency === 'KRW' || currency === 'JPY' ? 0 : 2
-  }).format(price);
-};
+  // State
+  const [seats, setSeats] = useState<SelectedSeat[]>([]);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes = 600 seconds
+  const [parkingCount, setParkingCount] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-export default async function PaymentPage({ params }: PageProps) {
-  const { ticket_id } = await params;
+  // Initialize from sessionStorage
+  useEffect(() => {
+    const stored = sessionStorage.getItem('stagefront_seats');
+    if (stored) {
+      try {
+        setSeats(JSON.parse(stored));
+      } catch (e) {
+        setSeats([]);
+      }
+    }
+  }, []);
 
-  // Obtener el boleto y los datos del evento asociado
-  const { data: ticket, error } = await insforge.database
-    .from("tickets_inventory")
-    .select(`
-      *,
-      events (
-        title,
-        venue,
-        city,
-        date
-      )
-    `)
-    .eq("id", ticket_id)
-    .single();
+  // Timer Countdown
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      // Time is up
+      alert('El tiempo se ha agotado. Los boletos han sido liberados.');
+      router.push('/');
+      return;
+    }
 
-  if (error || !ticket || ticket.status !== "bloqueado") {
-    // Si el boleto no existe o no está bloqueado por el usuario, fallamos.
-    // (En un sistema real, verificaríamos que el boleto fue bloqueado por ESTE usuario específico).
-    notFound();
-  }
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
 
-  // Bind the ticketId to the server action
-  const processPaymentWithId = processPayment.bind(null, ticket_id);
+    return () => clearInterval(timer);
+  }, [timeLeft, router]);
 
-  // Formateador de fechas
-  const dateFormatter = new Intl.DateTimeFormat("es-ES", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
 
-  const eventTitle = (ticket.events as any)?.title || "Evento Desconocido";
-  const eventVenue = (ticket.events as any)?.venue || "Recinto";
-  const eventCity = (ticket.events as any)?.city || "Ciudad";
-  const eventDate = (ticket.events as any)?.date ? new Date((ticket.events as any).date) : new Date();
+  // Calculations
+  const basePrice = seats.reduce((acc, seat) => acc + seat.precio, 0);
+  const serviceFee = basePrice * 0.15; // 15% service fee
+  const PARKING_FEE = 350;
+  const extrasTotal = parkingCount * PARKING_FEE;
+  const grandTotal = basePrice + serviceFee + extrasTotal;
+
+  // Mock Payment Function
+  const handlePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+
+    // Simulate 2s processing
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Cleanup session storage
+    sessionStorage.removeItem('stagefront_seats');
+
+    // Redirect to wallet
+    router.push('/wallet');
+  };
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-grow pt-24 pb-12 min-h-screen bg-zinc-950 px-margin-mobile md:px-margin-desktop flex flex-col items-center justify-center">
-        <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
-          
-          {/* Columna Izquierda: Resumen de Compra */}
-          <div className="flex flex-col">
-            <h1 className="font-headline-lg text-3xl md:text-4xl font-bold text-white mb-6">
-              Resumen de Compra
-            </h1>
-            
-            <div className="bg-surface-container-low border border-white/5 rounded-3xl p-6 md:p-8 flex-grow">
-              <div className="flex items-start justify-between border-b border-white/10 pb-6 mb-6">
-                <div>
-                  <h2 className="font-headline-md text-2xl text-white mb-2">{eventTitle}</h2>
-                  <div className="flex items-center gap-2 text-zinc-400 font-body-md text-sm mb-1">
-                    <span className="material-symbols-outlined text-sm">calendar_month</span>
-                    <span className="capitalize">{dateFormatter.format(eventDate)}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-zinc-400 font-body-md text-sm">
-                    <span className="material-symbols-outlined text-sm">location_on</span>
-                    <span>{eventVenue}, {eventCity}</span>
-                  </div>
-                </div>
-              </div>
+    <div className="bg-zinc-950 text-white antialiased min-h-screen flex flex-col">
+      {/* Top Banner (Urgency) */}
+      <header className="w-full bg-black border-b border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div className="border-b-2 border-cyan-400 pb-1">
+          <h1 className="font-headline-lg text-headline-lg text-white">CHECKOUT</h1>
+        </div>
+        <div className="flex items-center gap-2 text-red-400 font-label-caps text-label-caps">
+          <span className="material-symbols-outlined text-[18px]">timer</span>
+          <span>Tiempo restante {formatTime(timeLeft)}</span>
+        </div>
+      </header>
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center font-body-md text-zinc-300">
-                  <span>Zona</span>
-                  <span className="font-semibold text-white">{ticket.zone}</span>
-                </div>
-                <div className="flex justify-between items-center font-body-md text-zinc-300">
-                  <span>Asiento</span>
-                  <span className="font-semibold text-white">{ticket.seat_number}</span>
-                </div>
-                <div className="flex justify-between items-center font-body-md text-zinc-300 border-t border-white/5 pt-4 mt-4">
-                  <span>Precio del boleto</span>
-                  <span className="font-semibold text-white">{formatPrice(Number(ticket.price), eventCity)}</span>
-                </div>
-                <div className="flex justify-between items-center font-body-md text-zinc-300 pb-4 border-b border-white/10">
-                  <span>Cargos por servicio</span>
-                  <span className="font-semibold text-white">{formatPrice(0, eventCity)}</span>
-                </div>
-                <div className="flex justify-between items-end pt-2">
-                  <span className="font-headline-md text-xl text-white">Total</span>
-                  <span className="font-display-md text-3xl font-bold text-primary">
-                    {formatPrice(Number(ticket.price), eventCity)}
-                  </span>
-                </div>
+      {/* Main Content */}
+      <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+        {/* Left Column (65%) */}
+        <div className="lg:col-span-8 flex flex-col gap-stack-md">
+          {/* Card 1: Delivery */}
+          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
+            <h2 className="font-headline-md text-headline-md mb-6">ENTREGA</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="flex flex-col gap-2">
+                <label className="font-label-caps text-label-caps text-zinc-400">País</label>
+                <select className="bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none appearance-none">
+                  <option>México</option>
+                  <option>Estados Unidos</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="font-label-caps text-label-caps text-zinc-400">Estado</label>
+                <select className="bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none appearance-none">
+                  <option>Ciudad de México</option>
+                  <option>Jalisco</option>
+                  <option>Nuevo León</option>
+                </select>
               </div>
             </div>
-          </div>
+            <div className="flex items-start gap-4 p-4 border border-white/10 rounded-lg bg-black/20">
+              <span className="material-symbols-outlined text-cyan-400">smartphone</span>
+              <div className="flex-grow">
+                <h3 className="font-body-lg text-body-lg mb-1">Boleto digital</h3>
+                <p className="font-body-md text-body-md text-zinc-400">Accede a tus boletos directamente desde tu dispositivo móvil.</p>
+              </div>
+              <span className="font-label-caps text-label-caps text-cyan-400">GRATIS</span>
+            </div>
+          </section>
 
-          {/* Columna Derecha: Formulario de Pago */}
-          <div className="flex flex-col">
-            <h2 className="font-headline-md text-2xl font-bold text-white mb-6">
-              Método de Pago
-            </h2>
-            
-            <form action={processPaymentWithId} className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 space-y-6">
-              
-              {/* Datos de Tarjeta Simulados */}
-              <div className="pt-4 border-t border-white/10 space-y-4">
-                <p className="text-sm font-body-md text-zinc-500 mb-4 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm">lock</span>
-                  Pago seguro (Simulado)
-                </p>
-                <div>
-                  <label className="block text-sm font-body-md text-zinc-400 mb-2">Número de tarjeta</label>
-                  <input 
-                    type="text" 
-                    required 
-                    defaultValue="4242 4242 4242 4242"
-                    className="w-full bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-3 text-zinc-500 font-mono focus:outline-none"
-                    readOnly
+          {/* Card 2: Extras */}
+          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
+            <h2 className="font-headline-md text-headline-md mb-6">EXTRAS</h2>
+            <div className="flex items-center justify-between p-4 border border-white/10 rounded-lg bg-black/20 hover:border-white/20 transition-all">
+              <div>
+                <h3 className="font-body-lg text-body-lg mb-1">Pase de Estacionamiento</h3>
+                <p className="font-body-md text-body-md text-zinc-400">${PARKING_FEE.toFixed(2)} MXN c/u</p>
+              </div>
+              <div className="flex items-center gap-4 bg-black/40 rounded-full px-4 py-2 border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setParkingCount((c) => Math.max(0, c - 1))}
+                  className="text-zinc-400 hover:text-white"
+                >
+                  <span className="material-symbols-outlined text-[20px]">remove</span>
+                </button>
+                <span className="font-body-md text-body-md font-bold">{parkingCount}</span>
+                <button
+                  type="button"
+                  onClick={() => setParkingCount((c) => c + 1)}
+                  className="text-zinc-400 hover:text-white"
+                >
+                  <span className="material-symbols-outlined text-[20px]">add</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* Card 3: Payment */}
+          <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
+            <h2 className="font-headline-md text-headline-md mb-6">MÉTODO DE PAGO</h2>
+            <form id="payment-form" onSubmit={handlePayment} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="font-label-caps text-label-caps text-zinc-400">Número de Tarjeta</label>
+                <div className="relative">
+                  <input
+                    className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 pl-12 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none"
+                    placeholder="0000 0000 0000 0000"
+                    type="text"
+                    required
                   />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-body-md text-zinc-400 mb-2">Fecha de exp.</label>
-                    <input 
-                      type="text" 
-                      defaultValue="12/30"
-                      className="w-full bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-3 text-zinc-500 font-mono focus:outline-none"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-body-md text-zinc-400 mb-2">CVC</label>
-                    <input 
-                      type="text" 
-                      defaultValue="123"
-                      className="w-full bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-3 text-zinc-500 font-mono focus:outline-none"
-                      readOnly
-                    />
-                  </div>
+                  <span className="material-symbols-outlined absolute left-4 top-3.5 text-zinc-400">credit_card</span>
                 </div>
               </div>
-
-              {/* Botón de Submit (El submit en Server Actions mostrará carga si usamos useFormStatus en un client component, pero por simplicidad usaremos un botón estático, o podríamos crear un Client Button) */}
-              <button 
-                type="submit"
-                className="w-full bg-primary text-on-primary py-4 rounded-xl font-body-md font-bold text-lg hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.3)] flex items-center justify-center gap-2 mt-4"
-              >
-                Pagar {formatPrice(Number(ticket.price), eventCity)}
-                <span className="material-symbols-outlined">arrow_forward</span>
-              </button>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2">
+                  <label className="font-label-caps text-label-caps text-zinc-400">Vencimiento</label>
+                  <input
+                    className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none"
+                    placeholder="MM/YY"
+                    type="text"
+                    required
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="font-label-caps text-label-caps text-zinc-400">CVC</label>
+                  <input
+                    className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none"
+                    placeholder="123"
+                    type="password"
+                    maxLength={4}
+                    required
+                  />
+                </div>
+              </div>
             </form>
-          </div>
+          </section>
+        </div>
 
+        {/* Right Column (35% Sticky) */}
+        <div className="lg:col-span-4 flex flex-col gap-stack-md relative">
+          <div className="sticky top-24 flex flex-col gap-stack-md">
+            {/* Card 1: Event Details */}
+            <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 flex gap-4">
+              <div className="w-24 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800 relative">
+                <Image
+                  src="https://prismic-images.tmol.io/ticketmaster-tm-global/aWZmqwIvOtkhBc5Z_EADP-Desktop-Header-updated.png?auto=format%2Ccompress&rect=1%2C0%2C2425%2C1023&w=2048&h=864"
+                  alt="Concert poster"
+                  fill
+                  className="object-cover opacity-80"
+                  unoptimized
+                />
+              </div>
+              <div className="flex flex-col justify-center">
+                <h3 className="font-headline-md text-headline-md mb-2">Checkout Evento</h3>
+                <p className="font-body-md text-body-md text-zinc-400 mb-1">
+                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">calendar_today</span> Oct 24, 2024
+                </p>
+                <p className="font-body-md text-body-md text-zinc-400 mb-1">
+                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">schedule</span> 20:00 HRS
+                </p>
+                <p className="font-body-md text-body-md text-zinc-400">
+                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">location_on</span> Foro Sol, CDMX
+                </p>
+              </div>
+            </section>
+
+            {/* Card 2: Summary */}
+            <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
+              <h2 className="font-headline-md text-headline-md mb-6">TOTAL</h2>
+              <div className="flex flex-col gap-4 mb-6 font-body-md text-body-md">
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">Boletos ({seats.length})</span>
+                  <span>${basePrice.toFixed(2)} MXN</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">Cargos por servicio</span>
+                  <span>${serviceFee.toFixed(2)} MXN</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">Extras (Estacionamiento)</span>
+                  <span>${extrasTotal.toFixed(2)} MXN</span>
+                </div>
+              </div>
+              <div className="border-t border-white/10 pt-6 mb-8 flex justify-between items-center">
+                <span className="font-headline-md text-headline-md text-zinc-400">Total</span>
+                <span className="font-headline-lg text-headline-lg">${grandTotal.toFixed(2)}</span>
+              </div>
+              <button
+                type="submit"
+                form="payment-form"
+                disabled={isProcessing || seats.length === 0}
+                className={`w-full font-label-caps text-label-caps py-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                  isProcessing
+                    ? 'bg-zinc-600 text-zinc-400 cursor-not-allowed'
+                    : 'bg-white text-black hover:bg-zinc-200'
+                }`}
+              >
+                {isProcessing ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                    PROCESANDO...
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined">lock</span>
+                    PROCEDER AL PAGO
+                  </>
+                )}
+              </button>
+              <p className="text-center font-body-md text-zinc-500 text-[12px] mt-4 flex items-center justify-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">verified_user</span> Transacción segura
+              </p>
+            </section>
+          </div>
         </div>
       </main>
-      <Footer />
-    </>
+
+      <footer className="w-full py-16 px-8 flex flex-col md:flex-row justify-between items-center gap-8 bg-zinc-950 border-t border-zinc-800">
+        <div className="text-lg font-black text-white">StageFront</div>
+        <div className="flex flex-wrap gap-6 justify-center">
+          <span className="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200 cursor-pointer">Privacy Policy</span>
+          <span className="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200 cursor-pointer">Terms of Service</span>
+          <span className="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200 cursor-pointer">Security</span>
+          <span className="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200 cursor-pointer">Help Center</span>
+        </div>
+        <div className="font-label-caps text-label-caps text-zinc-500">© 2026 StageFront. High-Fidelity Access.</div>
+      </footer>
+    </div>
   );
 }

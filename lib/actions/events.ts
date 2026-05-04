@@ -54,3 +54,30 @@ export async function getAllUpcomingEvents(): Promise<EventWithArtist[]> {
 
   return (data as EventWithArtist[]) ?? [];
 }
+
+/**
+ * Obtiene los eventos destacados para la landing page.
+ * Como no existe columna is_featured, usamos los más próximos (limit 4)
+ * con su artista embebido.
+ */
+export async function getFeaturedEvents(
+  limit = 4
+): Promise<EventWithArtist[]> {
+  const { data, error } = await insforge.database
+    .from("events")
+    .select(`
+      *,
+      artists (*)
+    `)
+    .in("status", ["en_venta", "programado"])
+    .gte("date", new Date().toISOString())
+    .order("date", { ascending: true })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error al obtener eventos destacados:", error);
+    return [];
+  }
+
+  return (data as EventWithArtist[]) ?? [];
+}

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageFront - Checkout</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "surface-dim": "#141313",
+                      "on-surface": "#e5e2e1",
+                      "surface-container-high": "#2a2a2a",
+                      "secondary-container": "#474649",
+                      "primary-fixed": "#e2e2e2",
+                      "surface-container": "#201f1f",
+                      "primary": "#ffffff",
+                      "on-primary-container": "#636565",
+                      "surface-container-highest": "#353434",
+                      "on-tertiary-container": "#636565",
+                      "error-container": "#93000a",
+                      "error": "#ffb4ab",
+                      "on-primary-fixed": "#1a1c1c",
+                      "tertiary-container": "#e2e2e2",
+                      "surface-variant": "#353434",
+                      "tertiary-fixed-dim": "#c6c6c7",
+                      "on-secondary-container": "#b7b4b7",
+                      "on-primary-fixed-variant": "#454747",
+                      "on-error-container": "#ffdad6",
+                      "on-secondary": "#313032",
+                      "surface-container-lowest": "#0e0e0e",
+                      "secondary-fixed-dim": "#c8c6c8",
+                      "inverse-surface": "#e5e2e1",
+                      "primary-fixed-dim": "#c6c6c7",
+                      "on-tertiary": "#2f3131",
+                      "on-surface-variant": "#c4c7c8",
+                      "surface-tint": "#c6c6c7",
+                      "inverse-on-surface": "#313030",
+                      "secondary": "#c8c6c8",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "tertiary-fixed": "#e2e2e2",
+                      "surface-container-low": "#1c1b1b",
+                      "on-secondary-fixed-variant": "#474649",
+                      "tertiary": "#ffffff",
+                      "secondary-fixed": "#e5e1e4",
+                      "primary-container": "#e2e2e2",
+                      "background": "#141313",
+                      "outline-variant": "#444748",
+                      "outline": "#8e9192",
+                      "inverse-primary": "#5d5f5f",
+                      "on-background": "#e5e2e1",
+                      "on-secondary-fixed": "#1c1b1d",
+                      "on-primary": "#2f3131",
+                      "on-error": "#690005",
+                      "surface-bright": "#3a3939",
+                      "surface": "#141313"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "margin-desktop": "48px",
+                      "gutter": "24px",
+                      "stack-lg": "48px",
+                      "margin-mobile": "16px",
+                      "stack-sm": "8px",
+                      "stack-md": "24px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Space Grotesk"
+                      ],
+                      "display-xl": [
+                              "Space Grotesk"
+                      ],
+                      "headline-md": [
+                              "Space Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-xl": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-zinc-950 text-white antialiased min-h-screen flex flex-col">
+<!-- Top Navbar Placeholder (Suppressed per logic, using custom checkout header) -->
+<!-- Top Banner (Urgency) -->
+<header class="w-full bg-black border-b border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+<div class="border-b-2 border-cyan-400 pb-1">
+<h1 class="font-headline-lg text-headline-lg text-white">CHECKOUT</h1>
+</div>
+<div class="flex items-center gap-2 text-red-400 font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[18px]">timer</span>
+<span>Tiempo restante 07:16</span>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column (65%) -->
+<div class="lg:col-span-8 flex flex-col gap-stack-md">
+<!-- Card 1: Delivery -->
+<section class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
+<h2 class="font-headline-md text-headline-md mb-6">ENTREGA</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-zinc-400">País</label>
+<select class="bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none appearance-none">
+<option>México</option>
+<option>Estados Unidos</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-zinc-400">Estado</label>
+<select class="bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none appearance-none">
+<option>Ciudad de México</option>
+<option>Jalisco</option>
+</select>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 border border-white/10 rounded-lg bg-black/20">
+<span class="material-symbols-outlined text-cyan-400">smartphone</span>
+<div class="flex-grow">
+<h3 class="font-body-lg text-body-lg mb-1">Boleto digital</h3>
+<p class="font-body-md text-body-md text-zinc-400">Accede a tus boletos directamente desde tu dispositivo móvil.</p>
+</div>
+<span class="font-label-caps text-label-caps text-cyan-400">GRATIS</span>
+</div>
+</section>
+<!-- Card 2: Extras -->
+<section class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
+<h2 class="font-headline-md text-headline-md mb-6">EXTRAS</h2>
+<div class="flex items-center justify-between p-4 border border-white/10 rounded-lg bg-black/20 hover:border-white/20 transition-all">
+<div>
+<h3 class="font-body-lg text-body-lg mb-1">Pase de Estacionamiento</h3>
+<p class="font-body-md text-body-md text-zinc-400">$350.00 MXN</p>
+</div>
+<div class="flex items-center gap-4 bg-black/40 rounded-full px-4 py-2 border border-white/10">
+<button class="text-zinc-400 hover:text-white"><span class="material-symbols-outlined text-[20px]">remove</span></button>
+<span class="font-body-md text-body-md font-bold">0</span>
+<button class="text-zinc-400 hover:text-white"><span class="material-symbols-outlined text-[20px]">add</span></button>
+</div>
+</div>
+</section>
+<!-- Card 3: Payment -->
+<section class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
+<h2 class="font-headline-md text-headline-md mb-6">MÉTODO DE PAGO</h2>
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-zinc-400">Número de Tarjeta</label>
+<div class="relative">
+<input class="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 pl-12 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none" placeholder="0000 0000 0000 0000" type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-3.5 text-zinc-400">credit_card</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-zinc-400">Vencimiento</label>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none" placeholder="MM/YY" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-zinc-400">CVC</label>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none" placeholder="123" type="text"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column (35% Sticky) -->
+<div class="lg:col-span-4 flex flex-col gap-stack-md relative">
+<div class="sticky top-24 flex flex-col gap-stack-md">
+<!-- Card 1: Event Details -->
+<section class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 flex gap-4">
+<div class="w-24 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800">
+<img alt="Concert poster" class="w-full h-full object-cover opacity-80" data-alt="A moody, high-contrast promotional poster for a K-Pop concert featuring dynamic neon lighting against a deep black background, cinematic aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAe79DxDh7aMbKdDeSx8-8N25XiIHyysAp0cEGHloi3d0nfhSXzRAnaWGAnAxilfkPsrVdfR3S6pBUeQxevOJYZtEu4PzVddVpwqax40xKJyb4dcAOEXj9njfZNSDxreSRu8c9JMFC3vJV35tb_G2ZF3PPJ1E3E2aYKXXnMzJeC9GmdOxIUJMAkm9CNWZG44fKlASTf7iz8VI3TpCgcGpcA7uR4qWpSEM8WM4ZILO9g0YjD3Cq0TMxtO957VAuwb-YNfJ64HzWyrc"/>
+</div>
+<div class="flex flex-col justify-center">
+<h3 class="font-headline-md text-headline-md mb-2">BTS: Permission to Dance</h3>
+<p class="font-body-md text-body-md text-zinc-400 mb-1"><span class="material-symbols-outlined text-[16px] align-middle mr-1">calendar_today</span> Oct 24, 2024</p>
+<p class="font-body-md text-body-md text-zinc-400 mb-1"><span class="material-symbols-outlined text-[16px] align-middle mr-1">schedule</span> 20:00 HRS</p>
+<p class="font-body-md text-body-md text-zinc-400"><span class="material-symbols-outlined text-[16px] align-middle mr-1">location_on</span> Foro Sol, CDMX</p>
+</div>
+</section>
+<!-- Card 2: Summary -->
+<section class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
+<h2 class="font-headline-md text-headline-md mb-6">TOTAL</h2>
+<div class="flex flex-col gap-4 mb-6 font-body-md text-body-md">
+<div class="flex justify-between">
+<span class="text-zinc-400">Boletos (2)</span>
+<span>$4,500.00 MXN</span>
+</div>
+<div class="flex justify-between">
+<span class="text-zinc-400">Cargos por servicio</span>
+<span>$850.00 MXN</span>
+</div>
+<div class="flex justify-between">
+<span class="text-zinc-400">Extras</span>
+<span>$0.00 MXN</span>
+</div>
+</div>
+<div class="border-t border-white/10 pt-6 mb-8 flex justify-between items-center">
+<span class="font-headline-md text-headline-md text-zinc-400">Total</span>
+<span class="font-headline-lg text-headline-lg">$5,350.00</span>
+</div>
+<button class="w-full bg-white text-black font-label-caps text-label-caps py-4 rounded-lg hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">lock</span>
+                        PROCEDER AL PAGO
+                    </button>
+<p class="text-center font-body-md text-zinc-500 text-[12px] mt-4 flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified_user</span> Transacción segura
+                    </p>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer Placeholder -->
+<footer class="w-full py-16 px-8 flex flex-col md:flex-row justify-between items-center gap-8 bg-zinc-950 border-t border-zinc-800">
+<div class="text-lg font-black text-white">StageFront</div>
+<div class="flex flex-wrap gap-6 justify-center">
+<a class="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200" href="#">Security</a>
+<a class="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200" href="#">Help Center</a>
+</div>
+<div class="font-label-caps text-label-caps text-zinc-500">© 2024 StageFront. High-Fidelity Access.</div>
+</footer>
+</body></html>

@@ -9,3 +9,39 @@
     box-shadow: none;
   }
 }
+
+@layer components {
+  /* Glassmorphism panels — from DESIGN.md */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .glass-panel:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  /* Artist circle glow — CSS-only hover via custom properties */
+  .artist-glow-circle {
+    box-shadow: 0 0 15px var(--glow, rgba(161, 161, 170, 0.15));
+  }
+  .artist-glow-circle:hover {
+    box-shadow: 0 0 25px var(--glow-hover, rgba(161, 161, 170, 0.3));
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+

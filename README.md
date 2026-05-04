@@ -16,6 +16,7 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Checkout Interactivo** — Selección de asientos por zona en `/event/[id]` con actualización de precios en tiempo real
 - **Bloqueo de Concurrencia** — Prevención de doble venta en base de datos al seleccionar asientos
 - **Autenticación Segura** — Inicio de sesión y registro impulsado por InsForge Auth y Server Actions
+- **Pago Exitoso** — Confirmación interactiva con renderizado multi-boleto, inyección de datos reales desde InsForge y efectos visuales de confeti puros en CSS
 - **Billetera Digital** — Ruta `/wallet` con boletos de diseño Skeuomorphic (perforaciones y QR simulados)
 - **Panel de Administración** — Dashboard en `/admin` con métricas clave, control de acceso y ventas recientes
 - **Portal de Artista** — Dashboard en `/portal` con ventas e ingresos por artista
@@ -101,8 +102,8 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   │   ├── auth.ts                  → Server Actions (login, signup, logout, getSession)
 │   │   ├── events.ts                → Server Actions (getEventsByArtistSlug)
 │   │   ├── tickets.ts               → Server Actions (getEventById, getTicketsByEventId, lockTicket)
-│   │   ├── checkout.ts              → Server Actions (processPayment)
-│   │   └── orders.ts                → Server Actions (getUserTickets)
+│   │   ├── checkout.ts              → Server Actions (processPayment y redirección)
+│   │   └── orders.ts                → Server Actions (getUserTickets, getOrderConfirmation, getRelatedOrders)
 │   └── types/
 │       └── database.ts              → Tipos TypeScript del esquema SQL
 ├── tailwind.config.ts               → Tokens del sistema de diseño Ethereal Tech

@@ -31,17 +31,19 @@ export async function processPayment(ticketId: string, formData: FormData) {
     throw new Error("No se encontró el boleto a procesar.");
   }
 
-  // 3. Insertar la orden en la base de datos
-  const { error: orderError } = await insforge.database
+  // 3. Insertar la orden en la base de datos y capturar su ID
+  const { data: order, error: orderError } = await insforge.database
     .from("orders")
     .insert({
       user_name: name,
       user_email: email,
       ticket_id: ticketId,
       amount_paid: ticket.price,
-    });
+    })
+    .select("id")
+    .single();
 
-  if (orderError) {
+  if (orderError || !order) {
     console.error("Error al crear la orden:", orderError);
     throw new Error("Error al registrar la compra.");
   }
@@ -57,6 +59,6 @@ export async function processPayment(ticketId: string, formData: FormData) {
     throw new Error("Error al finalizar la transacción.");
   }
 
-  // 5. Redirigir a la página de éxito
-  redirect("/success");
+  // 5. Redirigir a la página de éxito con el ID de la orden
+  redirect(`/success?order_id=${order.id}`);
 }
