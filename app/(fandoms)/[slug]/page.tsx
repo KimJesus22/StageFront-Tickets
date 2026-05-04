@@ -115,7 +115,7 @@ export default async function ArtistProfilePage({ params }: PageProps) {
                     </div>
                     <div className="mt-auto pt-6">
                       {isActive ? (
-                        <Link href={`/event/${event.id}`} className={`w-full py-4 px-6 font-body-md text-body-md font-semibold rounded-lg transition-colors flex justify-center items-center gap-2 ${isEnVenta ? "bg-primary text-on-primary hover:bg-primary-fixed group-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]" : "bg-transparent border border-outline-variant text-primary hover:bg-surface-variant"}`}>
+                        <Link href={`/event/${event.id}/queue`} className={`w-full py-4 px-6 font-body-md text-body-md font-semibold rounded-lg transition-colors flex justify-center items-center gap-2 ${isEnVenta ? "bg-primary text-on-primary hover:bg-primary-fixed group-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]" : "bg-transparent border border-outline-variant text-primary hover:bg-surface-variant"}`}>
                           Seleccionar Asientos
                           <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
                         </Link>

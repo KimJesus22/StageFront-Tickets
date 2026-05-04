@@ -9,16 +9,23 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Landing Page Premium** — Diseño oscuro con estética Glassmorphism, gradientes de neón contextuales y micro-animaciones
 - **Artistas Dinámicos** — Grid Bento alimentado desde PostgreSQL con tarjetas interactivas (BTS, TXT, Blackpink, Twenty One Pilots)
 - **Perfiles de Artista** — Rutas dinámicas `/[slug]` con lista de eventos y diseño blur-background
+- **Fila Virtual con OTP** — Verificación de identidad por código de 6 dígitos antes de acceder a la cola de compra
+- **Simulador de Cola Activa** — Contador regresivo animado con barra de progreso, posición dinámica y ID de fila único
+- **Selección de Asientos** — Layout dividido (70% mapa / 30% sidebar) con zonas interactivas (VIP/General), sidebar reactivo y bottom sheet móvil
+- **Datos Dinámicos por Evento** — Queue y Seats obtienen título, venue, fecha e imagen del evento desde la API (ya no hardcodeados)
 - **Checkout Interactivo** — Selección de asientos por zona en `/event/[id]` con actualización de precios en tiempo real
 - **Bloqueo de Concurrencia** — Prevención de doble venta en base de datos al seleccionar asientos
 - **Autenticación Segura** — Inicio de sesión y registro impulsado por InsForge Auth y Server Actions
 - **Billetera Digital** — Ruta `/wallet` con boletos de diseño Skeuomorphic (perforaciones y QR simulados)
 - **Panel de Administración** — Dashboard en `/admin` con métricas clave, control de acceso y ventas recientes
+- **Portal de Artista** — Dashboard en `/portal` con ventas e ingresos por artista
+- **Centro de Soporte** — FAQ interactivo con acordeón y formulario de contacto persistido en InsForge
 - **Protección de Rutas** — Enrutamiento protegido por middleware (`proxy.ts` de Next.js 16)
 - **Backend InsForge** — Base de datos PostgreSQL, autenticación, almacenamiento y funciones serverless
 - **Server Actions** — Consultas a la base de datos desde Server Components de Next.js
 - **Tipado Estricto** — Interfaces TypeScript que reflejan el esquema SQL
 - **Diseño Responsivo** — Adaptado para móvil, tablet y escritorio
+- **Código Maestro Dev** — OTP bypass (`741963`) disponible solo en `NODE_ENV=development` para pruebas rápidas
 
 ## 🛠️ Stack Tecnológico
 
@@ -53,7 +60,11 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   ├── (checkout)/
 │   │   ├── event/[id]/
 │   │   │   ├── page.tsx             → Layout principal de selección de asientos
-│   │   │   └── SeatSelector.tsx     → Componente interactivo de cuadrícula de asientos
+│   │   │   ├── SeatSelector.tsx     → Componente legado de cuadrícula de asientos
+│   │   │   ├── queue/
+│   │   │   │   └── page.tsx         → Fila Virtual con OTP + simulador de cola activa
+│   │   │   └── seats/
+│   │   │       └── page.tsx         → Selección de asientos (split-panel con mapa de estadio)
 │   │   ├── payment/[ticket_id]/
 │   │   │   └── page.tsx             → Formulario de pago simulado
 │   │   └── success/page.tsx         → Confirmación de compra exitosa
@@ -66,7 +77,10 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   │   └── page.tsx                 → Directorio de todos los artistas
 │   ├── events/
 │   │   └── page.tsx                 → Cartelera completa de próximos eventos
-│   ├── api/insforge/route.ts        → Health-check del backend
+│   ├── api/
+│   │   ├── insforge/route.ts        → Health-check del backend
+│   │   ├── session/route.ts         → Endpoint GET para exponer datos de sesión a Client Components
+│   │   └── events/[id]/route.ts     → Endpoint GET para datos dinámicos del evento (título, venue, fecha)
 │   ├── privacy/
 │   │   └── page.tsx                 → Política de privacidad (Server Component estático)
 │   ├── terms/

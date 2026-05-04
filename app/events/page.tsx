@@ -162,7 +162,7 @@ export default async function EventsPage() {
                         </button>
                       ) : (
                         <Link
-                          href={`/event/${event.id}`}
+                          href={`/event/${event.id}/queue`}
                           className="block w-full py-3 px-4 rounded-lg bg-transparent backdrop-blur-xl border border-white/20 text-primary font-label-caps text-label-caps text-center hover:bg-white hover:text-black transition-all duration-300"
                         >
                           Comprar Boletos

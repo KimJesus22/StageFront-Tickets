@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageFront - Virtual Queue</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Space Grotesk & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#353434",
+                    "on-secondary-fixed-variant": "#474649",
+                    "outline": "#8e9192",
+                    "on-primary-fixed-variant": "#454747",
+                    "on-secondary": "#313032",
+                    "on-error": "#690005",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface-dim": "#141313",
+                    "surface-container": "#201f1f",
+                    "inverse-on-surface": "#313030",
+                    "surface-variant": "#353434",
+                    "outline-variant": "#444748",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-surface": "#e5e2e1",
+                    "primary-container": "#e2e2e2",
+                    "on-tertiary": "#2f3131",
+                    "error-container": "#93000a",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-surface-variant": "#c4c7c8",
+                    "primary": "#ffffff",
+                    "surface-container-high": "#2a2a2a",
+                    "secondary-fixed": "#e5e1e4",
+                    "on-error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "on-background": "#e5e2e1",
+                    "background": "#141313",
+                    "secondary": "#c8c6c8",
+                    "on-primary": "#2f3131",
+                    "surface-container-low": "#1c1b1b",
+                    "inverse-primary": "#5d5f5f",
+                    "on-secondary-container": "#b7b4b7",
+                    "primary-fixed": "#e2e2e2",
+                    "surface": "#141313",
+                    "on-tertiary-container": "#636565",
+                    "on-secondary-fixed": "#1c1b1d",
+                    "tertiary": "#ffffff",
+                    "surface-bright": "#3a3939",
+                    "tertiary-container": "#e2e2e2",
+                    "secondary-container": "#474649",
+                    "error": "#ffb4ab",
+                    "surface-tint": "#c6c6c7",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "primary-fixed-dim": "#c6c6c7",
+                    "on-primary-fixed": "#1a1c1c",
+                    "inverse-surface": "#e5e2e1",
+                    "on-primary-container": "#636565"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "stack-md": "24px",
+                    "margin-desktop": "48px",
+                    "stack-sm": "8px",
+                    "margin-mobile": "16px",
+                    "unit": "4px",
+                    "container-max": "1280px",
+                    "stack-lg": "48px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Space Grotesk"],
+                    "headline-lg": ["Space Grotesk"],
+                    "display-xl": ["Space Grotesk"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary/30 selection:text-primary">
+<!-- TopNavBar (Hidden on Mobile, Visible on md+) -->
+<nav class="hidden md:flex fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-zinc-950/50 backdrop-blur-xl docked full-width top-0 border-b border-white/10">
+<div class="flex items-center gap-12">
+<div class="text-2xl font-bold tracking-tighter text-white font-['Space_Grotesk'] tracking-tight">StageFront</div>
+<div class="flex gap-8">
+<a class="text-zinc-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg font-['Space_Grotesk'] tracking-tight scale-95 active:scale-90 transition-transform" href="#">Events</a>
+<a class="text-zinc-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg font-['Space_Grotesk'] tracking-tight scale-95 active:scale-90 transition-transform" href="#">Marketplace</a>
+<a class="text-zinc-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg font-['Space_Grotesk'] tracking-tight scale-95 active:scale-90 transition-transform" href="#">Vault</a>
+</div>
+</div>
+<div class="flex items-center gap-4 text-white">
+<button class="hover:bg-white/5 transition-all duration-300 p-2 rounded-full scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-white/5 transition-all duration-300 p-2 rounded-full scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-20 pb-32 md:pb-gutter flex flex-col relative">
+<!-- Background Atmospheric Glows -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+<!-- Event Header Section -->
+<section class="relative w-full overflow-hidden flex flex-col items-center text-center pt-16 pb-12 z-10">
+<div class="absolute inset-0 z-0 opacity-20 mix-blend-overlay">
+<img class="w-full h-full object-cover" data-alt="A massive, energetic stadium concert crowd illuminated by striking, high-tech stage lighting. Deep, dark shadows contrast with brilliant beams of neon violet and bright white lasers cutting through a hazy atmosphere. The scene conveys an exclusive, premium live music experience with a modern, Ethereal Tech aesthetic. The overall mood is intense, immersive, and highly anticipated, fitting for a world-class performance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABHHcfm1AGdIC6W2n2kLo1yB67JDHMM2JyZjVhwXJBPUwTuV145jV1LtMMDkAXYymj4MVXNsxndbP7znIpMym5hl8rGSSRlWTotM-UR763pRvgMz20GHAz0VgiYLF0CkQUAyGQTRVcAi68jmub3FSZ38ROlv5rJTZm9lKpw9xw_IuTInP6mB4zhLbe5EJXim6IChQCIdVOMEpQA7r2kB5OwLMG5UKrm0v7p8LfrEti7FX81lcihLNIK_FKoyPj-4WFiU11agcwT1I"/>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-background"></div>
+</div>
+<div class="relative z-10 max-w-container-max mx-auto px-gutter mt-stack-md">
+<div class="inline-flex items-center justify-center bg-surface-container-highest/80 backdrop-blur-md border border-outline-variant/30 rounded-full px-4 py-1.5 mb-6 shadow-[0_0_12px_rgba(255,255,255,0.05)]">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse mr-2"></span>
+<span class="font-label-caps text-label-caps text-on-surface">SALA DE ESPERA ACTIVA</span>
+</div>
+<h1 class="font-display-xl text-display-xl text-on-surface uppercase drop-shadow-2xl">BTS WORLD TOUR EN MÉXICO</h1>
+<div class="flex flex-wrap items-center justify-center gap-4 mt-stack-sm font-body-lg text-body-lg text-on-surface-variant">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">calendar_today</span> 24 Nov 2024</span>
+<span class="hidden sm:inline opacity-50">•</span>
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">schedule</span> 20:00 HRS</span>
+<span class="hidden sm:inline opacity-50">•</span>
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">location_on</span> Estadio Azteca</span>
+</div>
+</div>
+</section>
+<!-- Progress Stepper -->
+<section class="w-full max-w-4xl mx-auto px-gutter mb-stack-lg z-10 relative">
+<div class="relative">
+<!-- Line -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-surface-container-high -translate-y-1/2 z-0"></div>
+<!-- Progress Line -->
+<div class="absolute top-1/2 left-0 w-[66%] h-[2px] bg-primary shadow-[0_0_10px_rgba(255,255,255,0.5)] -translate-y-1/2 z-0"></div>
+<div class="relative z-10 flex justify-between">
+<!-- Step 1 -->
+<div class="flex flex-col items-center gap-2 w-1/4">
+<div class="w-4 h-4 rounded-full bg-primary ring-4 ring-background"></div>
+<span class="font-label-caps text-label-caps text-on-surface opacity-70">Lobby</span>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center gap-2 w-1/4">
+<div class="w-4 h-4 rounded-full bg-primary ring-4 ring-background"></div>
+<span class="font-label-caps text-label-caps text-on-surface opacity-70">Sala de Espera</span>
+</div>
+<!-- Step 3 (Active) -->
+<div class="flex flex-col items-center gap-2 w-1/4">
+<div class="w-4 h-4 rounded-full bg-primary ring-4 ring-background shadow-[0_0_15px_rgba(255,255,255,0.8)] relative">
+<div class="absolute inset-0 rounded-full bg-primary animate-ping opacity-50"></div>
+</div>
+<span class="font-label-caps text-label-caps text-primary shadow-sm">Fila Virtual</span>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center gap-2 w-1/4">
+<div class="w-4 h-4 rounded-full bg-surface-container-high ring-4 ring-background"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant opacity-50 text-center">Selecciona tus<br/>Asientos</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Main CTA Card -->
+<section class="w-full max-w-3xl mx-auto px-gutter z-10 relative">
+<div class="bg-surface-container-high/40 backdrop-blur-[40px] border border-outline-variant/30 rounded-xl p-stack-lg flex flex-col items-center text-center shadow-2xl relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-stack-sm tracking-tight">BOLETOS YA A LA VENTA EN ESTE MOMENTO</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto mb-stack-md">
+                    Para comprar boletos, por favor incorpórate a la Fila Virtual donde te proporcionaremos información adicional y te asignaremos un turno.
+                </p>
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-full hover:bg-surface-tint transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(255,255,255,0.2)] flex items-center gap-2">
+                    Únete a la Fila Virtual
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Info Card -->
+<section class="w-full max-w-3xl mx-auto px-gutter mt-stack-md z-10 relative">
+<div class="bg-surface-container-lowest/60 border border-outline-variant/20 rounded-lg p-6 flex gap-4 backdrop-blur-md items-start">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface mb-2">Recomendaciones Importantes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">
+                        Tu posición en la fila se asignará de manera automática. No refresques esta página o perderás tu lugar. Asegúrate de tener una conexión a internet estable.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Advice Grid -->
+<section class="w-full max-w-5xl mx-auto px-gutter mt-stack-lg z-10 relative">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-low p-6 rounded-lg border border-outline-variant/10 flex flex-col items-center text-center gap-3 hover:bg-surface-container transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface text-[24px]">person</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface text-lg">Verifica tu Cuenta</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Inicia sesión con anticipación para un proceso más rápido.</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-low p-6 rounded-lg border border-outline-variant/10 flex flex-col items-center text-center gap-3 hover:bg-surface-container transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface text-[24px]">smartphone</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface text-lg">Mantén tu teléfono cerca</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Podríamos requerir verificación mediante SMS.</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-low p-6 rounded-lg border border-outline-variant/10 flex flex-col items-center text-center gap-3 hover:bg-surface-container transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface text-[24px]">credit_card</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface text-lg">Prepara tu método de pago</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Ten a la mano tu tarjeta de crédito o débito.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Visible on Mobile only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-zinc-950/80 backdrop-blur-2xl docked full-width bottom-0 rounded-t-2xl border-t border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-300 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest hover:backdrop-blur-3xl transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="explore">explore</span>
+<span>Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-300 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest hover:backdrop-blur-3xl transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="confirmation_number">confirmation_number</span>
+<span>Tickets</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white bg-white/10 rounded-xl px-4 py-1 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest hover:backdrop-blur-3xl transition-all Active: pulse-subtle scale-98" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="hourglass_empty" style="font-variation-settings: 'FILL' 1;">hourglass_empty</span>
+<span>Queue</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-zinc-300 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest hover:backdrop-blur-3xl transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+</nav>
+</body></html>

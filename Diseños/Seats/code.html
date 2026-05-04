@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageFront - Seat Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#353434",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-bright": "#3a3939",
+                        "on-background": "#e5e2e1",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary": "#ffffff",
+                        "outline-variant": "#444748",
+                        "on-tertiary": "#2f3131",
+                        "on-tertiary-container": "#636565",
+                        "surface": "#141313",
+                        "surface-container-highest": "#353434",
+                        "primary-container": "#e2e2e2",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "secondary-fixed": "#e5e1e4",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-secondary-fixed-variant": "#474649",
+                        "on-primary-fixed-variant": "#454747",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface-container-low": "#1c1b1b",
+                        "inverse-primary": "#5d5f5f",
+                        "surface-dim": "#141313",
+                        "on-surface-variant": "#c4c7c8",
+                        "surface-container": "#201f1f",
+                        "inverse-surface": "#e5e2e1",
+                        "background": "#141313",
+                        "on-secondary": "#313032",
+                        "on-surface": "#e5e2e1",
+                        "on-primary-fixed": "#1a1c1c",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-container": "#636565",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "tertiary": "#ffffff",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "tertiary-container": "#e2e2e2",
+                        "secondary-container": "#474649",
+                        "surface-container-high": "#2a2a2a",
+                        "error": "#ffb4ab",
+                        "secondary": "#c8c6c8",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-tint": "#c6c6c7",
+                        "on-secondary-container": "#b7b4b7",
+                        "on-primary": "#2f3131",
+                        "on-error": "#690005",
+                        "outline": "#8e9192",
+                        "error-container": "#93000a",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "margin-desktop": "48px",
+                        "unit": "4px",
+                        "stack-lg": "48px",
+                        "stack-md": "24px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-xl": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #141313; color: #e5e2e1; }
+        .glass-panel { background: rgba(32, 31, 31, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .neon-accent-blue { box-shadow: 0 0 12px rgba(163, 222, 254, 0.5); }
+        .neon-accent-purple { box-shadow: 0 0 12px rgba(192, 132, 252, 0.5); }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col overflow-hidden bg-background text-on-background">
+<!-- Top Event Banner -->
+<header class="w-full bg-surface-container-lowest border-b border-outline-variant/30 flex-shrink-0 z-20 relative">
+<div class="flex items-center justify-between px-gutter py-stack-sm h-20">
+<div class="flex items-center gap-stack-md">
+<button class="text-on-surface hover:text-primary transition-colors flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="flex items-center gap-stack-sm">
+<img alt="BTS" class="w-12 h-12 rounded-full object-cover border border-white/10" data-alt="A cinematic, high-contrast portrait of a K-pop music group performing on stage, bathed in dramatic purple and blue neon lighting. The background is completely dark, emphasizing their silhouettes and the vibrant energy of the concert. The overall aesthetic is premium, modern, and aligned with a sleek, dark-mode ticketing platform interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe8gQsDXbYLkddXlrj5R8Exh3SZ1w1ChaUbTFnGOSiyyIRA_SogbEEyvi0KGoJ99Kb-iK_zDIjNVdOnCld2qiXQig6GBYgJ4slV-ZM9j-GthQb-ZvaOAUaZtVQd8zwsQ8kjGyAUiQso6fX0VTsGqTXhbaGJ-GoSQiB-KkNpGqr3bSY8BPXQbBBge4iP5Z5g71qJeEzv6YshGv_EtAoegvoVK_OJD3PgIEn5AaI0m2zUO8vVZ2x_IM4R8OvntvtLDdiysEi7Nt7dxI"/>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary">BTS World Tour</h1>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+<span>Nov 24</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span>Estadio Azteca</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Actions -->
+<div class="flex items-center gap-stack-sm hidden md:flex">
+<div class="glass-panel px-4 py-2 rounded-full flex items-center gap-2 text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest">
+<span class="material-symbols-outlined text-[16px]" data-icon="info">info</span>
+<span>Información Importante: Límite de edad...</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 flex overflow-hidden relative">
+<!-- Left: Map Area (70%) -->
+<section class="flex-1 relative bg-surface overflow-hidden flex items-center justify-center">
+<!-- Map Legend (Top Left) -->
+<div class="absolute top-stack-md left-stack-md z-10 glass-panel rounded-lg p-4 flex flex-col gap-3">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Simbología</h3>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-[#a3defe] neon-accent-blue"></div>
+<span class="font-body-md text-body-md text-on-surface text-sm">Standard</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-[#c084fc] neon-accent-purple"></div>
+<span class="font-body-md text-body-md text-on-surface text-sm">VIP</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-surface-variant border border-outline-variant"></div>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Ocupado</span>
+</div>
+</div>
+<!-- Floating Controls (Right Edge) -->
+<div class="absolute right-stack-md top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2">
+<button class="glass-panel w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+<button class="glass-panel w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined" data-icon="remove">remove</span>
+</button>
+<button class="glass-panel w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors mt-2">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+</button>
+</div>
+<!-- Placeholder Map Graphic -->
+<div class="w-full h-full relative flex items-center justify-center opacity-80 scale-90">
+<!-- Abstract Stadium Representation -->
+<div class="relative w-[800px] h-[600px]">
+<!-- Stage -->
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 w-96 h-32 rounded-t-[200px] bg-gradient-to-t from-surface-container-high to-surface-variant border-t-2 border-[#c084fc] flex items-center justify-center shadow-[0_-20px_60px_rgba(192,132,252,0.2)]">
+<span class="font-headline-md text-headline-md text-on-surface font-bold tracking-widest">ESCENARIO</span>
+</div>
+<!-- VIP Zones -->
+<div class="absolute bottom-48 left-[25%] w-48 h-32 bg-[#c084fc]/10 border border-[#c084fc]/50 rounded-lg backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-[#c084fc]/20 transition-all neon-accent-purple">
+<span class="font-label-caps text-label-caps text-white">VIP L</span>
+</div>
+<div class="absolute bottom-48 right-[25%] w-48 h-32 bg-[#c084fc]/10 border border-[#c084fc]/50 rounded-lg backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-[#c084fc]/20 transition-all neon-accent-purple">
+<span class="font-label-caps text-label-caps text-white">VIP R</span>
+</div>
+<!-- General A -->
+<div class="absolute bottom-[340px] left-1/2 -translate-x-1/2 w-[600px] h-40 bg-[#a3defe]/10 border border-[#a3defe]/30 rounded-t-[100px] backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-[#a3defe]/20 transition-all">
+<span class="font-label-caps text-label-caps text-white">General A</span>
+</div>
+<!-- Gradas -->
+<div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-32 border-t-4 border-l-4 border-r-4 border-surface-container-high rounded-t-[350px] opacity-50"></div>
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-40 border-t-4 border-l-4 border-r-4 border-surface-container-high rounded-t-[400px] opacity-30"></div>
+</div>
+</div>
+</section>
+<!-- Right: Sidebar (30%) -->
+<aside class="w-[400px] bg-surface-container-low border-l border-white/10 flex flex-col z-20 shadow-[-20px_0_40px_rgba(0,0,0,0.5)]">
+<!-- Filters Header -->
+<div class="p-6 border-b border-white/5 flex flex-col gap-4">
+<h2 class="font-headline-md text-headline-md text-primary">Filtros</h2>
+<div class="grid grid-cols-3 gap-2">
+<button class="glass-panel py-2 px-3 rounded text-sm font-body-md text-on-surface-variant flex items-center justify-between hover:text-white transition-colors">
+                        Cantidad <span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</button>
+<button class="glass-panel py-2 px-3 rounded text-sm font-body-md text-on-surface-variant flex items-center justify-between hover:text-white transition-colors">
+                        Precio <span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</button>
+<button class="glass-panel py-2 px-3 rounded text-sm font-body-md text-on-surface-variant flex items-center justify-between hover:text-white transition-colors">
+                        Tipo <span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Selected Seats List -->
+<div class="flex-1 overflow-y-auto p-6 flex flex-col gap-4 custom-scrollbar">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">2 Asientos Seleccionados</span>
+<button class="text-error text-sm font-body-md hover:underline">Limpiar</button>
+</div>
+<!-- Seat Card 1 -->
+<div class="glass-panel p-4 rounded-xl flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-[#c084fc]"></div>
+<div class="flex justify-between items-start pl-2">
+<div>
+<span class="font-label-caps text-label-caps text-[#c084fc] uppercase tracking-wider block mb-1">Zona VIP</span>
+<h4 class="font-headline-md text-headline-md text-white text-lg">Fila A, Asiento 1</h4>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="flex justify-between items-end pl-2 mt-2 border-t border-white/5 pt-3">
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Admisión General VIP</span>
+<span class="font-headline-md text-headline-md text-white">$500.00</span>
+</div>
+</div>
+<!-- Seat Card 2 -->
+<div class="glass-panel p-4 rounded-xl flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-[#c084fc]"></div>
+<div class="flex justify-between items-start pl-2">
+<div>
+<span class="font-label-caps text-label-caps text-[#c084fc] uppercase tracking-wider block mb-1">Zona VIP</span>
+<h4 class="font-headline-md text-headline-md text-white text-lg">Fila A, Asiento 2</h4>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="flex justify-between items-end pl-2 mt-2 border-t border-white/5 pt-3">
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Admisión General VIP</span>
+<span class="font-headline-md text-headline-md text-white">$500.00</span>
+</div>
+</div>
+</div>
+<!-- Checkout Footer -->
+<div class="p-6 bg-surface-container-highest border-t border-white/10 mt-auto">
+<div class="flex justify-between items-center mb-6">
+<span class="font-body-md text-body-md text-on-surface-variant text-lg">Total</span>
+<span class="font-headline-lg text-headline-lg text-white">$1,000.00</span>
+</div>
+<button class="w-full bg-primary text-background font-label-caps text-label-caps py-4 rounded-lg uppercase tracking-widest hover:bg-white/90 transition-colors flex items-center justify-center gap-2 font-bold">
+                    Continuar al Pago
+                    <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</aside>
+</main>
+</body></html>
