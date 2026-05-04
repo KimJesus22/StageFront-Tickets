@@ -8,6 +8,7 @@ import { insforge } from '@/lib/insforge';
 
 // 🔑 Dev-only master OTP code (bypasses real verification)
 const DEV_MASTER_CODE = '741963';
+const DEV_FAST_CODE = '111222';
 const IS_DEV = process.env.NODE_ENV === 'development';
 
 // ---------------------------------------------------------------------------
@@ -133,8 +134,9 @@ export default function VirtualQueuePage() {
     try {
       // Dev bypass: accept master code without calling the API
       const isDevBypass = IS_DEV && otpCode === DEV_MASTER_CODE;
+      const isFastBypass = IS_DEV && otpCode === DEV_FAST_CODE;
 
-      if (!isDevBypass) {
+      if (!isDevBypass && !isFastBypass) {
         const { error } = await insforge.auth.verifyEmail({
           email: userEmail,
           otp: otpCode,
@@ -151,7 +153,7 @@ export default function VirtualQueuePage() {
       setShowAuthModal(false);
       setIsQueued(true);
 
-      const pos = Math.floor(Math.random() * 1000) + 1;
+      const pos = isFastBypass ? Math.floor(Math.random() * 50) + 1 : Math.floor(Math.random() * 1000) + 1;
       setQueuePosition(pos);
       setInitialQueuePosition(pos);
       setQueueId(generateQueueId());
