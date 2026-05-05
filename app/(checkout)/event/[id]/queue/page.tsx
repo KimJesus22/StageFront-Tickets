@@ -220,21 +220,21 @@ export default function VirtualQueuePage() {
           <div className="flex gap-8">
             <Link
               href="/events"
-              className="text-zinc-400 hover:text-white transition-all duration-300 px-3 py-2 rounded-lg font-headline-md text-sm hover:bg-white/5 active:scale-90"
+              className="text-zinc-400 hover:text-white transition-colors duration-300 px-3 py-2 rounded-lg font-headline-md text-sm hover:bg-white/5 active:scale-90"
             >
-              Events
+              Eventos
             </Link>
             <Link
-              href="#"
-              className="text-zinc-400 hover:text-white transition-all duration-300 px-3 py-2 rounded-lg font-headline-md text-sm hover:bg-white/5 active:scale-90"
+              href="/marketplace"
+              className="text-zinc-400 hover:text-white transition-colors duration-300 px-3 py-2 rounded-lg font-headline-md text-sm hover:bg-white/5 active:scale-90"
             >
-              Marketplace
+              Mercado
             </Link>
             <Link
-              href="#"
-              className="text-zinc-400 hover:text-white transition-all duration-300 px-3 py-2 rounded-lg font-headline-md text-sm hover:bg-white/5 active:scale-90"
+              href="/wallet"
+              className="text-zinc-400 hover:text-white transition-colors duration-300 px-3 py-2 rounded-lg font-headline-md text-sm hover:bg-white/5 active:scale-90"
             >
-              Vault
+              Billetera
             </Link>
           </div>
         </div>

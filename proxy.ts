@@ -9,7 +9,7 @@ export default function proxy(request: NextRequest) {
   if (isAuthenticated) {
     try {
       session = JSON.parse(sessionCookie.value);
-    } catch {}
+    } catch { }
   }
 
   const { pathname } = request.nextUrl;
@@ -43,9 +43,9 @@ export default function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/admin/:path*",
-    "/wallet/:path*", 
+    "/wallet/:path*",
     "/portal/:path*",
-    "/checkout/:path*", 
+    "/checkout/:path*",
     "/event/:path*",
     "/payment/:path*",
     "/success",

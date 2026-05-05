@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageFront - Digital Wallet</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#313032",
+                        "on-error": "#690005",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-lowest": "#0e0e0e",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#5d5f5f",
+                        "on-surface": "#e5e2e1",
+                        "primary": "#ffffff",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#474649",
+                        "surface": "#141313",
+                        "surface-container-highest": "#353434",
+                        "surface-variant": "#353434",
+                        "background": "#141313",
+                        "surface-bright": "#3a3939",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "surface-tint": "#c6c6c7",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "tertiary-container": "#e2e2e2",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed": "#e2e2e2",
+                        "outline": "#8e9192",
+                        "surface-container": "#201f1f",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-secondary-fixed-variant": "#474649",
+                        "on-secondary-container": "#b7b4b7",
+                        "primary-container": "#e2e2e2",
+                        "on-primary": "#2f3131",
+                        "inverse-surface": "#e5e2e1",
+                        "tertiary": "#ffffff",
+                        "on-primary-fixed": "#1a1c1c",
+                        "secondary": "#c8c6c8",
+                        "secondary-fixed": "#e5e1e4",
+                        "tertiary-fixed": "#e2e2e2",
+                        "outline-variant": "#444748",
+                        "inverse-on-surface": "#313030",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-primary-fixed-variant": "#454747",
+                        "surface-dim": "#141313",
+                        "on-tertiary-container": "#636565",
+                        "on-tertiary": "#2f3131",
+                        "on-primary-container": "#636565",
+                        "on-surface-variant": "#c4c7c8",
+                        "on-tertiary-fixed": "#1a1c1c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px",
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "label-caps": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "display-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Skeuomorphic Ticket Cutouts */
+        .ticket-edge {
+            mask-image: radial-gradient(circle at 0 50%, transparent 12px, black 13px), radial-gradient(circle at 100% 50%, transparent 12px, black 13px);
+            mask-size: 51% 100%;
+            mask-repeat: no-repeat;
+            mask-position: left, right;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased selection:bg-primary selection:text-on-primary">
+<!-- Mobile Top App Bar (Visible only on small screens) -->
+<div class="md:hidden flex justify-between items-center px-6 h-16 w-full sticky top-0 z-50 bg-zinc-950/50 backdrop-blur-[40px] text-white border-b border-white/10 shadow-none font-['Space_Grotesk']">
+<div class="text-xl font-black text-white">StageFront</div>
+<div class="flex items-center gap-4">
+<button class="text-zinc-400 hover:text-white transition-colors focus:ring-1 focus:ring-white/20 rounded-full p-1">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-zinc-400 hover:text-white transition-colors focus:ring-1 focus:ring-white/20 rounded-full p-1">
+<span class="material-symbols-outlined">local_activity</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-surface-container">
+<img alt="User Avatar" class="h-full w-full object-cover" data-alt="A highly stylized, cinematic portrait of a young male professional in a moody, low-light setting. The lighting features a subtle neon blue rim light against a deep black background, consistent with a premium, cutting-edge digital ecosystem aesthetic. The subject exudes confidence and modern sophistication." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOchWGvdhknomCrfLsigV6uL5nTqJ5yy-l81np7qb8SPFkDdkPXN3YU1XzPPg8TPEY3-A15Om1iYJPksFjo7bEoKFdeWRogQxGg_cEaTDRDTscHRDM33_ouA0-p13HQzDvsVC7mBCXgo4eLCBt7XunAbJ_Al9K2_ipQHrnYMqs2VaFKbQbulXYL4_2_LdkVd4lzQGXTWEUcgzGnyPk85sr57TSs2mnTYyg5Qs1OlhgTFUiZhP_pwxLh-RKMMUsEWotJPkw9apSdas"/>
+</div>
+</div>
+</div>
+<div class="flex h-screen overflow-hidden">
+<!-- Desktop Side Navigation Shell -->
+<aside class="hidden md:flex flex-col h-full sticky left-0 top-0 h-screen w-64 border-r border-white/10 bg-zinc-950/80 backdrop-blur-[20px] text-white shadow-none font-['Space_Grotesk'] tracking-tight z-40">
+<!-- Brand -->
+<div class="p-6 pb-12 border-b border-white/10">
+<h1 class="text-2xl font-bold text-white tracking-tighter">StageFront</h1>
+<p class="font-label-caps text-zinc-400 mt-2 uppercase tracking-widest">Premium Tier</p>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 px-4 py-8 space-y-2">
+<!-- Dashboard (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-500 font-medium hover:bg-white/5 hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span>Dashboard</span>
+</a>
+<!-- My Wallet (Active) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-white/10 font-bold border-l-2 border-white scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span>My Wallet</span>
+</a>
+<!-- Explore (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-500 font-medium hover:bg-white/5 hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span>Explore</span>
+</a>
+<!-- Account Settings (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-500 font-medium hover:bg-white/5 hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">manage_accounts</span>
+<span>Account Settings</span>
+</a>
+</nav>
+<!-- CTA Footer -->
+<div class="p-6 border-t border-white/10">
+<button class="w-full py-3 px-4 rounded-lg bg-surface-container-high/40 backdrop-blur-md border border-white/10 text-white font-label-caps hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">support_agent</span>
+                    Contact Concierge
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background relative">
+<!-- Ambient Background Glow -->
+<div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg space-y-stack-lg relative z-10">
+<!-- Page Header & User Profile Context -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-stack-md border-b border-surface-container-highest pb-stack-md">
+<div>
+<h2 class="font-display-xl text-display-xl text-primary">Mi Billetera Digital</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Manage your exclusive access passes and digital collectibles.</p>
+</div>
+<!-- User Context Card (Glassmorphism) -->
+<div class="flex items-center gap-4 bg-surface-container-high/40 backdrop-blur-xl border border-white/10 p-4 rounded-2xl w-full md:w-auto">
+<div class="h-14 w-14 rounded-full overflow-hidden border border-outline/30">
+<img alt="Alex Rivera" class="h-full w-full object-cover" data-alt="A highly stylized, cinematic portrait of a young male professional in a moody, low-light setting. The lighting features a subtle neon blue rim light against a deep black background, consistent with a premium, cutting-edge digital ecosystem aesthetic. The subject exudes confidence and modern sophistication." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxKR5mnu29kzZXW7NB-pBjkeYbYSacHCCeN2Gq1d5N31_qFhWF7SeyAxatXo-QYSBm6LteBXXOwxe7Y5O06U_2WzHZ6tJ9xSCnxPmV41gBA8vWOoZI2UBGfhK08JjR4wHOGbaksvBmxk8E3pfJSTIdj6kif69GTYKWktrkklQQ_pbfMKv3NpGg7RU8l5aCGxWZr8LCe214PGmMOnPhNDGAj48g4h_TckI60GI-oNgTIJ1uxWgqp47O7HiC-NMSJ3ukbVfb4okdQco"/>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-primary">Alex Rivera</div>
+<div class="font-label-caps text-label-caps text-on-primary-container flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-green-400">verified</span>
+                                Verified Member
+                            </div>
+</div>
+</div>
+</header>
+<!-- Active Tickets Section -->
+<section class="space-y-stack-md">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-lg text-headline-lg text-primary">Active Passes</h3>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant rounded-full font-label-caps text-label-caps text-on-surface">2 Available</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<!-- Ticket 1 -->
+<div class="group relative overflow-hidden rounded-2xl bg-surface-container-high/20 backdrop-blur-md border border-white/10 ticket-edge transition-all duration-500 hover:border-white/30 hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.3)]">
+<!-- Background Image with Blur -->
+<div class="absolute inset-0 z-0">
+<img alt="BTS Concert" class="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700" data-alt="A vibrant, energetic concert stage view from the crowd, featuring massive LED screens displaying abstract geometric neon patterns in purples and pinks. High-contrast lighting with deep black shadows and intense light beams cutting through atmospheric fog. The scene captures the high-production value and exclusive atmosphere of a premium music event." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw6Hc8aDLrdEZIIVZ3NlKXWI7ls2zIUIsfIDAoPhroJB8LxbouFc4_y7GeybU7UW1birCJvEEDZyPm92cxKcBZiW5xPkSttiW_Tn_V1S1n0Q50HFUzqr5_yjXONYR0XrlBRetVhSsK747lpuy1L0OQ3HGE-PJt4S5qfM6H7JF-KONNHWWC8lzbmEybhyVqix3WFsMDgJZ3pzH6K-0vG9E-DGD-_DGVO_YMofhAyC8p_BVThqOuBebn069xkxbCtgEAgg1Jhu6PkzQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<!-- Holographic Overlay -->
+<div class="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-transparent to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-screen"></div>
+</div>
+<div class="relative z-10 p-6 flex flex-col h-full min-h-[240px] justify-between">
+<div class="flex justify-between items-start">
+<div class="px-3 py-1 bg-black/50 backdrop-blur-md border border-white/10 rounded-full font-label-caps text-label-caps text-primary shadow-[0_0_12px_rgba(168,85,247,0.4)]">
+                                        VIP Access
+                                    </div>
+<span class="material-symbols-outlined text-primary">qr_code_scanner</span>
+</div>
+<div class="space-y-4 mt-8">
+<div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase tracking-widest">Global Tour 2024</div>
+<h4 class="font-display-xl text-4xl text-primary leading-none">BTS</h4>
+</div>
+<div class="flex items-end justify-between border-t border-white/10 pt-4">
+<div>
+<div class="font-body-md text-on-surface">Oct 24, 2024 • 8:00 PM</div>
+<div class="font-label-caps text-on-surface-variant mt-1">MetLife Stadium, NY</div>
+</div>
+<button class="bg-primary text-on-primary px-5 py-2 rounded-full font-label-caps text-label-caps hover:bg-white/90 transition-colors">
+                                            Ver Código QR
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Ticket 2 -->
+<div class="group relative overflow-hidden rounded-2xl bg-surface-container-high/20 backdrop-blur-md border border-white/10 ticket-edge transition-all duration-500 hover:border-white/30 hover:shadow-[0_0_40px_-10px_rgba(236,72,153,0.3)]">
+<div class="absolute inset-0 z-0">
+<img alt="Blackpink Concert" class="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700" data-alt="A cinematic, atmospheric shot of a dark concert arena illuminated by striking neon pink and stark white laser lights. The staging is minimal but monolithic, with intense light flares and a moody, glass-like reflection on the stage floor. The overall aesthetic is sleek, exclusive, and highly produced." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp9xGeLWHHIg3PwmYXhME7HxjVa184_M88MKx_YnjqVVZRzgsQEB29WLOMaVbLAfzN-x0EB2bh4LTxqHV0bfIh_Zw3qqt_BXx9MUdnjg5tz2zrC2GraPt5muDCmU65flLliSbth1ctuPIGtXGQcCR23-nSrTxhv884RJ1VDe-oOSqyXTAdLvmZ_stHeGop_J6QwfNIM4nO1Ct5_bX2kZ0SJrPTwADuqTDv83XNK7yB1u3nuKmQB-SIq1wS9ogvG3iLpfP8h-S_vl4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-tr from-pink-500/10 via-transparent to-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-screen"></div>
+</div>
+<div class="relative z-10 p-6 flex flex-col h-full min-h-[240px] justify-between">
+<div class="flex justify-between items-start">
+<div class="px-3 py-1 bg-black/50 backdrop-blur-md border border-white/10 rounded-full font-label-caps text-label-caps text-primary shadow-[0_0_12px_rgba(236,72,153,0.4)]">
+                                        General Admission
+                                    </div>
+<span class="material-symbols-outlined text-primary">qr_code_scanner</span>
+</div>
+<div class="space-y-4 mt-8">
+<div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase tracking-widest">Born Pink Tour</div>
+<h4 class="font-display-xl text-4xl text-primary leading-none">BLACKPINK</h4>
+</div>
+<div class="flex items-end justify-between border-t border-white/10 pt-4">
+<div>
+<div class="font-body-md text-on-surface">Nov 12, 2024 • 7:30 PM</div>
+<div class="font-label-caps text-on-surface-variant mt-1">O2 Arena, London</div>
+</div>
+<button class="bg-primary text-on-primary px-5 py-2 rounded-full font-label-caps text-label-caps hover:bg-white/90 transition-colors">
+                                            Ver Código QR
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Past Tickets Section -->
+<section class="space-y-stack-md pt-stack-sm">
+<h3 class="font-headline-md text-headline-md text-on-surface-variant">Boletos Pasados</h3>
+<div class="flex flex-col gap-4">
+<!-- Past Ticket 1 -->
+<div class="flex items-center gap-6 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/20 grayscale opacity-70 hover:opacity-100 hover:grayscale-0 transition-all duration-300">
+<div class="h-20 w-32 rounded-lg overflow-hidden shrink-0">
+<img alt="TXT Concert" class="h-full w-full object-cover" data-alt="A desaturated, monochromatic image of an empty, high-tech stadium stage after a concert. Subtle cool grey tones and deep blacks dominate the scene, with faint remnants of stage lighting fading into the background. The mood is nostalgic yet premium, maintaining a sleek, modern architectural feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeqAG4TpVNIxyjRnlk9n6iLJ7BKkXcZtibZXVCnBMcRm_hyTq_3k04ev514PO1Vrbs9XLMP-MDrkLUyl7XrnGFK9PSn65u_aiN0Pd-0ja5xkaZss35gebKZfNBqVhYtEuyCWjBBnPMDtP3OTDrSIaJXAOeYmHiTz_-jQkO0Xe72rj1JUM7BAmgRizgtM9alTaWAaVpcRzebvTl_PC8p-YQ5_ezld4PhlhQZ9OyvBgfvr_5l_IfR3_anXv-AEn81Rg2jo_SAHPq-TE"/>
+</div>
+<div class="flex-1">
+<div class="font-headline-md text-headline-md text-primary">TXT (Tomorrow X Together)</div>
+<div class="font-body-md text-on-surface-variant">Act: Sweet Mirage • BMO Stadium</div>
+</div>
+<div class="hidden md:block text-right">
+<div class="font-label-caps text-label-caps text-on-surface">May 28, 2023</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-1">Attended</div>
+</div>
+</div>
+<!-- Past Ticket 2 -->
+<div class="flex items-center gap-6 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/20 grayscale opacity-70 hover:opacity-100 hover:grayscale-0 transition-all duration-300">
+<div class="h-20 w-32 rounded-lg overflow-hidden shrink-0 bg-surface-container">
+<div class="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-3xl">music_note</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="font-headline-md text-headline-md text-primary">Twenty One Pilots</div>
+<div class="font-body-md text-on-surface-variant">The Icy Tour • Madison Square Garden</div>
+</div>
+<div class="hidden md:block text-right">
+<div class="font-label-caps text-label-caps text-on-surface">Aug 24, 2022</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-1">Attended</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Account Settings -->
+<section class="space-y-stack-md pt-stack-md border-t border-surface-container-highest">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Configuración de Cuenta</h3>
+<p class="font-body-md text-on-surface-variant mt-1">Manage your personal details and security preferences.</p>
+</div>
+<form class="max-w-2xl space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface">Full Name</label>
+<input class="w-full bg-white/5 border border-outline-variant/30 rounded-lg px-4 py-3 text-primary font-body-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder:text-on-surface-variant/50" type="text" value="Alex Rivera"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface">Email Address</label>
+<input class="w-full bg-white/5 border border-outline-variant/30 rounded-lg px-4 py-3 text-primary font-body-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder:text-on-surface-variant/50" type="email" value="alex.rivera@example.com"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface">Password</label>
+<div class="relative">
+<input class="w-full bg-white/5 border border-outline-variant/30 rounded-lg px-4 py-3 text-primary font-body-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all tracking-widest" type="password" value="••••••••••••"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</div>
+<div class="pt-4 flex gap-4">
+<button class="px-6 py-3 rounded-lg bg-primary text-on-primary font-label-caps text-label-caps hover:bg-white/90 transition-colors" type="button">
+                                Save Changes
+                            </button>
+<button class="px-6 py-3 rounded-lg bg-transparent border border-outline-variant text-on-surface font-label-caps text-label-caps hover:bg-surface-container transition-colors" type="button">
+                                Cancel
+                            </button>
+</div>
+</form>
+</section>
+<!-- Spacer for mobile scroll -->
+<div class="h-12 md:hidden"></div>
+</div>
+</main>
+</div>
+</body></html>

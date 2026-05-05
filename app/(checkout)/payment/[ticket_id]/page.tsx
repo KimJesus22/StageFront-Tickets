@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
+import { createMockOrder } from '@/lib/actions/checkout';
 
 interface SelectedSeat {
   id: string;
@@ -10,8 +12,15 @@ interface SelectedSeat {
   label: string;
   tipo: string;
   precio: number;
-  color: string;
 }
+
+const ESTADOS_MEXICO = [
+  "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas",
+  "Chihuahua", "Ciudad de México", "Coahuila", "Colima", "Durango", "Estado de México",
+  "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "Michoacán", "Morelos", "Nayarit",
+  "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí",
+  "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"
+];
 
 export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: string }> }) {
   // Use React.use to unwrap params if needed
@@ -23,16 +32,57 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes = 600 seconds
   const [parkingCount, setParkingCount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [eventData, setEventData] = useState<{
+    id: string;
+    title: string;
+    venue: string;
+    city: string;
+    date: string;
+    image_url: string | null;
+  } | null>(null);
+
+  // Form States
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvc, setCvc] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedState, setSelectedState] = useState('');
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, '');
+    const truncated = val.slice(0, 16);
+    const formatted = truncated.replace(/(\d{4})(?=\d)/g, '$1 ');
+    setCardNumber(formatted);
+  };
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 2) {
+      val = val.slice(0, 2) + '/' + val.slice(2, 4);
+    }
+    setExpiry(val);
+  };
+
+  const handleCvcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCvc(e.target.value.replace(/\D/g, '').slice(0, 4));
+  };
 
   // Initialize from sessionStorage
   useEffect(() => {
     const stored = sessionStorage.getItem('stagefront_seats');
+    const storedEventId = sessionStorage.getItem('stagefront_event_id');
     if (stored) {
       try {
         setSeats(JSON.parse(stored));
       } catch (e) {
         setSeats([]);
       }
+    }
+    if (storedEventId) {
+      fetch(`/api/events/${storedEventId}`)
+        .then(res => res.json())
+        .then(data => setEventData(data))
+        .catch(err => console.error("Error fetching event data", err));
     }
   }, []);
 
@@ -70,15 +120,27 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
     e.preventDefault();
     setIsProcessing(true);
 
-    // Simulate 2s processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const orderId = await createMockOrder(seats, eventData?.id || '');
+      
+      // Cleanup session storage
+      sessionStorage.removeItem('stagefront_seats');
 
-    // Cleanup session storage
-    sessionStorage.removeItem('stagefront_seats');
-
-    // Redirect to wallet
-    router.push('/wallet');
+      // Redirect to success
+      router.push(`/success?order_id=${orderId}`);
+    } catch (error) {
+      console.error(error);
+      alert('Hubo un error procesando el pago.');
+      setIsProcessing(false);
+    }
   };
+
+  const shortDate = eventData?.date
+    ? new Intl.DateTimeFormat('es-MX', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(eventData.date))
+    : '...';
+  const shortTime = eventData?.date
+    ? new Intl.DateTimeFormat('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(eventData.date))
+    : '...';
 
   return (
     <div className="bg-zinc-950 text-white antialiased min-h-screen flex flex-col">
@@ -108,13 +170,37 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
                   <option>Estados Unidos</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 relative">
                 <label className="font-label-caps text-label-caps text-zinc-400">Estado</label>
-                <select className="bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none appearance-none">
-                  <option>Ciudad de México</option>
-                  <option>Jalisco</option>
-                  <option>Nuevo León</option>
-                </select>
+                <div className="relative w-full">
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="w-full text-left bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:outline-none flex justify-between items-center"
+                  >
+                    <span>{selectedState || 'Selecciona un estado'}</span>
+                    <span className="material-symbols-outlined text-zinc-400">
+                      {isOpen ? 'expand_less' : 'expand_more'}
+                    </span>
+                  </button>
+
+                  {isOpen && (
+                    <ul className="absolute left-0 top-full mt-2 w-full max-h-60 overflow-y-auto bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-lg z-50 shadow-2xl">
+                      {ESTADOS_MEXICO.map((estado) => (
+                        <li
+                          key={estado}
+                          onClick={() => {
+                            setSelectedState(estado);
+                            setIsOpen(false);
+                          }}
+                          className="px-4 py-3 cursor-pointer text-zinc-300 hover:bg-white/10 hover:text-white transition-colors"
+                        >
+                          {estado}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex items-start gap-4 p-4 border border-white/10 rounded-lg bg-black/20">
@@ -166,6 +252,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
                     className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 pl-12 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none"
                     placeholder="0000 0000 0000 0000"
                     type="text"
+                    value={cardNumber}
+                    onChange={handleCardNumberChange}
+                    maxLength={19}
                     required
                   />
                   <span className="material-symbols-outlined absolute left-4 top-3.5 text-zinc-400">credit_card</span>
@@ -178,6 +267,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
                     className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none"
                     placeholder="MM/YY"
                     type="text"
+                    value={expiry}
+                    onChange={handleExpiryChange}
+                    maxLength={5}
                     required
                   />
                 </div>
@@ -187,6 +279,8 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
                     className="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-white focus:border-cyan-400 focus:ring-0 focus:outline-none"
                     placeholder="123"
                     type="password"
+                    value={cvc}
+                    onChange={handleCvcChange}
                     maxLength={4}
                     required
                   />
@@ -202,24 +296,26 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
             {/* Card 1: Event Details */}
             <section className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 flex gap-4">
               <div className="w-24 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800 relative">
-                <Image
-                  src="https://prismic-images.tmol.io/ticketmaster-tm-global/aWZmqwIvOtkhBc5Z_EADP-Desktop-Header-updated.png?auto=format%2Ccompress&rect=1%2C0%2C2425%2C1023&w=2048&h=864"
-                  alt="Concert poster"
-                  fill
-                  className="object-cover opacity-80"
-                  unoptimized
-                />
+                {eventData?.image_url && (
+                  <Image
+                    src={eventData.image_url}
+                    alt={eventData.title}
+                    fill
+                    className="object-cover opacity-80"
+                    unoptimized
+                  />
+                )}
               </div>
               <div className="flex flex-col justify-center">
-                <h3 className="font-headline-md text-headline-md mb-2">Checkout Evento</h3>
+                <h3 className="font-headline-md text-headline-md mb-2">{eventData?.title || 'Cargando evento...'}</h3>
                 <p className="font-body-md text-body-md text-zinc-400 mb-1">
-                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">calendar_today</span> Oct 24, 2024
+                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">calendar_today</span> {shortDate}
                 </p>
                 <p className="font-body-md text-body-md text-zinc-400 mb-1">
-                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">schedule</span> 20:00 HRS
+                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">schedule</span> {shortTime} HRS
                 </p>
                 <p className="font-body-md text-body-md text-zinc-400">
-                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">location_on</span> Foro Sol, CDMX
+                  <span className="material-symbols-outlined text-[16px] align-middle mr-1">location_on</span> {eventData?.venue || '...'}, {eventData?.city || '...'}
                 </p>
               </div>
             </section>
@@ -278,12 +374,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
       <footer className="w-full py-16 px-8 flex flex-col md:flex-row justify-between items-center gap-8 bg-zinc-950 border-t border-zinc-800">
         <div className="text-lg font-black text-white">StageFront</div>
         <div className="flex flex-wrap gap-6 justify-center">
-          <span className="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200 cursor-pointer">Privacy Policy</span>
-          <span className="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200 cursor-pointer">Terms of Service</span>
-          <span className="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200 cursor-pointer">Security</span>
-          <span className="font-label-caps text-label-caps text-zinc-500 hover:text-cyan-400 transition-colors duration-200 cursor-pointer">Help Center</span>
+          <Link href="/privacy" className="font-label-caps text-label-caps text-zinc-400 hover:text-white transition-colors duration-200">Política de Privacidad</Link>
+          <Link href="/terms" className="font-label-caps text-label-caps text-zinc-400 hover:text-white transition-colors duration-200">Términos de Servicio</Link>
+          <Link href="/security" className="font-label-caps text-label-caps text-zinc-400 hover:text-white transition-colors duration-200">Seguridad</Link>
+          <Link href="/help" className="font-label-caps text-label-caps text-zinc-400 hover:text-white transition-colors duration-200">Centro de Ayuda</Link>
         </div>
-        <div className="font-label-caps text-label-caps text-zinc-500">© 2026 StageFront. High-Fidelity Access.</div>
+        <div className="font-label-caps text-label-caps text-zinc-400">© 2026 StageFront. Acceso de Alta Fidelidad.</div>
       </footer>
     </div>
   );

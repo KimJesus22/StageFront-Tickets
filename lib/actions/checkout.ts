@@ -62,3 +62,59 @@ export async function processPayment(ticketId: string, formData: FormData) {
   // 5. Redirigir a la página de éxito con el ID de la orden
   redirect(`/success?order_id=${order.id}`);
 }
+
+export async function createMockOrder(seats: any[], eventId: string) {
+  const session = await getSession();
+  if (!session?.email || !session?.name) {
+    throw new Error("Usuario no autenticado");
+  }
+
+  if (!eventId) {
+    throw new Error("No event ID provided");
+  }
+
+  let firstOrderId = null;
+
+  for (const seat of seats) {
+    const uniqueSeatNumber = `${seat.label} - ${Math.floor(Math.random() * 1000000)}`;
+
+    const { data: ticket, error: ticketError } = await insforge.database
+      .from("tickets_inventory")
+      .insert({
+        event_id: eventId,
+        zone: seat.zona,
+        seat_number: uniqueSeatNumber,
+        price: seat.precio,
+        status: "vendido",
+      })
+      .select("id")
+      .single();
+
+    if (ticketError || !ticket) {
+      console.error(ticketError);
+      throw new Error("Error inserting ticket");
+    }
+
+    const { data: order, error: orderError } = await insforge.database
+      .from("orders")
+      .insert({
+        user_name: session.name,
+        user_email: session.email,
+        ticket_id: ticket.id,
+        amount_paid: seat.precio,
+      })
+      .select("id")
+      .single();
+
+    if (orderError || !order) {
+      console.error(orderError);
+      throw new Error("Error inserting order");
+    }
+
+    if (!firstOrderId) {
+      firstOrderId = order.id;
+    }
+  }
+
+  return firstOrderId;
+}

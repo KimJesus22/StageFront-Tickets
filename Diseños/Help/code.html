@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro de Ayuda - StageFront</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#353434",
+                        "on-primary": "#2f3131",
+                        "inverse-primary": "#5d5f5f",
+                        "on-tertiary-container": "#636565",
+                        "on-primary-fixed-variant": "#454747",
+                        "primary": "#ffffff",
+                        "tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface-container-low": "#1c1b1b",
+                        "on-secondary-fixed-variant": "#474649",
+                        "surface": "#141313",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "secondary-container": "#474649",
+                        "secondary": "#c8c6c8",
+                        "on-secondary": "#313032",
+                        "primary-container": "#e2e2e2",
+                        "outline-variant": "#444748",
+                        "on-primary-container": "#636565",
+                        "surface-container-highest": "#353434",
+                        "primary-fixed": "#e2e2e2",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-container": "#e2e2e2",
+                        "on-surface-variant": "#c4c7c8",
+                        "on-secondary-container": "#b7b4b7",
+                        "surface-dim": "#141313",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "tertiary-fixed": "#e2e2e2",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "surface-bright": "#3a3939",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#1a1c1c",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-background": "#e5e2e1",
+                        "on-error": "#690005",
+                        "on-tertiary": "#2f3131",
+                        "secondary-fixed": "#e5e1e4",
+                        "on-error-container": "#ffdad6",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "inverse-on-surface": "#313030",
+                        "surface-container": "#201f1f",
+                        "outline": "#8e9192",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-tint": "#c6c6c7",
+                        "error-container": "#93000a",
+                        "background": "#141313"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "48px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "display-xl": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(20, 19, 19, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel {
+            background: rgba(20, 19, 19, 0.6);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            outline: none;
+            border-bottom-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.8);
+        }
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md selection:bg-primary/30 selection:text-primary overflow-x-hidden">
+<!-- TopAppBar (Web) -->
+<nav class="hidden md:block fixed top-0 w-full z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/10 shadow-none font-space-grotesk tracking-tight">
+<div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-2xl font-bold tracking-tighter text-white" href="#">StageFront</a>
+<div class="flex items-center gap-6">
+<a class="text-zinc-400 hover:text-white transition-colors" href="#">Eventos</a>
+<a class="text-zinc-400 hover:text-white transition-colors" href="#">Mi Cuenta</a>
+<a class="text-white font-bold border-b-2 border-white pb-1" href="#">Soporte</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-caps uppercase hover:bg-white/90 transition-all">Entrar</button>
+</div>
+</div>
+</nav>
+<!-- Main Layout with SideNav -->
+<div class="flex-1 flex w-full max-w-container-max mx-auto md:pt-[73px]">
+<!-- SideNavBar (Web - Contextual Help Center) -->
+<aside class="hidden lg:flex flex-col p-4 gap-2 h-screen w-64 border-r border-white/10 shadow-2xl bg-zinc-950/90 backdrop-blur-2xl fixed left-0 top-[73px] font-space-grotesk z-40">
+<div class="mb-8 px-4 py-2">
+<div class="text-xl font-black text-white">StageFront</div>
+<div class="text-zinc-500 text-sm mt-1">Centro de Ayuda</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="text-zinc-500 hover:text-zinc-200 hover:bg-white/5 p-3 rounded-lg flex items-center gap-3 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">home</span>
+                    Inicio
+                </a>
+<a class="text-zinc-500 hover:text-zinc-200 hover:bg-white/5 p-3 rounded-lg flex items-center gap-3 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">confirmation_number</span>
+                    Tickets
+                </a>
+<a class="text-zinc-500 hover:text-zinc-200 hover:bg-white/5 p-3 rounded-lg flex items-center gap-3 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">payments</span>
+                    Pagos
+                </a>
+<a class="text-zinc-500 hover:text-zinc-200 hover:bg-white/5 p-3 rounded-lg flex items-center gap-3 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined">shield</span>
+                    Seguridad
+                </a>
+<a class="bg-white/10 text-white rounded-lg p-3 flex items-center gap-3 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined filled-icon">help_center</span>
+                    Centro de Ayuda
+                </a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 w-full lg:pl-64 min-h-screen pb-32 md:pb-12">
+<!-- Hero Section -->
+<section class="relative pt-24 pb-16 px-margin-mobile md:px-margin-desktop flex flex-col items-center justify-center text-center overflow-hidden min-h-[512px]">
+<!-- Decorative blurred background element -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl h-64 bg-white/5 rounded-full blur-[100px] pointer-events-none"></div>
+<h1 class="font-display-xl text-display-xl text-primary mb-stack-md relative z-10 max-w-3xl">¿Cómo podemos ayudarte?</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-lg max-w-2xl relative z-10">Busca artículos, guías de solución de problemas o explora las categorías a continuación.</p>
+<!-- Search Bar -->
+<div class="relative w-full max-w-2xl z-10">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full glass-input text-on-surface placeholder:text-outline py-4 pl-12 pr-4 text-body-lg font-body-lg rounded-t-lg" placeholder="Busca 'fila virtual', 'reembolsos'..." type="text"/>
+</div>
+</section>
+<!-- Categories Bento Grid -->
+<section class="px-margin-mobile md:px-margin-desktop mb-stack-lg max-w-5xl mx-auto">
+<h2 class="font-headline-md text-headline-md text-primary mb-stack-md">Categorías de Ayuda</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Category Card 1 -->
+<a class="glass-card p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group flex flex-col items-center text-center" href="#">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-white/10">
+<span class="material-symbols-outlined text-primary">local_activity</span>
+</div>
+<h3 class="font-headline-lg text-body-lg font-semibold text-primary mb-2">Boletos</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Descarga, transferencia y problemas de acceso.</p>
+</a>
+<!-- Category Card 2 -->
+<a class="glass-card p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group flex flex-col items-center text-center" href="#">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-white/10">
+<span class="material-symbols-outlined text-primary">credit_card</span>
+</div>
+<h3 class="font-headline-lg text-body-lg font-semibold text-primary mb-2">Pagos</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Facturación, métodos de pago y reembolsos.</p>
+</a>
+<!-- Category Card 3 -->
+<a class="glass-card p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group flex flex-col items-center text-center" href="#">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-white/10">
+<span class="material-symbols-outlined text-primary">hourglass_empty</span>
+</div>
+<h3 class="font-headline-lg text-body-lg font-semibold text-primary mb-2">Fila Virtual</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Cómo funciona y consejos para preventas.</p>
+</a>
+<!-- Category Card 4 -->
+<a class="glass-card p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group flex flex-col items-center text-center" href="#">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-white/10">
+<span class="material-symbols-outlined text-primary">manage_accounts</span>
+</div>
+<h3 class="font-headline-lg text-body-lg font-semibold text-primary mb-2">Cuenta</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Actualización de datos y seguridad de la cuenta.</p>
+</a>
+</div>
+</section>
+<!-- FAQ Accordion Section -->
+<section class="px-margin-mobile md:px-margin-desktop mb-stack-lg max-w-3xl mx-auto">
+<h2 class="font-headline-md text-headline-md text-primary mb-stack-md">Preguntas Frecuentes</h2>
+<div class="glass-panel rounded-2xl divide-y divide-white/10">
+<!-- FAQ 1 -->
+<details class="group" open="">
+<summary class="flex justify-between items-center font-headline-lg text-body-lg font-medium cursor-pointer list-none p-6 text-primary hover:bg-white/5 transition-colors">
+<span>¿Qué pasa si pierdo conexión durante la Fila Virtual?</span>
+<span class="transition group-open:rotate-180 material-symbols-outlined text-outline-variant">expand_more</span>
+</summary>
+<div class="text-on-surface-variant font-body-md text-body-md px-6 pb-6 pt-2 animate-fade-in">
+                            Tu lugar en la fila virtual está asegurado por un breve período si pierdes la conexión. Te recomendamos reconectarte lo antes posible usando el mismo dispositivo y navegador. No actualices la página manualmente, el sistema intentará reconectar automáticamente.
+                        </div>
+</details>
+<!-- FAQ 2 -->
+<details class="group">
+<summary class="flex justify-between items-center font-headline-lg text-body-lg font-medium cursor-pointer list-none p-6 text-primary hover:bg-white/5 transition-colors">
+<span>¿Cómo funcionan los boletos digitales?</span>
+<span class="transition group-open:rotate-180 material-symbols-outlined text-outline-variant">expand_more</span>
+</summary>
+<div class="text-on-surface-variant font-body-md text-body-md px-6 pb-6 pt-2">
+                            Tus boletos digitales son códigos dinámicos que se actualizan constantemente para evitar fraudes. Podrás visualizarlos en la app de StageFront 24 horas antes del evento. Las capturas de pantalla no serán válidas para ingresar al recinto.
+                        </div>
+</details>
+<!-- FAQ 3 -->
+<details class="group">
+<summary class="flex justify-between items-center font-headline-lg text-body-lg font-medium cursor-pointer list-none p-6 text-primary hover:bg-white/5 transition-colors">
+<span>¿Puedo transferir mis boletos a otra persona?</span>
+<span class="transition group-open:rotate-180 material-symbols-outlined text-outline-variant">expand_more</span>
+</summary>
+<div class="text-on-surface-variant font-body-md text-body-md px-6 pb-6 pt-2">
+                            Sí, puedes transferir tus boletos de forma segura a través de la sección "Mis Tickets" en tu cuenta. El destinatario necesitará crear una cuenta en StageFront para aceptar la transferencia. Algunas transferencias pueden estar restringidas según las políticas del artista.
+                        </div>
+</details>
+</div>
+</section>
+<!-- Bottom Action -->
+<section class="px-margin-mobile md:px-margin-desktop mb-stack-lg flex justify-center">
+<a class="inline-flex items-center gap-2 glass-card px-6 py-3 rounded-full hover:bg-white/10 transition-all font-label-caps text-label-caps uppercase text-primary tracking-widest border border-white/20" href="#">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                    Volver al Inicio
+                </a>
+</section>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center p-3 pb-safe bg-zinc-950/80 backdrop-blur-lg rounded-t-2xl border-t border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-zinc-500 active:bg-white/5 transition-all p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">search</span>
+<span class="text-[10px] font-medium font-space-grotesk">Explorar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 active:bg-white/5 transition-all p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">local_activity</span>
+<span class="text-[10px] font-medium font-space-grotesk">Tickets</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white bg-white/10 rounded-xl px-4 py-1 transition-all" href="#">
+<span class="material-symbols-outlined filled-icon mb-1">help_outline</span>
+<span class="text-[10px] font-medium font-space-grotesk">Ayuda</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 active:bg-white/5 transition-all p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">account_circle</span>
+<span class="text-[10px] font-medium font-space-grotesk">Perfil</span>
+</a>
+</nav>
+</body></html>

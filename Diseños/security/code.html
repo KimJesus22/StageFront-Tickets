@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro de Seguridad - StageFront</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#e2e2e2",
+                        "tertiary-container": "#e2e2e2",
+                        "secondary-container": "#474649",
+                        "on-tertiary": "#2f3131",
+                        "on-tertiary-container": "#636565",
+                        "on-secondary-container": "#b7b4b7",
+                        "on-primary-container": "#636565",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "surface-container-low": "#1c1b1b",
+                        "primary": "#ffffff",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "on-surface-variant": "#c4c7c8",
+                        "surface-container": "#201f1f",
+                        "surface": "#141313",
+                        "surface-container-highest": "#353434",
+                        "on-background": "#e5e2e1",
+                        "tertiary": "#ffffff",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0e0e0e",
+                        "inverse-on-surface": "#313030",
+                        "on-primary": "#2f3131",
+                        "surface-variant": "#353434",
+                        "secondary": "#c8c6c8",
+                        "on-secondary": "#313032",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-bright": "#3a3939",
+                        "outline-variant": "#444748",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "background": "#141313",
+                        "outline": "#8e9192",
+                        "secondary-fixed": "#e5e1e4",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "on-secondary-fixed-variant": "#474649",
+                        "surface-tint": "#c6c6c7",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "inverse-surface": "#e5e2e1",
+                        "on-primary-fixed": "#1a1c1c",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#454747",
+                        "surface-dim": "#141313",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface": "#e5e2e1",
+                        "inverse-primary": "#5d5f5f",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "primary-fixed": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "48px",
+                        "unit": "4px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-zinc-950 text-on-surface antialiased selection:bg-white/20 selection:text-white min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/10">
+<div class="flex justify-between items-center px-6 py-4 max-w-full">
+<div class="text-xl font-bold tracking-tighter text-white uppercase font-space-grotesk tracking-tight">
+                StageFront
+            </div>
+<div class="hidden md:flex gap-8 items-center font-space-grotesk tracking-tight">
+<a class="text-zinc-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Marketplace</a>
+<a class="text-zinc-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Events</a>
+<a class="text-white font-bold border-b-2 border-white pb-1 hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Support</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-space-grotesk tracking-tight text-white hover:bg-white/5 transition-all duration-300 px-4 py-2 rounded-lg font-medium">Sign In</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col justify-center items-center px-6 pt-32 pb-20">
+<div class="w-full max-w-4xl">
+<!-- Glassmorphism Main Card -->
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 relative overflow-hidden group">
+<!-- Subtle internal glow effect -->
+<div class="absolute -top-32 -left-32 w-64 h-64 bg-white/10 rounded-full blur-[100px] pointer-events-none opacity-50 group-hover:opacity-70 transition-opacity duration-700"></div>
+<!-- Header -->
+<header class="mb-8 relative z-10">
+<h1 class="font-display-xl text-display-xl text-primary mb-4 text-4xl md:text-[64px]">Centro de Seguridad</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Última actualización: Mayo 2026</p>
+<div class="h-px w-full bg-white/10 mt-8"></div>
+</header>
+<!-- Content Sections -->
+<div class="space-y-12 relative z-10">
+<!-- Section 1 -->
+<section>
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Compromiso de Seguridad</h2>
+<p class="font-body-lg text-body-lg text-zinc-300">
+                            En StageFront, la integridad de su experiencia de acceso es nuestra máxima prioridad. Empleamos protocolos de encriptación de grado militar y arquitecturas de datos descentralizadas para asegurar que cada transacción e interacción dentro de nuestro ecosistema permanezca impenetrable. Su información personal y financiera está blindada tras múltiples capas de autenticación, garantizando un entorno de confianza absoluta.
+                        </p>
+</section>
+<!-- Section 2 -->
+<section>
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Verificación de Boletos</h2>
+<p class="font-body-lg text-body-lg text-zinc-300">
+                            Nuestra tecnología de boletaje holográfico digital erradica el fraude de raíz. Cada pase emitido por StageFront cuenta con una firma criptográfica única y dinámica, enlazada exclusivamente a su dispositivo verificado. Los identificadores visuales adaptativos, que responden a sensores biométricos y de movimiento, hacen que la duplicación física o digital sea fundamentalmente imposible.
+                        </p>
+</section>
+<!-- Section 3 -->
+<section>
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Soporte al Usuario</h2>
+<p class="font-body-lg text-body-lg text-zinc-300">
+                            Ante cualquier anomalía, intento de intrusión o duda sobre la legitimidad de un acceso, nuestro equipo de respuesta a incidentes opera 24/7. Comuníquese inmediatamente a través de nuestros canales cifrados en la aplicación o directamente al centro de comando de seguridad. Investigaremos rigurosamente cualquier reporte para mantener la pureza de la red StageFront.
+                        </p>
+</section>
+</div>
+<!-- Footer Action -->
+<div class="mt-16 pt-8 border-t border-white/10 flex justify-start relative z-10">
+<button class="font-label-caps text-label-caps px-6 py-4 rounded-full border border-zinc-700 text-zinc-300 hover:text-white hover:border-white hover:bg-white/5 transition-all duration-300 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                        Volver al Inicio
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-8 border-t border-white/5 bg-zinc-950 border-t border-zinc-900 mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 w-full max-w-container-max mx-auto">
+<div class="text-lg font-black text-white">
+                StageFront
+            </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-space-grotesk text-sm uppercase tracking-widest text-zinc-500 hover:text-white transition-colors hover:-translate-y-0.5 duration-200 block" href="#">Privacy Policy</a>
+<a class="font-space-grotesk text-sm uppercase tracking-widest text-zinc-500 hover:text-white transition-colors hover:-translate-y-0.5 duration-200 block" href="#">Terms of Service</a>
+<a class="font-space-grotesk text-sm uppercase tracking-widest text-zinc-500 hover:text-white transition-colors hover:-translate-y-0.5 duration-200 block" href="#">Cookie Settings</a>
+<a class="font-space-grotesk text-sm uppercase tracking-widest text-white underline hover:text-white transition-colors hover:-translate-y-0.5 duration-200 block" href="#">Security Center</a>
+</div>
+<div class="font-space-grotesk text-sm uppercase tracking-widest text-zinc-500">
+                © 2024 StageFront Tickets. Cinematic Access Guaranteed.
+            </div>
+</div>
+</footer>
+</body></html>

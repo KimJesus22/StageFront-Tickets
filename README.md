@@ -11,16 +11,16 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Perfiles de Artista** — Rutas dinámicas `/[slug]` con lista de eventos y diseño blur-background
 - **Fila Virtual con OTP** — Verificación de identidad por código de 6 dígitos antes de acceder a la cola de compra
 - **Simulador de Cola Activa** — Contador regresivo animado con barra de progreso, posición dinámica y ID de fila único
-- **Selección de Asientos** — Layout dividido (70% mapa / 30% sidebar) con zonas interactivas (VIP/General), sidebar reactivo y bottom sheet móvil
-- **Datos Dinámicos por Evento** — Queue y Seats obtienen título, venue, fecha e imagen del evento desde la API (ya no hardcodeados)
-- **Checkout Interactivo** — Selección de asientos por zona en `/event/[id]` con actualización de precios en tiempo real
-- **Bloqueo de Concurrencia** — Prevención de doble venta en base de datos al seleccionar asientos
+- **Selección de Asientos** — Layout dividido (70% mapa / 30% sidebar) con controles de Zoom interactivo, zonas interactivas (VIP/General), sidebar reactivo y bottom sheet móvil
+- **Datos Dinámicos por Evento** — Queue, Seats y Checkout obtienen título, venue, fecha e imagen del evento desde la API de InsForge sin datos estáticos
+- **Checkout Interactivo** — Formulario de pago avanzado con Custom Dropdown de estados, validaciones en tiempo real (Tarjeta, Vencimiento, CVC) y actualización de precios
+- **Bloqueo de Concurrencia** — Prevención de colisiones al insertar `tickets_inventory` usando Server Actions dinámicas (`createMockOrder`)
 - **Autenticación Segura** — Inicio de sesión y registro impulsado por InsForge Auth y Server Actions
-- **Pago Exitoso** — Confirmación interactiva con renderizado multi-boleto, inyección de datos reales desde InsForge y efectos visuales de confeti puros en CSS
-- **Billetera Digital** — Ruta `/wallet` con boletos de diseño Skeuomorphic (perforaciones y QR simulados)
+- **Pago Exitoso** — Confirmación interactiva con renderizado multi-boleto, inyección de datos reales desde InsForge y redirección fluida a `/success` antes de la Billetera
+- **Billetera Digital** — Ruta `/wallet` conectada a DB con boletos de diseño Skeuomorphic (perforaciones y QR simulados)
 - **Panel de Administración** — Dashboard en `/admin` con métricas clave, control de acceso y ventas recientes
 - **Portal de Artista** — Dashboard en `/portal` con ventas e ingresos por artista
-- **Centro de Soporte** — FAQ interactivo con acordeón y formulario de contacto persistido en InsForge
+- **Páginas Legales y Soporte** — Centro de Ayuda (`/help`) y Centro de Seguridad (`/security`) estáticos con UI Glassmorphism y FAQs interactivas nativas
 - **Protección de Rutas** — Enrutamiento protegido por middleware (`proxy.ts` de Next.js 16)
 - **Backend InsForge** — Base de datos PostgreSQL, autenticación, almacenamiento y funciones serverless
 - **Server Actions** — Consultas a la base de datos desde Server Components de Next.js
@@ -86,6 +86,10 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   │   └── page.tsx                 → Política de privacidad (Server Component estático)
 │   ├── terms/
 │   │   └── page.tsx                 → Términos de servicio (Server Component estático)
+│   ├── security/
+│   │   └── page.tsx                 → Centro de seguridad (Server Component estático)
+│   ├── help/
+│   │   └── page.tsx                 → Centro de ayuda y FAQs (Server Component estático)
 │   ├── globals.css
 │   ├── layout.tsx                   → Layout raíz (fuentes, metadatos, dark mode)
 │   └── page.tsx                     → Landing page (async, datos dinámicos)

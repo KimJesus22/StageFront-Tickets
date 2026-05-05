@@ -34,6 +34,11 @@ export default function SeatSelectionPage() {
 
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [scale, setScale] = useState(1);
+
+  const handleZoomIn = useCallback(() => setScale((s) => Math.min(s + 0.2, 3)), []);
+  const handleZoomOut = useCallback(() => setScale((s) => Math.max(s - 0.2, 0.5)), []);
+  const handleReset = useCallback(() => setScale(1), []);
 
   // Event data (fetched dynamically)
   const [eventData, setEventData] = useState<{
@@ -113,6 +118,7 @@ export default function SeatSelectionPage() {
     if (selectedSeats.length === 0) return;
     // Store selection in sessionStorage for the checkout page
     sessionStorage.setItem('stagefront_seats', JSON.stringify(selectedSeats));
+    if (params.id) sessionStorage.setItem('stagefront_event_id', params.id);
     // Redirigir a la página de pago usando el ID del primer asiento seleccionado
     router.push(`/payment/${selectedSeats[0].id}`);
   }, [selectedSeats, router]);
@@ -182,19 +188,19 @@ export default function SeatSelectionPage() {
 
           {/* Floating Zoom Controls (Right Edge) */}
           <div className="absolute right-stack-md top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2">
-            <button className="bg-surface-container/40 backdrop-blur-[20px] border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors">
+            <button onClick={handleZoomIn} className="bg-surface-container/40 backdrop-blur-[20px] border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors">
               <span className="material-symbols-outlined">add</span>
             </button>
-            <button className="bg-surface-container/40 backdrop-blur-[20px] border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors">
+            <button onClick={handleZoomOut} className="bg-surface-container/40 backdrop-blur-[20px] border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors">
               <span className="material-symbols-outlined">remove</span>
             </button>
-            <button className="bg-surface-container/40 backdrop-blur-[20px] border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors mt-2">
+            <button onClick={handleReset} className="bg-surface-container/40 backdrop-blur-[20px] border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors mt-2">
               <span className="material-symbols-outlined">refresh</span>
             </button>
           </div>
 
           {/* ---- Stadium Map Graphic ---- */}
-          <div className="w-full h-full relative flex items-center justify-center opacity-80 scale-[0.65] md:scale-90">
+          <div className="w-full h-full relative flex items-center justify-center opacity-80" style={{ transform: `scale(${scale})`, transition: 'transform 0.3s ease', transformOrigin: 'center' }}>
             <div className="relative w-[800px] h-[600px]">
               {/* Outer gradas (decorative) */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-40 border-t-4 border-l-4 border-r-4 border-surface-container-high rounded-t-[400px] opacity-30" />
