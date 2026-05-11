@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useIntegrityFilter } from '@/hooks/useIntegrityFilter';
+import { useSeatGraph } from '@/hooks/useSeatGraph';
+import type { SeatNode } from '@/lib/graph/SeatGraph';
 
 // ---------------------------------------------------------------------------
 // Types & Data
@@ -35,6 +38,16 @@ export default function SeatSelectionPage() {
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const [scale, setScale] = useState(1);
+
+  // Integrity Filter — bot detection
+  const integrity = useIntegrityFilter();
+  const [showIntegrityModal, setShowIntegrityModal] = useState(false);
+  const [integrityVerdict, setIntegrityVerdict] = useState<'human' | 'suspect' | 'bot'>('human');
+  const [integrityOtp, setIntegrityOtp] = useState('');
+  const [integrityOtpError, setIntegrityOtpError] = useState('');
+
+  // Seat Graph — adjacency matrix for orphan detection
+  const seatGraph = useSeatGraph();
 
   const handleZoomIn = useCallback(() => setScale((s) => Math.min(s + 0.2, 3)), []);
   const handleZoomOut = useCallback(() => setScale((s) => Math.max(s - 0.2, 0.5)), []);
@@ -104,24 +117,93 @@ export default function SeatSelectionPage() {
     ]);
   }, [selectedSeats]);
 
+  // ─── Graph seat toggle (individual seat-level clicks) ───
+  const handleSeatToggle = useCallback((zoneId: string, row: number, col: number) => {
+    const seatId = `${zoneId}-${row}-${col}`;
+    const zone = ZONES.find((z) => z.id === zoneId);
+    if (!zone) return;
+
+    const currentStatus = seatGraph.getZoneSeats(zoneId).find(
+      (s) => s.id === seatId
+    )?.status;
+
+    if (currentStatus === 'selected') {
+      // Deselect from graph
+      seatGraph.deselectSeat(seatId);
+      // Remove from local state
+      setSelectedSeats((prev) => prev.filter((s) => s.id !== seatId));
+    } else if (currentStatus === 'available') {
+      // Select in graph
+      seatGraph.selectSeat(zoneId, row, col);
+      // Add to local state
+      const label = `Fila ${String.fromCharCode(65 + row)}, Asiento ${col + 1}`;
+      setSelectedSeats((prev) => [
+        ...prev,
+        {
+          id: seatId,
+          zona: zone.zona,
+          label,
+          tipo: zone.tipo,
+          precio: zone.precio,
+          color: zone.color,
+        },
+      ]);
+    }
+  }, [seatGraph]);
+
   const removeSeat = useCallback((seatId: string) => {
+    seatGraph.deselectSeat(seatId);
     setSelectedSeats((prev) => prev.filter((s) => s.id !== seatId));
-  }, []);
+  }, [seatGraph]);
 
   const clearAll = useCallback(() => {
+    seatGraph.clearSelections();
     setSelectedSeats([]);
-  }, []);
+  }, [seatGraph]);
 
   const total = selectedSeats.reduce((sum, s) => sum + s.precio, 0);
 
-  const handleCheckout = useCallback(() => {
+  const handleCheckout = useCallback(async () => {
     if (selectedSeats.length === 0) return;
-    // Store selection in sessionStorage for the checkout page
+
+    // ─── Integrity Check (bot detection) ───
+    const result = await integrity.validate();
+
+    if (result.verdict === 'bot') {
+      // Hard block — mostrar modal de rechazo
+      setIntegrityVerdict('bot');
+      setShowIntegrityModal(true);
+      return;
+    }
+
+    if (result.verdict === 'suspect') {
+      // Soft block — pedir OTP de verificación extra
+      setIntegrityVerdict('suspect');
+      setShowIntegrityModal(true);
+      return;
+    }
+
+    // ─── Human verified — continuar al checkout ───
+    proceedToCheckout();
+  }, [selectedSeats, integrity]);
+
+  const proceedToCheckout = useCallback(() => {
     sessionStorage.setItem('stagefront_seats', JSON.stringify(selectedSeats));
     if (params.id) sessionStorage.setItem('stagefront_event_id', params.id);
-    // Redirigir a la página de pago usando el ID del primer asiento seleccionado
     router.push(`/payment/${selectedSeats[0].id}`);
-  }, [selectedSeats, router]);
+  }, [selectedSeats, router, params.id]);
+
+  const handleIntegrityOtpSubmit = useCallback(() => {
+    // Simular verificación OTP (en producción, validar contra servidor)
+    if (integrityOtp.length >= 4) {
+      setShowIntegrityModal(false);
+      setIntegrityOtp('');
+      setIntegrityOtpError('');
+      proceedToCheckout();
+    } else {
+      setIntegrityOtpError('Código de verificación inválido');
+    }
+  }, [integrityOtp, proceedToCheckout]);
 
   const isZoneSelected = (zoneId: string) =>
     selectedSeats.some((s) => s.id.startsWith(zoneId));
@@ -206,41 +288,117 @@ export default function SeatSelectionPage() {
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-40 border-t-4 border-l-4 border-r-4 border-surface-container-high rounded-t-[400px] opacity-30" />
               <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-32 border-t-4 border-l-4 border-r-4 border-surface-container-high rounded-t-[350px] opacity-50" />
 
-              {/* General A — clickable */}
-              <button
-                onClick={() => addSeatToZone(ZONES[2])}
-                className={`absolute bottom-[340px] left-1/2 -translate-x-1/2 w-[600px] h-40 rounded-t-[100px] backdrop-blur-sm flex items-center justify-center cursor-pointer transition-all duration-300 border ${
+              {/* General A — zone + individual seats */}
+              <div
+                className={`absolute bottom-[340px] left-1/2 -translate-x-1/2 w-[600px] h-40 rounded-t-[100px] backdrop-blur-sm transition-all duration-300 border overflow-hidden ${
                   isZoneSelected('general-a')
-                    ? 'bg-[#a3defe]/30 border-[#a3defe] shadow-[0_0_20px_rgba(163,222,254,0.6)]'
-                    : 'bg-[#a3defe]/10 border-[#a3defe]/30 hover:bg-[#a3defe]/20'
+                    ? 'bg-[#a3defe]/15 border-[#a3defe] shadow-[0_0_20px_rgba(163,222,254,0.4)]'
+                    : 'bg-[#a3defe]/5 border-[#a3defe]/30 hover:bg-[#a3defe]/10'
                 }`}
               >
-                <span className="font-label-caps text-label-caps text-white">General A — $250</span>
-              </button>
+                <div className="absolute top-2 left-1/2 -translate-x-1/2">
+                  <span className="font-label-caps text-[10px] text-white/50 uppercase tracking-widest">General A — $250</span>
+                </div>
+                {/* Individual seat dots */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(6, 1fr)', padding: '28px 60px 12px' }}>
+                    {seatGraph.getZoneSeats('general-a').map((seat) => {
+                      const isOrphan = seatGraph.orphanAnalysis.orphanSeats.some((o) => o.id === seat.id);
+                      return (
+                        <button
+                          key={seat.id}
+                          onClick={() => handleSeatToggle('general-a', seat.row, seat.col)}
+                          disabled={seat.status === 'occupied'}
+                          title={`${seat.label} ${seat.status === 'occupied' ? '(Ocupado)' : seat.status === 'selected' ? '(Seleccionado)' : isOrphan ? '(Huérfano)' : '(Disponible)'}`}
+                          className={`w-5 h-5 rounded-full transition-all duration-200 border-2 ${
+                            seat.status === 'occupied'
+                              ? 'bg-zinc-700/60 border-zinc-600/40 cursor-not-allowed opacity-40'
+                              : seat.status === 'selected'
+                              ? 'bg-[#a3defe] border-[#a3defe] shadow-[0_0_10px_rgba(163,222,254,0.8)] scale-110'
+                              : isOrphan
+                              ? 'bg-amber-500/30 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse'
+                              : 'bg-white/10 border-white/20 hover:bg-[#a3defe]/40 hover:border-[#a3defe]/60 hover:scale-110'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
 
-              {/* VIP L — clickable */}
-              <button
-                onClick={() => addSeatToZone(ZONES[0])}
-                className={`absolute bottom-48 left-[25%] w-48 h-32 rounded-lg backdrop-blur-sm flex items-center justify-center cursor-pointer transition-all duration-300 border ${
+              {/* VIP L — zone + individual seats */}
+              <div
+                className={`absolute bottom-48 left-[25%] w-48 h-32 rounded-lg backdrop-blur-sm transition-all duration-300 border overflow-hidden ${
                   isZoneSelected('vip-l')
-                    ? 'bg-[#c084fc]/30 border-[#c084fc] shadow-[0_0_20px_rgba(192,132,252,0.7)]'
-                    : 'bg-[#c084fc]/10 border-[#c084fc]/50 hover:bg-[#c084fc]/20 shadow-[0_0_12px_rgba(192,132,252,0.5)]'
+                    ? 'bg-[#c084fc]/15 border-[#c084fc] shadow-[0_0_20px_rgba(192,132,252,0.5)]'
+                    : 'bg-[#c084fc]/5 border-[#c084fc]/50 hover:bg-[#c084fc]/10 shadow-[0_0_12px_rgba(192,132,252,0.3)]'
                 }`}
               >
-                <span className="font-label-caps text-label-caps text-white">VIP L — $500</span>
-              </button>
+                <div className="absolute top-1.5 left-1/2 -translate-x-1/2">
+                  <span className="font-label-caps text-[9px] text-white/50 uppercase tracking-widest">VIP L — $500</span>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(4, 1fr)', padding: '24px 16px 8px' }}>
+                    {seatGraph.getZoneSeats('vip-l').map((seat) => {
+                      const isOrphan = seatGraph.orphanAnalysis.orphanSeats.some((o) => o.id === seat.id);
+                      return (
+                        <button
+                          key={seat.id}
+                          onClick={() => handleSeatToggle('vip-l', seat.row, seat.col)}
+                          disabled={seat.status === 'occupied'}
+                          title={`${seat.label} ${seat.status === 'occupied' ? '(Ocupado)' : seat.status === 'selected' ? '(Seleccionado)' : isOrphan ? '(Huérfano)' : '(Disponible)'}`}
+                          className={`w-5 h-5 rounded-full transition-all duration-200 border-2 ${
+                            seat.status === 'occupied'
+                              ? 'bg-zinc-700/60 border-zinc-600/40 cursor-not-allowed opacity-40'
+                              : seat.status === 'selected'
+                              ? 'bg-[#c084fc] border-[#c084fc] shadow-[0_0_10px_rgba(192,132,252,0.8)] scale-110'
+                              : isOrphan
+                              ? 'bg-amber-500/30 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse'
+                              : 'bg-white/10 border-white/20 hover:bg-[#c084fc]/40 hover:border-[#c084fc]/60 hover:scale-110'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
 
-              {/* VIP R — clickable */}
-              <button
-                onClick={() => addSeatToZone(ZONES[1])}
-                className={`absolute bottom-48 right-[25%] w-48 h-32 rounded-lg backdrop-blur-sm flex items-center justify-center cursor-pointer transition-all duration-300 border ${
+              {/* VIP R — zone + individual seats */}
+              <div
+                className={`absolute bottom-48 right-[25%] w-48 h-32 rounded-lg backdrop-blur-sm transition-all duration-300 border overflow-hidden ${
                   isZoneSelected('vip-r')
-                    ? 'bg-[#c084fc]/30 border-[#c084fc] shadow-[0_0_20px_rgba(192,132,252,0.7)]'
-                    : 'bg-[#c084fc]/10 border-[#c084fc]/50 hover:bg-[#c084fc]/20 shadow-[0_0_12px_rgba(192,132,252,0.5)]'
+                    ? 'bg-[#c084fc]/15 border-[#c084fc] shadow-[0_0_20px_rgba(192,132,252,0.5)]'
+                    : 'bg-[#c084fc]/5 border-[#c084fc]/50 hover:bg-[#c084fc]/10 shadow-[0_0_12px_rgba(192,132,252,0.3)]'
                 }`}
               >
-                <span className="font-label-caps text-label-caps text-white">VIP R — $500</span>
-              </button>
+                <div className="absolute top-1.5 left-1/2 -translate-x-1/2">
+                  <span className="font-label-caps text-[9px] text-white/50 uppercase tracking-widest">VIP R — $500</span>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(4, 1fr)', padding: '24px 16px 8px' }}>
+                    {seatGraph.getZoneSeats('vip-r').map((seat) => {
+                      const isOrphan = seatGraph.orphanAnalysis.orphanSeats.some((o) => o.id === seat.id);
+                      return (
+                        <button
+                          key={seat.id}
+                          onClick={() => handleSeatToggle('vip-r', seat.row, seat.col)}
+                          disabled={seat.status === 'occupied'}
+                          title={`${seat.label} ${seat.status === 'occupied' ? '(Ocupado)' : seat.status === 'selected' ? '(Seleccionado)' : isOrphan ? '(Huérfano)' : '(Disponible)'}`}
+                          className={`w-5 h-5 rounded-full transition-all duration-200 border-2 ${
+                            seat.status === 'occupied'
+                              ? 'bg-zinc-700/60 border-zinc-600/40 cursor-not-allowed opacity-40'
+                              : seat.status === 'selected'
+                              ? 'bg-[#c084fc] border-[#c084fc] shadow-[0_0_10px_rgba(192,132,252,0.8)] scale-110'
+                              : isOrphan
+                              ? 'bg-amber-500/30 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse'
+                              : 'bg-white/10 border-white/20 hover:bg-[#c084fc]/40 hover:border-[#c084fc]/60 hover:scale-110'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
 
               {/* Stage */}
               <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-96 h-32 rounded-t-[200px] bg-gradient-to-t from-surface-container-high to-surface-variant border-t-2 border-[#c084fc] flex items-center justify-center shadow-[0_-20px_60px_rgba(192,132,252,0.2)]">
@@ -312,6 +470,49 @@ export default function SeatSelectionPage() {
 
           {/* Checkout Footer */}
           <div className="p-6 bg-surface-container-highest border-t border-white/10 mt-auto">
+            {/* Orphan Seat Warning */}
+            {seatGraph.hasWarning && (
+              <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                <div className="flex items-start gap-2.5">
+                  <span className="material-symbols-outlined text-amber-400 text-[20px] mt-0.5">warning</span>
+                  <div className="flex-1">
+                    <p className="text-amber-300 text-sm font-medium mb-1">{seatGraph.orphanAnalysis.message}</p>
+                    {seatGraph.orphanAnalysis.suggestions.length > 0 && (
+                      <div className="flex flex-col gap-1 mt-2">
+                        {seatGraph.orphanAnalysis.suggestions.map((s, i) => (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              if (s.type === 'select') {
+                                const parts = s.seatId.split('-');
+                                const row = parseInt(parts[parts.length - 2]);
+                                const col = parseInt(parts[parts.length - 1]);
+                                const zoneId = parts.slice(0, -2).join('-');
+                                handleSeatToggle(zoneId, row, col);
+                              } else {
+                                removeSeat(s.seatId);
+                              }
+                            }}
+                            className="text-left text-amber-400/80 text-xs hover:text-amber-300 transition-colors flex items-center gap-1.5"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">
+                              {s.type === 'select' ? 'add_circle' : 'remove_circle'}
+                            </span>
+                            {s.description}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <button
+                      onClick={seatGraph.dismissWarning}
+                      className="text-amber-400/40 text-[10px] mt-2 hover:text-amber-400/70 transition-colors"
+                    >
+                      Ignorar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="flex justify-between items-center mb-6">
               <span className="font-body-md text-body-md text-on-surface-variant text-lg">Total</span>
               <span className="font-headline-lg text-headline-lg text-white">${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
@@ -428,6 +629,95 @@ export default function SeatSelectionPage() {
           )}
         </div>
       </main>
+      {/* ============ Integrity Filter Modal ============ */}
+      {showIntegrityModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="bg-zinc-900/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 max-w-md w-full mx-4 shadow-[0_0_60px_rgba(0,0,0,0.8)]">
+            {integrityVerdict === 'bot' ? (
+              /* ─── Hard Block: Bot Detected ─── */
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-red-400 text-4xl">shield</span>
+                </div>
+                <h3 className="font-headline-md text-headline-md text-white mb-3">Acceso Restringido</h3>
+                <p className="font-body-md text-body-md text-zinc-400 mb-6">
+                  Nuestro sistema de integridad detectó un patrón de navegación automatizado.
+                  Si crees que esto es un error, intenta recargar la página y navegar normalmente.
+                </p>
+                <div className="flex items-center gap-2 justify-center text-red-400/60 text-sm mb-6">
+                  <span className="material-symbols-outlined text-[16px]">info</span>
+                  <span>Score de riesgo: {integrity.score}/100</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowIntegrityModal(false);
+                    integrity.reset();
+                  }}
+                  className="w-full py-3 rounded-lg bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 transition-colors font-label-caps text-label-caps"
+                >
+                  Cerrar
+                </button>
+              </div>
+            ) : (
+              /* ─── Soft Block: Suspect — OTP Required ─── */
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-amber-500/10 border-2 border-amber-500/30 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-amber-400 text-4xl">verified_user</span>
+                </div>
+                <h3 className="font-headline-md text-headline-md text-white mb-3">Verificación Adicional</h3>
+                <p className="font-body-md text-body-md text-zinc-400 mb-6">
+                  Para proteger tu compra, necesitamos una verificación adicional.
+                  Ingresa el código enviado a tu dispositivo.
+                </p>
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    value={integrityOtp}
+                    onChange={(e) => {
+                      setIntegrityOtp(e.target.value.replace(/\D/g, '').slice(0, 6));
+                      setIntegrityOtpError('');
+                    }}
+                    placeholder="000000"
+                    maxLength={6}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg py-4 px-6 text-white text-center text-2xl tracking-[0.5em] font-mono focus:border-amber-400 focus:ring-0 focus:outline-none placeholder:text-zinc-600"
+                    autoFocus
+                  />
+                  {integrityOtpError && (
+                    <p className="text-red-400 text-sm mt-2">{integrityOtpError}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 justify-center text-amber-400/60 text-sm mb-6">
+                  <span className="material-symbols-outlined text-[16px]">security</span>
+                  <span>Filtro de integridad activo</span>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowIntegrityModal(false);
+                      setIntegrityOtp('');
+                      setIntegrityOtpError('');
+                    }}
+                    className="flex-1 py-3 rounded-lg bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 transition-colors font-label-caps text-label-caps"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleIntegrityOtpSubmit}
+                    disabled={integrityOtp.length < 4}
+                    className={`flex-1 py-3 rounded-lg font-label-caps text-label-caps transition-colors ${
+                      integrityOtp.length >= 4
+                        ? 'bg-amber-500 text-black hover:bg-amber-400'
+                        : 'bg-zinc-700 text-zinc-500 cursor-not-allowed'
+                    }`}
+                  >
+                    Verificar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

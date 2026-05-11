@@ -1,53 +1,69 @@
 import { createClient } from "@insforge/sdk";
 
 // ============================================================================
-// 🔒 TIPADO DE BASE DE DATOS
+// 🔒 SINGLETON DATABASE CONNECTION — Patrón Singleton via globalThis
 // ============================================================================
 //
-// Cuando tengas tablas creadas en InsForge, define aquí tus tipos para
-// obtener autocompletado y seguridad de tipos en todas las operaciones CRUD.
+// PROBLEMA:
+//   En Next.js, cada hot-reload en desarrollo y cada invocación serverless
+//   en producción re-evalúa los módulos, creando NUEVAS instancias del
+//   cliente de base de datos. Esto acumula conexiones hasta provocar el
+//   error "Too many connections" en planes gratuitos.
 //
-// Ejemplo de cómo definir los tipos de tu base de datos:
+// SOLUCIÓN:
+//   Usar `globalThis` como almacén persistente que sobrevive a:
+//     1. Hot Module Replacement (HMR) en desarrollo
+//     2. Re-evaluaciones de módulos en serverless (mismo proceso)
+//     3. Múltiples imports desde distintos archivos
 //
-//   export interface Database {
-//     events: {
-//       id: string;
-//       artist_id: string;
-//       title: string;
-//       venue: string;
-//       city: string;
-//       date: string;
-//       price_min: number;
-//       price_max: number;
-//       total_seats: number;
-//       available_seats: number;
-//       image_url: string | null;
-//       created_at: string;
-//     };
-//     artists: {
-//       id: string;
-//       name: string;
-//       slug: string;
-//       genre: string;
-//       image_url: string | null;
-//     };
-//     tickets: {
-//       id: string;
-//       event_id: string;
-//       user_id: string;
-//       seat_number: string;
-//       status: "reserved" | "paid" | "cancelled";
-//       purchased_at: string;
-//     };
-//   }
+// GARANTÍA:
+//   Solo existirá UNA instancia de cada cliente (anon + admin)
+//   durante todo el ciclo de vida del proceso Node.js.
 //
-// Luego, al hacer consultas puedes tipar los resultados:
-//
-//   const { data } = await insforge.database
-//     .from("events")
-//     .select() as { data: Database["events"][] | null; error: Error | null };
+// COMPLEJIDAD DE MEMORIA:
+//   ~0 overhead — solo se reusan los mismos objetos en lugar de crear nuevos.
 //
 // ============================================================================
+
+// ---------------------------------------------------------------------------
+// Tipo para el almacenamiento global (typesafe)
+// ---------------------------------------------------------------------------
+
+/**
+ * Extendemos globalThis con un símbolo privado para almacenar
+ * nuestros singletons sin contaminar el namespace global.
+ *
+ * El uso de `var` dentro de `declare global` es intencional —
+ * es la forma estándar de extender globalThis en TypeScript.
+ */
+type InsforgeClient = ReturnType<typeof createClient>;
+
+interface InsforgeGlobalStore {
+  /** Cliente público (anon key) — para Server/Client Components y Route Handlers */
+  anonClient: InsforgeClient | undefined;
+  /** Cliente administrativo (API key) — SOLO para el servidor */
+  adminClient: InsforgeClient | undefined;
+}
+
+// Símbolo único para evitar colisiones con otros módulos
+const GLOBAL_KEY = "__stagefront_insforge_singleton__" as const;
+
+// ---------------------------------------------------------------------------
+// Acceso al store global (typesafe)
+// ---------------------------------------------------------------------------
+
+function getGlobalStore(): InsforgeGlobalStore {
+  const g = globalThis as unknown as Record<string, InsforgeGlobalStore | undefined>;
+
+  if (!g[GLOBAL_KEY]) {
+    g[GLOBAL_KEY] = {
+      anonClient: undefined,
+      adminClient: undefined,
+    };
+  }
+
+  return g[GLOBAL_KEY];
+}
 
 // ---------------------------------------------------------------------------
 // Validación de variables de entorno
@@ -71,44 +87,103 @@ if (!insforgeAnonKey) {
 }
 
 // ---------------------------------------------------------------------------
-// Cliente público (Anon Key)
+// 1. SINGLETON: Cliente público (Anon Key)
 // ---------------------------------------------------------------------------
 // ✅ Úsalo en: Server Components, Client Components, Route Handlers
-// ⚠️ Las operaciones están limitadas por las políticas RLS de tu base de datos
+// ⚠️ Las operaciones están limitadas por las políticas RLS
 //
-// Ejemplo de uso:
+// Ejemplo:
 //   import { insforge } from "@/lib/insforge";
 //
 //   const { data, error } = await insforge.database
 //     .from("events")
 //     .select()
 //     .eq("artist_slug", "bts");
+// ---------------------------------------------------------------------------
 
-export const insforge = createClient({
-  baseUrl: insforgeUrl,
-  anonKey: insforgeAnonKey,
-});
+function getAnonClient(): InsforgeClient {
+  const store = getGlobalStore();
+
+  if (!store.anonClient) {
+    store.anonClient = createClient({
+      baseUrl: insforgeUrl!,
+      anonKey: insforgeAnonKey!,
+    });
+
+    if (process.env.NODE_ENV === "development") {
+      console.log("🔌 [Singleton] Instancia ANON creada (única por proceso)");
+    }
+  }
+
+  return store.anonClient;
+}
+
+/**
+ * Cliente público de la base de datos — Singleton garantizado.
+ *
+ * Esta exportación siempre retorna la MISMA instancia, sin importar
+ * cuántas veces se importe o desde cuántos archivos.
+ *
+ * @example
+ * ```ts
+ * import { insforge } from "@/lib/insforge";
+ * const { data } = await insforge.database.from("events").select();
+ * ```
+ */
+export const insforge: InsforgeClient = getAnonClient();
 
 // ---------------------------------------------------------------------------
-// Cliente administrativo (API Key)
+// 2. SINGLETON: Cliente administrativo (API Key) — Lazy initialization
 // ---------------------------------------------------------------------------
 // 🔐 SOLO para uso en el SERVIDOR (Route Handlers, Server Actions)
 // ❌ NUNCA importar en Client Components ("use client")
 //
-// Ejemplo de uso:
+// Se inicializa LAZILY: la conexión admin no se crea hasta que alguien
+// la solicite por primera vez. Esto ahorra una conexión si el proceso
+// nunca necesita operaciones admin.
+//
+// Ejemplo:
 //   import { insforgeAdmin } from "@/lib/insforge";
 //
-//   // Dentro de un Route Handler (app/api/...)
-//   const { data, error } = await insforgeAdmin.database
+//   // Dentro de un Route Handler
+//   const admin = insforgeAdmin();
+//   const { data } = await admin.database
 //     .from("tickets")
-//     .insert({ user_id: "...", event_id: "...", seat_number: "A12" })
+//     .insert({ ... })
 //     .select();
+// ---------------------------------------------------------------------------
 
 const insforgeAdminKey = process.env.INSFORGE_ADMIN_API_KEY;
 
-export const insforgeAdmin = insforgeAdminKey
-  ? createClient({
-      baseUrl: insforgeUrl,
+function getAdminClient(): InsforgeClient | null {
+  if (!insforgeAdminKey) return null;
+
+  const store = getGlobalStore();
+
+  if (!store.adminClient) {
+    store.adminClient = createClient({
+      baseUrl: insforgeUrl!,
       anonKey: insforgeAdminKey,
-    })
-  : null;
+    });
+
+    if (process.env.NODE_ENV === "development") {
+      console.log("🔐 [Singleton] Instancia ADMIN creada (única por proceso)");
+    }
+  }
+
+  return store.adminClient;
+}
+
+/**
+ * Cliente administrativo — Singleton con inicialización lazy.
+ *
+ * Retorna `null` si `INSFORGE_ADMIN_API_KEY` no está configurada.
+ *
+ * @example
+ * ```ts
+ * import { insforgeAdmin } from "@/lib/insforge";
+ * if (!insforgeAdmin) throw new Error("Admin not configured");
+ * const { data } = await insforgeAdmin.database.from("users").select();
+ * ```
+ */
+export const insforgeAdmin: InsforgeClient | null = getAdminClient();

@@ -28,6 +28,127 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Diseño Responsivo** — Adaptado para móvil, tablet y escritorio
 - **Código Maestro Dev** — OTP bypass (`741963`) disponible solo en `NODE_ENV=development` para pruebas rápidas
 
+---
+
+## 🧠 Arquitectura Avanzada
+
+### ⚙️ Motor de Fila Virtual — Min-Heap Priority Queue
+
+El motor de fila virtual (`lib/queue-engine.ts`) implementa una **Cola de Prioridad basada en un Min-Heap binario**, reemplazando el array lineal original con una estructura de datos que garantiza reordenamiento logarítmico.
+
+| Operación | Complejidad Anterior | Complejidad Actual |
+|---|---|---|
+| `joinQueue()` | O(n) | **O(log n)** |
+| `getPosition()` | O(n) | **O(1)** lookup |
+| `executeCycle()` | O(n) | **O(K · log n)** |
+| `removeUser()` | O(n) | **O(log n)** |
+
+**Criterio de peso:**
+
+```
+weight = arrivalTimestamp − (isFanVerified ? FAN_BONUS_WEIGHT : 0)
+```
+
+- Peso menor = mayor prioridad (Min-Heap)
+- Los fans verificados reciben un bonus de 2 minutos de ventaja
+- El index map interno permite lookups `O(1)` para existencia y estado
+
+**Ciclos de desfogue:** Cada 60 segundos se libera un lote de `K` usuarios. El valor de `K` se ajusta dinámicamente según la latencia del servidor (75% si degradado, 50% si crítico, +15% en recuperación).
+
+### 💳 Arquitectura de Pagos — Strategy Pattern (OOP)
+
+El sistema de pagos aplica el **patrón Strategy** para desacoplar la UI de checkout de las pasarelas de pago:
+
+```
+PaymentStrategy (abstract)
+  ├── MockPaymentStrategy    ← Activa (desarrollo/demo)
+  └── StripeStrategy         ← Preparada (producción)
+         ↑
+    PaymentContext (factory)  ← Selecciona según PAYMENT_PROVIDER env var
+         ↑
+    processCheckout()         ← Server Action (thin wrapper)
+         ↑
+    Checkout UI               ← Agnóstica — solo llama process()
+```
+
+Para cambiar de pasarela: crear una clase que extienda `PaymentStrategy`, registrarla en `PaymentContext`, cambiar `PAYMENT_PROVIDER`. **Cero cambios en la UI.**
+
+### 🛡️ Filtro de Integridad — Detección Anti-Bot
+
+Sistema de clasificación de comportamiento que analiza el **ritmo biométrico** del usuario para detectar bots antes de procesar reservas.
+
+**9 reglas heurísticas ponderadas:**
+
+| Regla | Peso | Señal de Bot |
+|---|---|---|
+| Click Rhythm Uniformity | 20% | σ de intervalos < 15ms |
+| Mouse Linearity | 15% | >80% trazos rectos |
+| Inhuman Click Speed | 15% | Intervalo mín < 50ms |
+| Clicks Without Movement | 15% | <30% clics con movimiento previo |
+| Session Duration | 10% | < 3 segundos |
+| Mouse Speed Consistency | 10% | Coeficiente de variación < 0.10 |
+| Keyboard Cadence | 5% | σ de intervalos < 10ms |
+| Scroll Activity | 5% | 0 eventos de scroll |
+| Mouse Angle Variation | 5% | σ ángulos < 0.05 rad |
+
+**Veredictos:**
+
+| Score | Veredicto | Acción |
+|---|---|---|
+| 0–30 | `human` | ✅ Acceso directo |
+| 31–60 | `suspect` | ⚠️ Soft block — modal OTP extra |
+| 61–100 | `bot` | 🚫 Hard block — acceso denegado |
+
+**Doble validación:** El cliente clasifica localmente (`O(1)`) y envía el fingerprint al servidor, que re-clasifica independientemente y añade: rate limiting por IP, verificación de checksum FNV-1a, y detección de replay attacks.
+
+**Costo de memoria:** ~200 bytes por sesión (ring buffers de 50 muestras, solo 3 últimas posiciones del mouse).
+
+### 🪑 Grafo de Adyacencia — Detección de Asientos Huérfanos
+
+El mapa de asientos trata cada sección como un **grafo con matriz de adyacencia** para detectar asientos vacíos aislados en tiempo real.
+
+```
+Cada zona = grafo de R×C nodos
+Aristas = 4-connectivity (arriba, abajo, izquierda, derecha)
+
+Asiento huérfano = nodo "available" cuyos TODOS los vecinos
+                   están en estado "selected" u "occupied"
+```
+
+| Operación | Complejidad |
+|---|---|
+| `addZone()` | O(R × C) |
+| `selectSeat()` / `deselectSeat()` | O(1) |
+| `findOrphans()` | O(V + E) |
+| `generateSuggestions()` | O(orphans × 4) |
+
+**Visual:** Los asientos huérfanos pulsan en ámbar (`animate-pulse`) y el sidebar muestra sugerencias clicables: "Selecciona Fila C, Asiento 1 para evitar dejar un espacio vacío" o "Libera Fila B, Asiento 1 para abrir un espacio contiguo". Costo en servidor: **0** — todo corre en el frontend.
+
+### 📊 Motor de Eficiencia de Venta (Analytics)
+
+El panel admin incluye KPIs en tiempo real para monitorear el rendimiento del embudo de compra:
+
+- **Tasa de Conversión de Ciclo** — `Usuarios que compraron / Usuarios que entraron al mapa`
+- **Tiempo Medio de Ciclo (Cycle Time)** — Promedio desde salida de fila hasta pago completado
+- **Cuello de Botella** — Identifica en qué paso (OTP, Mapa o Checkout) los usuarios pasan más tiempo, resaltado en rojo
+
+### 🔌 Singleton de Base de Datos
+
+La conexión a InsForge usa el **patrón Singleton vía `globalThis`**, garantizando una única instancia por proceso:
+
+```typescript
+// globalThis.__stagefront_insforge_singleton__
+//   └── anonClient  → instancia única (anon key)
+//   └── adminClient → instancia única (admin key, lazy init)
+```
+
+- **HMR (dev):** Reutiliza la instancia existente en cada hot-reload
+- **Serverless:** Una conexión por proceso (previene "Too many connections")
+- **Admin:** Inicialización lazy — no se crea si nadie la solicita
+- **Diagnóstico:** `🔌 [Singleton] Instancia ANON creada (única por proceso)`
+
+---
+
 ## 🛠️ Stack Tecnológico
 
 | Tecnología | Versión | Uso |
@@ -65,9 +186,9 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   │   │   ├── queue/
 │   │   │   │   └── page.tsx         → Fila Virtual con OTP + simulador de cola activa
 │   │   │   └── seats/
-│   │   │       └── page.tsx         → Selección de asientos (split-panel con mapa de estadio)
+│   │   │       └── page.tsx         → Selección de asientos (split-panel + grafo de adyacencia)
 │   │   ├── payment/[ticket_id]/
-│   │   │   └── page.tsx             → Formulario de pago simulado
+│   │   │   └── page.tsx             → Formulario de pago (Strategy Pattern)
 │   │   └── success/page.tsx         → Confirmación de compra exitosa
 │   ├── support/
 │   │   ├── components/
@@ -81,7 +202,11 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   ├── api/
 │   │   ├── insforge/route.ts        → Health-check del backend
 │   │   ├── session/route.ts         → Endpoint GET para exponer datos de sesión a Client Components
-│   │   └── events/[id]/route.ts     → Endpoint GET para datos dinámicos del evento (título, venue, fecha)
+│   │   ├── events/[id]/route.ts     → Endpoint GET para datos dinámicos del evento
+│   │   ├── queue/route.ts           → Gestión de fila virtual (join, status, cycle, stats)
+│   │   ├── integrity/route.ts       → Validación anti-bot del servidor (re-clasificación + rate limit)
+│   │   └── admin/
+│   │       └── efficiency/route.ts  → KPIs de eficiencia de venta en tiempo real
 │   ├── privacy/
 │   │   └── page.tsx                 → Política de privacidad (Server Component estático)
 │   ├── terms/
@@ -97,9 +222,28 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   ├── Navbar.tsx                   → Barra de navegación con control de sesión
 │   ├── HeroSection.tsx              → Sección hero con búsqueda
 │   ├── ArtistGrid.tsx               → Grid Bento dinámico (recibe Artist[])
+│   ├── AdminDashboard.tsx           → Panel admin con métricas + SalesEfficiencyPanel
+│   ├── SalesEfficiencyPanel.tsx     → KPIs de eficiencia (Conversión, Cycle Time, Bottleneck)
 │   └── Footer.tsx                   → Pie de página
+├── hooks/
+│   ├── useIntegrityFilter.ts        → Hook de filtro anti-bot (collector + clasificación)
+│   └── useSeatGraph.ts              → Hook del grafo de adyacencia de asientos
 ├── lib/
-│   ├── insforge.ts                  → Cliente público + cliente admin
+│   ├── insforge.ts                  → Singleton DB (cliente anon + admin via globalThis)
+│   ├── queue-engine.ts              → Motor de fila virtual (Min-Heap + ciclos de desfogue)
+│   ├── integrity/
+│   │   ├── BehaviorCollector.ts     → Recolector de señales biométricas (click, mouse, keyboard)
+│   │   └── BotClassifier.ts         → Clasificador de 9 reglas heurísticas ponderadas
+│   ├── graph/
+│   │   └── SeatGraph.ts             → Grafo de adyacencia con detección de asientos huérfanos
+│   ├── payment/
+│   │   ├── index.ts                 → Re-exports del módulo de pagos
+│   │   ├── PaymentStrategy.ts       → Clase abstracta (contrato de pasarela)
+│   │   ├── MockPaymentStrategy.ts   → Implementación simulada (desarrollo)
+│   │   ├── StripeStrategy.ts        → Stub para Stripe (producción)
+│   │   └── PaymentContext.ts        → Factory que selecciona la estrategia activa
+│   ├── analytics/
+│   │   └── sales-efficiency.ts      → Motor de tracking del user journey (OTP → Mapa → Checkout)
 │   ├── actions/
 │   │   ├── admin.ts                 → Server Actions (getDashboardStats)
 │   │   ├── artists.ts               → Server Actions (getArtists, getArtistBySlug)
@@ -107,6 +251,7 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 │   │   ├── events.ts                → Server Actions (getEventsByArtistSlug)
 │   │   ├── tickets.ts               → Server Actions (getEventById, getTicketsByEventId, lockTicket)
 │   │   ├── checkout.ts              → Server Actions (processPayment y redirección)
+│   │   ├── payment.ts               → Server Action (processCheckout — Strategy wrapper)
 │   │   └── orders.ts                → Server Actions (getUserTickets, getOrderConfirmation, getRelatedOrders)
 │   └── types/
 │       └── database.ts              → Tipos TypeScript del esquema SQL
@@ -139,20 +284,29 @@ artists ──────< events ──────< tickets_inventory ──�
 
 ## 🔌 Conexión con InsForge
 
-El proyecto usa dos clientes definidos en `lib/insforge.ts`:
+El proyecto usa dos clientes definidos en `lib/insforge.ts` (Singleton):
 
-| Cliente | Variable de entorno | Uso |
-|---|---|---|
-| `insforge` | `NEXT_PUBLIC_INSFORGE_ANON_KEY` | Server/Client Components (operaciones públicas con RLS) |
-| `insforgeAdmin` | `INSFORGE_ADMIN_API_KEY` | Solo Route Handlers y Server Actions (operaciones admin) |
+| Cliente | Variable de entorno | Uso | Inicialización |
+|---|---|---|---|
+| `insforge` | `NEXT_PUBLIC_INSFORGE_ANON_KEY` | Server/Client Components (operaciones públicas con RLS) | Eager |
+| `insforgeAdmin` | `INSFORGE_ADMIN_API_KEY` | Solo Route Handlers y Server Actions (operaciones admin) | Lazy |
+
+Ambos clientes están almacenados en `globalThis.__stagefront_insforge_singleton__` para garantizar una única instancia por proceso Node.js.
 
 ### Variables de entorno
 
 ```bash
 # .env.local
+
+# ─── InsForge (obligatorias) ───
 NEXT_PUBLIC_INSFORGE_URL=https://tu-proyecto.region.insforge.app
 NEXT_PUBLIC_INSFORGE_ANON_KEY=eyJhbGciOi...   # JWT público (get-anon-key)
 INSFORGE_ADMIN_API_KEY=ik_tu-api-key           # Solo servidor
+
+# ─── Pasarela de pago (Strategy Pattern) ───
+PAYMENT_PROVIDER=mock                          # "mock" | "stripe"
+STRIPE_SECRET_KEY=sk_test_...                  # Solo si PAYMENT_PROVIDER=stripe
+STRIPE_PUBLISHABLE_KEY=pk_test_...             # Solo si PAYMENT_PROVIDER=stripe
 ```
 
 ## 🚀 Inicio Rápido
@@ -198,6 +352,24 @@ pnpm start
 - **Tipografía**: Space Grotesk (headlines) + Inter (body)
 - **Colores base**: `bg-zinc-950` con acentos de neón contextuales por artista
 - **Elevación**: Glassmorphism con blur y bordes semi-transparentes
+
+## 🏗️ Patrones de Diseño Implementados
+
+| Patrón | Ubicación | Propósito |
+|---|---|---|
+| **Singleton** | `lib/insforge.ts` | Una conexión DB por proceso (previene "Too many connections") |
+| **Strategy** | `lib/payment/` | Desacoplamiento de pasarelas de pago (Mock/Stripe/futuras) |
+| **Min-Heap** | `lib/queue-engine.ts` | Cola de prioridad O(log n) para la fila virtual |
+| **Adjacency Graph** | `lib/graph/SeatGraph.ts` | Detección de asientos huérfanos en O(V+E) |
+| **Observer (hooks)** | `hooks/useIntegrityFilter.ts` | Recolección reactiva de señales biométricas |
+| **Factory** | `lib/payment/PaymentContext.ts` | Selección de estrategia según env var |
+
+## 📈 Próximos Pasos
+
+1. **Integración Stripe** — Instalar SDK (`stripe`, `@stripe/stripe-js`) y activar `StripeStrategy`
+2. **Persistencia Redis** — Migrar el motor de fila y analytics a Redis para sobrevivir reinicios
+3. **QA de Carga** — Pruebas de estrés en el Min-Heap y Strategy under high concurrency
+4. **Dashboard Realtime** — WebSocket para actualizar KPIs de eficiencia sin polling
 
 ## 📄 Licencia
 

@@ -35,11 +35,22 @@ export default function VirtualQueuePage() {
   // Queue state
   const [isQueued, setIsQueued] = useState(false);
 
-  // Active queue simulation state
+  // Active queue state — powered by queue-engine
   const [isInActiveQueue, setIsInActiveQueue] = useState(false);
   const [queuePosition, setQueuePosition] = useState(0);
   const [initialQueuePosition, setInitialQueuePosition] = useState(0);
   const [queueId, setQueueId] = useState('');
+
+  // Batch cycle state
+  const [batchNumber, setBatchNumber] = useState(0);
+  const [currentK, setCurrentK] = useState(150);
+  const [cycleCountdown, setCycleCountdown] = useState(60);
+  const [healthStatus, setHealthStatus] = useState<'optimal' | 'degraded' | 'critical'>('optimal');
+  const [statusMessage, setStatusMessage] = useState('');
+  const [totalInQueue, setTotalInQueue] = useState(0);
+  const [estimatedWaitSeconds, setEstimatedWaitSeconds] = useState(0);
+  const [lastBatchSize, setLastBatchSize] = useState(0);
+  const [isAdmitted, setIsAdmitted] = useState(false);
 
   // Event data (fetched dynamically)
   const [eventData, setEventData] = useState<{
@@ -149,14 +160,41 @@ export default function VirtualQueuePage() {
         }
       }
 
-      // Success → close modal & initialize active queue
+      // Success → close modal & join queue via engine
       setShowAuthModal(false);
       setIsQueued(true);
-
-      const pos = isFastBypass ? Math.floor(Math.random() * 50) + 1 : Math.floor(Math.random() * 1000) + 1;
-      setQueuePosition(pos);
-      setInitialQueuePosition(pos);
       setQueueId(generateQueueId());
+
+      try {
+        const res = await fetch('/api/queue', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'join', eventId: params.id }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setQueuePosition(data.position);
+          setInitialQueuePosition(data.position);
+          setBatchNumber(data.batchNumber);
+          setCurrentK(data.cycleState?.currentK ?? 150);
+          setCycleCountdown(data.cycleState?.secondsUntilNextCycle ?? 60);
+          setHealthStatus(data.cycleState?.healthStatus ?? 'optimal');
+          setStatusMessage(data.statusMessage);
+          setTotalInQueue(data.totalInQueue);
+          setEstimatedWaitSeconds(data.estimatedWaitSeconds);
+          setLastBatchSize(data.cycleState?.lastBatchSize ?? 0);
+        } else {
+          // Fallback: simulated position
+          const pos = isFastBypass ? Math.floor(Math.random() * 50) + 1 : Math.floor(Math.random() * 1000) + 1;
+          setQueuePosition(pos);
+          setInitialQueuePosition(pos);
+        }
+      } catch {
+        const pos = Math.floor(Math.random() * 500) + 1;
+        setQueuePosition(pos);
+        setInitialQueuePosition(pos);
+      }
+
       setIsInActiveQueue(true);
     } catch {
       setAuthError('Error de red. Intenta de nuevo.');
@@ -176,35 +214,81 @@ export default function VirtualQueuePage() {
     setIsSending(false);
   }, [isSending, userEmail]);
 
-  // ------ Queue countdown effect ------
+  // ------ Batch Cycle polling & countdown ------
   useEffect(() => {
-    if (!isInActiveQueue || queuePosition <= 0) return;
+    if (!isInActiveQueue || isAdmitted) return;
 
-    const interval = setInterval(() => {
-      setQueuePosition((prev) => {
-        const decrement = Math.floor(Math.random() * 15) + 1;
-        const next = Math.max(prev - decrement, 0);
-        return next;
+    // Poll queue status every 5 seconds
+    const pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/queue', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'status', eventId: params.id }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.admitted) {
+            setIsAdmitted(true);
+            setQueuePosition(0);
+            setStatusMessage(data.statusMessage);
+            return;
+          }
+          setQueuePosition(data.position);
+          setBatchNumber(data.batchNumber);
+          setCurrentK(data.cycleState?.currentK ?? currentK);
+          setCycleCountdown(data.cycleState?.secondsUntilNextCycle ?? 60);
+          setHealthStatus(data.cycleState?.healthStatus ?? 'optimal');
+          setStatusMessage(data.statusMessage);
+          setTotalInQueue(data.totalInQueue);
+          setEstimatedWaitSeconds(data.estimatedWaitSeconds);
+          setLastBatchSize(data.cycleState?.lastBatchSize ?? 0);
+        }
+      } catch { /* silently retry on next interval */ }
+    }, 5000);
+
+    return () => clearInterval(pollInterval);
+  }, [isInActiveQueue, isAdmitted, params.id]);
+
+  // Local countdown timer (ticks every second)
+  useEffect(() => {
+    if (!isInActiveQueue || isAdmitted) return;
+
+    const ticker = setInterval(() => {
+      setCycleCountdown((prev) => {
+        if (prev <= 1) {
+          // Trigger a cycle execution (in a real app, a cron/serverless function would do this)
+          fetch('/api/queue', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'cycle', eventId: params.id }),
+          }).catch(() => {});
+          return 60;
+        }
+        return prev - 1;
       });
-    }, 2500);
+    }, 1000);
 
-    return () => clearInterval(interval);
-  }, [isInActiveQueue]);
+    return () => clearInterval(ticker);
+  }, [isInActiveQueue, isAdmitted, params.id]);
 
-  // ------ Redirect when position reaches 0 ------
+  // ------ Redirect when admitted ------
   useEffect(() => {
-    if (isInActiveQueue && queuePosition === 0) {
+    if (isAdmitted || (isInActiveQueue && queuePosition === 0)) {
       const timeout = setTimeout(() => {
         router.push(`/event/${params.id}/seats`);
-      }, 1200);
+      }, 1500);
       return () => clearTimeout(timeout);
     }
-  }, [isInActiveQueue, queuePosition, params.id, router]);
+  }, [isAdmitted, isInActiveQueue, queuePosition, params.id, router]);
 
   // Progress percentage
   const progressPercent = initialQueuePosition > 0
     ? Math.min(((initialQueuePosition - queuePosition) / initialQueuePosition) * 100, 100)
     : 0;
+
+  // Cycle countdown progress (for the ring)
+  const cycleProgressPercent = (cycleCountdown / 60) * 100;
 
   return (
     <>
@@ -444,24 +528,48 @@ export default function VirtualQueuePage() {
           </>
         ) : (
           <>
-            {/* ============ Active Queue Card (Glassmorphism) ============ */}
+            {/* ============ Active Queue Card (Glassmorphism + Batch Cycles) ============ */}
             <section className="w-full max-w-2xl mx-auto px-gutter z-10 relative">
               <div className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden group">
                 {/* Inner subtle glow for depth */}
-                <div className="absolute -top-32 -left-32 w-64 h-64 bg-surface-tint/10 rounded-full blur-[60px] pointer-events-none group-hover:bg-surface-tint/20 transition-all duration-700" />
+                <div className={`absolute -top-32 -left-32 w-64 h-64 rounded-full blur-[60px] pointer-events-none transition-all duration-700 ${
+                  healthStatus === 'critical' ? 'bg-red-500/10' :
+                  healthStatus === 'degraded' ? 'bg-amber-500/10' :
+                  'bg-surface-tint/10 group-hover:bg-surface-tint/20'
+                }`} />
 
-                {/* Help Icon */}
-                <button className="absolute top-6 right-6 text-on-surface-variant hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined">help</span>
-                </button>
+                {/* Health Status Badge */}
+                <div className="absolute top-6 right-6 flex items-center gap-2">
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border backdrop-blur-md ${
+                    healthStatus === 'critical' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+                    healthStatus === 'degraded' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
+                    'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${
+                      healthStatus === 'critical' ? 'bg-red-400 animate-pulse' :
+                      healthStatus === 'degraded' ? 'bg-amber-400 animate-pulse' :
+                      'bg-emerald-400'
+                    }`} />
+                    {healthStatus === 'critical' ? 'Alta demanda' :
+                     healthStatus === 'degraded' ? 'Optimizando' :
+                     'Sistema óptimo'}
+                  </div>
+                </div>
 
                 {/* Title */}
-                <h1 className="font-headline-lg text-headline-lg text-primary text-center tracking-tight mb-8">
+                <h1 className="font-headline-lg text-headline-lg text-primary text-center tracking-tight mb-2">
                   {queuePosition === 0 ? '¡ES TU TURNO!' : 'YA ESTÁS EN LA FILA VIRTUAL'}
                 </h1>
 
+                {/* Batch group indicator */}
+                {queuePosition > 0 && (
+                  <p className="text-center font-label-caps text-label-caps text-on-surface-variant/70 tracking-widest mb-6">
+                    GRUPO #{batchNumber} • LOTE DE {currentK} USUARIOS
+                  </p>
+                )}
+
                 {/* Giant Counter */}
-                <div className="flex flex-col items-center justify-center py-6">
+                <div className="flex flex-col items-center justify-center py-4">
                   <div className="font-display-xl text-[96px] md:text-[144px] leading-none text-primary drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] tracking-tighter transition-all duration-500">
                     {queuePosition}
                   </div>
@@ -470,8 +578,83 @@ export default function VirtualQueuePage() {
                   </div>
                 </div>
 
+                {/* ─── Cycle Countdown Section ─── */}
+                {queuePosition > 0 && (
+                  <div className="mt-8 mb-6">
+                    {/* Status message — the key user feedback */}
+                    <div className={`text-center py-3 px-6 rounded-xl border backdrop-blur-md mb-6 ${
+                      healthStatus === 'critical' ? 'bg-red-500/5 border-red-500/10 text-red-300' :
+                      healthStatus === 'degraded' ? 'bg-amber-500/5 border-amber-500/10 text-amber-300' :
+                      'bg-white/[0.03] border-white/5 text-on-surface-variant'
+                    }`}>
+                      <div className="flex items-center justify-center gap-2">
+                        <span className={`material-symbols-outlined text-[18px] ${
+                          healthStatus === 'critical' ? 'text-red-400' :
+                          healthStatus === 'degraded' ? 'text-amber-400' :
+                          'text-primary'
+                        }`}>
+                          {healthStatus === 'critical' ? 'warning' :
+                           healthStatus === 'degraded' ? 'speed' :
+                           'rocket_launch'}
+                        </span>
+                        <p className="font-body-md text-sm">{statusMessage}</p>
+                      </div>
+                    </div>
+
+                    {/* Cycle countdown with visual ring */}
+                    <div className="flex items-center justify-center gap-8">
+                      {/* Circular countdown */}
+                      <div className="relative w-20 h-20">
+                        <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="3" className="text-white/5" />
+                          <circle
+                            cx="50" cy="50" r="42" fill="none" strokeWidth="3" strokeLinecap="round"
+                            className={`transition-all duration-1000 ${
+                              cycleCountdown > 30 ? 'stroke-emerald-400' :
+                              cycleCountdown > 10 ? 'stroke-amber-400' :
+                              'stroke-red-400'
+                            }`}
+                            strokeDasharray={`${2 * Math.PI * 42}`}
+                            strokeDashoffset={`${2 * Math.PI * 42 * (1 - cycleProgressPercent / 100)}`}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className={`font-mono text-xl font-bold tabular-nums ${
+                            cycleCountdown > 30 ? 'text-emerald-400' :
+                            cycleCountdown > 10 ? 'text-amber-400' :
+                            'text-red-400'
+                          }`}>{cycleCountdown}</span>
+                          <span className="text-[8px] text-on-surface-variant uppercase tracking-wider">seg</span>
+                        </div>
+                      </div>
+
+                      {/* Cycle stats */}
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                        <div>
+                          <div className="font-label-caps text-[9px] text-on-surface-variant uppercase tracking-widest">En fila</div>
+                          <div className="font-headline-md text-lg text-primary">{totalInQueue}</div>
+                        </div>
+                        <div>
+                          <div className="font-label-caps text-[9px] text-on-surface-variant uppercase tracking-widest">Cap. (K)</div>
+                          <div className="font-headline-md text-lg text-primary">{currentK}</div>
+                        </div>
+                        <div>
+                          <div className="font-label-caps text-[9px] text-on-surface-variant uppercase tracking-widest">Último lote</div>
+                          <div className="font-headline-md text-lg text-primary">{lastBatchSize}</div>
+                        </div>
+                        <div>
+                          <div className="font-label-caps text-[9px] text-on-surface-variant uppercase tracking-widest">Est. espera</div>
+                          <div className="font-headline-md text-lg text-primary">
+                            {estimatedWaitSeconds > 60 ? `${Math.ceil(estimatedWaitSeconds / 60)}m` : `${estimatedWaitSeconds}s`}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Custom Progress Bar */}
-                <div className="w-full mt-12 mb-10 relative">
+                <div className="w-full mt-6 mb-8 relative">
                   {/* Track */}
                   <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden">
                     {/* Fill */}
@@ -490,7 +673,7 @@ export default function VirtualQueuePage() {
                 </div>
 
                 {/* Queue ID */}
-                <div className="border-t border-white/5 pt-6 mt-8">
+                <div className="border-t border-white/5 pt-6">
                   <p className="font-body-md text-body-md text-on-surface-variant/60 text-center text-[13px] tracking-wide font-mono">
                     ID DE FILA VIRTUAL: {queueId}
                   </p>
@@ -500,7 +683,7 @@ export default function VirtualQueuePage() {
 
             {/* Informational text below card */}
             <p className="mt-8 text-center text-on-surface-variant/70 max-w-md mx-auto font-body-md text-body-md text-[14px] z-10 relative">
-              Por favor, no actualices esta página. Tu lugar en la fila se actualiza automáticamente.
+              Tu posición se actualiza automáticamente con cada ciclo de desfogue. No actualices esta página.
             </p>
           </>
         )}

@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { createMockOrder } from '@/lib/actions/checkout';
+import { processCheckout } from '@/lib/actions/payment';
+import type { PaymentFormData } from '@/lib/payment/PaymentStrategy';
 
 interface SelectedSeat {
   id: string;
@@ -47,6 +48,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
   const [cvc, setCvc] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedState, setSelectedState] = useState('');
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, '');
@@ -115,22 +117,45 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
   const extrasTotal = parkingCount * PARKING_FEE;
   const grandTotal = basePrice + serviceFee + extrasTotal;
 
-  // Mock Payment Function
+  // Payment via Strategy Pattern
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
+    setPaymentError(null);
 
     try {
-      const orderId = await createMockOrder(seats, eventData?.id || '');
-      
-      // Cleanup session storage
-      sessionStorage.removeItem('stagefront_seats');
+      // Build standardized PaymentFormData
+      const formPayload: PaymentFormData = {
+        cardNumber,
+        expiry,
+        cvc,
+        country: 'México',
+        state: selectedState,
+      };
 
-      // Redirect to success
-      router.push(`/success?order_id=${orderId}`);
+      // Delegate to the active strategy via PaymentContext
+      // The component does NOT know which gateway is being used.
+      const result = await processCheckout(
+        seats,
+        eventData?.id || '',
+        formPayload
+      );
+
+      if (result.success && result.orderId) {
+        // Cleanup session storage
+        sessionStorage.removeItem('stagefront_seats');
+        // Redirect to success
+        router.push(`/success?order_id=${result.orderId}`);
+      } else {
+        // Show error from the strategy
+        setPaymentError(
+          result.errorMessage || 'Hubo un error procesando el pago.'
+        );
+        setIsProcessing(false);
+      }
     } catch (error) {
       console.error(error);
-      alert('Hubo un error procesando el pago.');
+      setPaymentError('Error inesperado. Por favor intenta de nuevo.');
       setIsProcessing(false);
     }
   };
@@ -287,6 +312,22 @@ export default function CheckoutPage({ params }: { params: Promise<{ ticket_id: 
                 </div>
               </div>
             </form>
+              {/* Payment Error Display */}
+              {paymentError && (
+                <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
+                  <span className="material-symbols-outlined text-red-400 text-[20px] mt-0.5">error</span>
+                  <div>
+                    <p className="text-red-400 font-medium text-sm">{paymentError}</p>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentError(null)}
+                      className="text-red-400/60 text-xs mt-1 hover:text-red-400 transition-colors underline"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              )}
           </section>
         </div>
 

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import { createNewEvent } from "@/lib/actions/admin";
+import SalesEfficiencyPanel from "@/components/SalesEfficiencyPanel";
 
 export default function AdminDashboard({ stats }: { stats: any }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -233,6 +234,11 @@ export default function AdminDashboard({ stats }: { stats: any }) {
                 <p className="font-headline-lg text-headline-lg text-white tracking-tight">{formatNumber(stats.usersCount)}</p>
               </div>
             </div>
+          </div>
+
+          {/* Sales Efficiency Section */}
+          <div className="mb-12">
+            <SalesEfficiencyPanel />
           </div>
 
           {/* Recent Events Table Section */}
