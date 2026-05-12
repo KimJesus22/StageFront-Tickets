@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { updateProfile, updatePassword } from "@/lib/actions/user";
+import { PasswordPolicy } from "@/lib/utils/PasswordPolicy";
 
 type Tab = "tickets" | "settings";
 
@@ -19,6 +20,18 @@ export default function ProfileTabs({
   const [isPendingPassword, startTransitionPassword] = useTransition();
 
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  // ── Validación en tiempo real con PasswordPolicy ──────────────────────
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length === 0) {
+      setPasswordError(null);
+      return;
+    }
+    const result = PasswordPolicy.validate(value);
+    setPasswordError(result.isValid ? null : (result.error ?? null));
+  };
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
@@ -349,7 +362,7 @@ export default function ProfileTabs({
                 </div>
               </form>
 
-              <form onSubmit={handleUpdatePassword} className="max-w-2xl space-y-6 pt-4">
+              <form onSubmit={handleUpdatePassword} onReset={() => setPasswordError(null)} className="max-w-2xl space-y-6 pt-4">
                 <div className="space-y-2">
                   <label className="font-label-caps text-label-caps text-on-surface">New Password</label>
                   <div className="relative">
@@ -357,7 +370,12 @@ export default function ProfileTabs({
                       name="password"
                       required
                       minLength={6}
-                      className="w-full bg-white/5 border border-outline-variant/30 rounded-lg px-4 py-3 text-primary font-body-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all tracking-widest" 
+                      onChange={handlePasswordChange}
+                      className={`w-full bg-white/5 border rounded-lg px-4 py-3 text-primary font-body-md focus:outline-none focus:ring-1 transition-all tracking-widest ${
+                        passwordError
+                          ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                          : "border-outline-variant/30 focus:ring-primary focus:border-primary"
+                      }`}
                       type="password" 
                       placeholder="••••••••••••"
                     />
@@ -365,11 +383,17 @@ export default function ProfileTabs({
                       <span className="material-symbols-outlined text-[20px]">lock</span>
                     </span>
                   </div>
+                  {passwordError && (
+                    <p className="text-red-500 text-xs font-body-md mt-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-sm">error</span>
+                      {passwordError}
+                    </p>
+                  )}
                 </div>
                 <div className="pt-4 flex gap-4">
                   <button 
-                    disabled={isPendingPassword}
-                    className="px-6 py-3 rounded-lg bg-primary text-on-primary font-label-caps text-label-caps hover:bg-white/90 transition-colors disabled:opacity-50" 
+                    disabled={isPendingPassword || !!passwordError}
+                    className="px-6 py-3 rounded-lg bg-primary text-on-primary font-label-caps text-label-caps hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
                     type="submit"
                   >
                     {isPendingPassword ? "Actualizando..." : "Actualizar Contraseña"}

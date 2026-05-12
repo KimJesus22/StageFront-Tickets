@@ -3,6 +3,7 @@
 import { insforge } from "@/lib/insforge";
 import { getSession } from "./auth";
 import { cookies } from "next/headers";
+import { PasswordPolicy } from "@/lib/utils/PasswordPolicy";
 
 export async function updateProfile(formData: FormData) {
   const session = await getSession();
@@ -49,8 +50,18 @@ export async function updatePassword(formData: FormData) {
 
   const password = formData.get("password") as string;
 
-  if (!password || password.length < 6) {
-    return { error: "La contraseña debe tener al menos 6 caracteres." };
+  // ── Server-side validation (Defense in Depth) ────────────────────────
+  // Reemplaza la verificación básica de longitud por PasswordPolicy.
+  // Bloquea contraseñas débiles y de lista negra incluso si un atacante
+  // envía la solicitud directamente al Server Action (bypass de la UI).
+  // ─────────────────────────────────────────────────────────────────────
+  if (!password) {
+    return { error: "La contraseña es obligatoria." };
+  }
+
+  const policyResult = PasswordPolicy.validate(password);
+  if (!policyResult.isValid) {
+    return { error: policyResult.error };
   }
 
   try {

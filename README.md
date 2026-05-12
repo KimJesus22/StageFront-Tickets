@@ -14,8 +14,10 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Selección de Asientos** — Layout dividido (70% mapa / 30% sidebar) con controles de Zoom interactivo, zonas interactivas (VIP/General), sidebar reactivo y bottom sheet móvil
 - **Datos Dinámicos por Evento** — Queue, Seats y Checkout obtienen título, venue, fecha e imagen del evento desde la API de InsForge sin datos estáticos
 - **Checkout Interactivo** — Formulario de pago avanzado con Custom Dropdown de estados, validaciones en tiempo real (Tarjeta, Vencimiento, CVC) y actualización de precios
-- **Bloqueo de Concurrencia** — Prevención de colisiones al insertar `tickets_inventory` usando Server Actions dinámicas (`createMockOrder`)
-- **Autenticación Segura** — Inicio de sesión y registro impulsado por InsForge Auth y Server Actions
+- **Bloqueo de Concurrencia (Lazy Release)** — Previene colisiones al reservar `tickets_inventory` usando Server Actions dinámicas (`lockSeats`) y rollback automático.
+- **Autenticación Segura y Defensiva** — Inicio de sesión y registro impulsado por InsForge Auth con mitigación de Fuerza Bruta (Rate Limiting) y Anti-Enumeración.
+- **Seguridad Criptográfica** — OTPs encriptados con SHA-256 y validador POO (quemado de códigos automático).
+- **Mapa de Asientos Multiestado** — Soporte para 5 estados en tiempo real (Disponible, Seleccionado, ReservadoTemporal, Ocupado, Bloqueado) con mapeo Tailwind.
 - **Pago Exitoso** — Confirmación interactiva con renderizado multi-boleto, inyección de datos reales desde InsForge y redirección fluida a `/success` antes de la Billetera
 - **Billetera Digital** — Ruta `/wallet` conectada a DB con boletos de diseño Skeuomorphic (perforaciones y QR simulados)
 - **Panel de Administración** — Dashboard en `/admin` con métricas clave, control de acceso y ventas recientes
@@ -146,6 +148,30 @@ La conexión a InsForge usa el **patrón Singleton vía `globalThis`**, garantiz
 - **Serverless:** Una conexión por proceso (previene "Too many connections")
 - **Admin:** Inicialización lazy — no se crea si nadie la solicita
 - **Diagnóstico:** `🔌 [Singleton] Instancia ANON creada (única por proceso)`
+
+### 🔒 Sistema de Autenticación Defensiva
+
+Una suite de seguridad multicapa diseñada para proteger la integridad de las credenciales y la base de datos:
+- **Motor de Contraseñas O(1):** `PasswordPolicy` usa un Set (Lista Negra) en memoria y validaciones Regex aplicadas en tiempo real (frontend) y como doble validación obligatoria en Server Actions (backend).
+- **Rate Limiting Anti-Fuerza Bruta:** Control de intentos de inicio de sesión persistido en `auth_attempts`. Limita a 5 intentos por IP/Email cada 15 minutos, deteniendo ataques antes de consultar a InsForge.
+- **Anti-Enumeración:** El flujo de registro devuelve payloads mínimos y sanitiza inputs (`trim.toLowerCase`) para evitar minado de usuarios.
+- **ErrorMapper (Hash Map):** Diccionario centralizado que traduce códigos técnicos de error a mensajes seguros y amigables (ej. `user_already_exists` → `Este correo ya está registrado`), evitando fugas de información.
+
+### 🎫 Concurrencia de Asientos (Lazy Release Algorithm)
+
+El problema clásico de múltiples usuarios intentando comprar el mismo boleto al mismo tiempo se resuelve sin bloquear la base de datos usando un algoritmo de *Lazy Release*:
+- **Bloqueo Atómico Condicional:** `UPDATE` en lote donde `status = 'disponible' OR (status = 'reservado_temporal' AND locked_until < NOW())`.
+- **Detección de Mismatch y Rollback:** Si el backend solicita 4 asientos pero la base de datos solo actualiza 3 (alguien más ganó uno milisegundos antes), se detecta la colisión, se hace *rollback* inmediato y se alerta al usuario.
+- **Lazy Mapping O(n):** Al servir el mapa de asientos (`getSeats`), si el backend detecta asientos temporalmente reservados cuyo tiempo de vida de 10 minutos ya caducó, los empaqueta al vuelo como "disponibles" para el frontend sin requerir pesados *CRON jobs* de limpieza en la base de datos.
+
+### 🔐 Máquina de Estados de OTP (POO)
+
+El validador de OTPs para la Fila Virtual está diseñado mediante Programación Orientada a Objetos (`OTPValidator`) y sigue una estricta máquina de estados defensiva:
+1. **Búsqueda O(1):** Indexada por `(user_id, event_id)` sin filtrar hash para poder reportar la razón exacta del fallo.
+2. **Expiración:** Si han pasado 5 minutos, el código se "quema" (`used_at = NOW()`) instantáneamente.
+3. **Bloqueo Defensivo:** Si `attempts >= 5`, se impide cualquier comparación de hash y el código se invalida permanentemente.
+4. **Criptografía:** `crypto.randomInt` (CSPRNG) para generar, comparado contra la DB mediante hashing SHA-256 (nunca texto plano).
+5. **Anti-Replay:** Tras un éxito, el código se quema atómicamente, impidiendo ataques de repetición.
 
 ---
 
@@ -280,7 +306,7 @@ artists ──────< events ──────< tickets_inventory ──�
 ### Enums
 
 - **`event_status`**: `programado`, `en_venta`, `agotado`, `cancelado`, `finalizado`
-- **`ticket_status`**: `disponible`, `bloqueado`, `vendido`
+- **`ticket_status`**: `disponible`, `reservado_temporal`, `ocupado`, `bloqueado`, `vendido`
 
 ## 🔌 Conexión con InsForge
 

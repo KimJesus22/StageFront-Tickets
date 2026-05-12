@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSession } from "@/lib/actions/auth";
-import { logout } from "@/lib/actions/auth";
+import UserDropdown from "@/components/UserDropdown";
 
 export default async function Navbar() {
   const session = await getSession();
@@ -70,11 +70,8 @@ export default async function Navbar() {
                 <span className="material-symbols-outlined text-sm">account_balance_wallet</span>
                 Billetera
               </Link>
-              <form action={logout}>
-                <button type="submit" className="text-zinc-400 hover:text-red-400 font-body-md text-sm transition-colors p-2 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-xl">logout</span>
-                </button>
-              </form>
+              {/* UserDropdown — Client Component con logout funcional */}
+              <UserDropdown session={session} />
             </div>
           ) : (
             <>

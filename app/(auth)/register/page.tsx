@@ -1,24 +1,88 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signup } from "@/lib/actions/auth";
+import { signup, checkEmailExists } from "@/lib/actions/auth";
+import { PasswordPolicy } from "@/lib/utils/PasswordPolicy";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  // ── Email: estado + debounce + validación asíncrona ───────────────────
+  const [emailValue, setEmailValue] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const debouncedEmail = useDebounce(emailValue, 500);
+
+  // Efecto: cuando el email debounced cambia, verificar si existe
+  useEffect(() => {
+    // No verificar si está vacío o no es un email válido
+    if (!debouncedEmail || !debouncedEmail.includes("@") || !debouncedEmail.includes(".")) {
+      setEmailError(null);
+      setIsCheckingEmail(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function verify() {
+      setIsCheckingEmail(true);
+      try {
+        const { exists } = await checkEmailExists(debouncedEmail);
+        if (!cancelled) {
+          setEmailError(exists ? "Este correo ya está registrado." : null);
+        }
+      } catch {
+        // Silencioso — no bloquear el registro por un fallo en la verificación
+        if (!cancelled) setEmailError(null);
+      } finally {
+        if (!cancelled) setIsCheckingEmail(false);
+      }
+    }
+
+    verify();
+
+    // Cleanup: si el efecto se re-ejecuta antes de que la promesa termine,
+    // marcamos cancelled para evitar actualizaciones de estado en un
+    // componente que ya se movió al siguiente render.
+    return () => { cancelled = true; };
+  }, [debouncedEmail]);
+
+  // ── Validación en tiempo real con PasswordPolicy ──────────────────────
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length === 0) {
+      setPasswordError(null);
+      return;
+    }
+    const result = PasswordPolicy.validate(value);
+    setPasswordError(result.isValid ? null : (result.error ?? null));
+  };
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-    setIsLoading(true);
 
+    // ── Defensa de campos vacíos (Coste 0 — no llega al servidor) ───────
     const formData = new FormData(e.currentTarget);
+    const name = (formData.get("name") as string)?.trim();
+    const email = (formData.get("email") as string)?.trim();
+    const password = (formData.get("password") as string)?.trim();
+
+    if (!name || !email || !password) {
+      setError("Completa todos los campos.");
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       const result = await signup(formData);
@@ -78,8 +142,9 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl font-body-md text-sm mb-6 text-center">
-              {error}
+            <div className="bg-red-500/10 backdrop-blur-md border border-red-500/20 text-red-400 px-4 py-3 rounded-xl font-body-md text-sm mb-6 flex items-center gap-3 animate-[fadeIn_0.3s_ease-out]">
+              <span className="material-symbols-outlined text-lg shrink-0">warning</span>
+              <span>{error}</span>
             </div>
           )}
 
@@ -118,13 +183,43 @@ export default function RegisterPage() {
                 <span className="material-symbols-outlined text-xl">mail</span>
               </div>
               <input
-                className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-b border-surface-variant text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:bg-white/5 transition-all duration-300 rounded-t-DEFAULT placeholder:text-on-surface-variant/50"
+                className={`w-full pl-12 pr-10 py-4 bg-surface-container-low border-b text-on-surface font-body-md text-body-md focus:outline-none focus:bg-white/5 transition-all duration-300 rounded-t-DEFAULT placeholder:text-on-surface-variant/50 ${
+                  emailError
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-surface-variant focus:border-primary"
+                }`}
                 id="email"
                 name="email"
                 placeholder="Correo electrónico"
                 type="email"
                 required
+                value={emailValue}
+                onChange={(e) => setEmailValue(e.target.value)}
               />
+              {/* Indicador de estado (spinner / check / error) */}
+              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                {isCheckingEmail && (
+                  <span className="material-symbols-outlined text-on-surface-variant text-lg animate-spin">
+                    progress_activity
+                  </span>
+                )}
+                {!isCheckingEmail && emailError && (
+                  <span className="material-symbols-outlined text-red-400 text-lg">
+                    error
+                  </span>
+                )}
+                {!isCheckingEmail && !emailError && debouncedEmail && debouncedEmail.includes("@") && debouncedEmail.includes(".") && (
+                  <span className="material-symbols-outlined text-emerald-400 text-lg">
+                    check_circle
+                  </span>
+                )}
+              </div>
+              {emailError && (
+                <p className="text-red-400 text-xs font-body-md mt-2 pl-1 flex items-center gap-1 animate-[fadeIn_0.3s_ease-out]">
+                  <span className="material-symbols-outlined text-sm">error</span>
+                  {emailError}
+                </p>
+              )}
             </div>
 
             {/* Password Input */}
@@ -136,19 +231,30 @@ export default function RegisterPage() {
                 <span className="material-symbols-outlined text-xl">lock</span>
               </div>
               <input
-                className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-b border-surface-variant text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:bg-white/5 transition-all duration-300 rounded-t-DEFAULT placeholder:text-on-surface-variant/50"
+                className={`w-full pl-12 pr-4 py-4 bg-surface-container-low border-b text-on-surface font-body-md text-body-md focus:outline-none focus:bg-white/5 transition-all duration-300 rounded-t-DEFAULT placeholder:text-on-surface-variant/50 ${
+                  passwordError
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-surface-variant focus:border-primary"
+                }`}
                 id="password"
                 name="password"
                 placeholder="Contraseña"
                 type="password"
                 required
+                onChange={handlePasswordChange}
               />
+              {passwordError && (
+                <p className="text-red-500 text-xs font-body-md mt-2 pl-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm">error</span>
+                  {passwordError}
+                </p>
+              )}
             </div>
 
             {/* Submit Button */}
             <button
-              disabled={isLoading}
-              className="w-full mt-stack-lg bg-primary text-on-primary font-label-caps text-label-caps py-4 rounded-DEFAULT uppercase tracking-widest hover:bg-primary-fixed transition-colors duration-300 flex justify-center items-center gap-2 disabled:opacity-70"
+              disabled={isLoading || !!passwordError || !!emailError || isCheckingEmail}
+              className="w-full mt-stack-lg bg-primary text-on-primary font-label-caps text-label-caps py-4 rounded-DEFAULT uppercase tracking-widest hover:bg-primary-fixed transition-colors duration-300 flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               type="submit"
             >
               {isLoading ? (

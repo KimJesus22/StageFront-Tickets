@@ -11,6 +11,31 @@ import type { SeatNode } from '@/lib/graph/SeatGraph';
 // Types & Data
 // ---------------------------------------------------------------------------
 
+export enum SeatState {
+  Disponible = 'Disponible',
+  Seleccionado = 'Seleccionado',
+  ReservadoTemporal = 'ReservadoTemporal',
+  Ocupado = 'Ocupado',
+  Bloqueado = 'Bloqueado',
+}
+
+export const getSeatStyles = (state: SeatState): string => {
+  switch (state) {
+    case SeatState.Disponible:
+      return 'bg-zinc-700 hover:bg-zinc-500 cursor-pointer';
+    case SeatState.Seleccionado:
+      return 'bg-indigo-500 ring-2 ring-indigo-300';
+    case SeatState.ReservadoTemporal:
+      return 'bg-amber-600/60 animate-pulse cursor-wait';
+    case SeatState.Ocupado:
+      return 'bg-red-900/40 cursor-not-allowed opacity-50';
+    case SeatState.Bloqueado:
+      return 'bg-zinc-900 border border-zinc-800 cursor-not-allowed opacity-20';
+    default:
+      return '';
+  }
+};
+
 interface SelectedSeat {
   id: string;
   zona: string;
@@ -118,7 +143,12 @@ export default function SeatSelectionPage() {
   }, [selectedSeats]);
 
   // ─── Graph seat toggle (individual seat-level clicks) ───
-  const handleSeatToggle = useCallback((zoneId: string, row: number, col: number) => {
+  const handleSeatToggle = useCallback((zoneId: string, row: number, col: number, state: SeatState) => {
+    // El evento onClick solo funciona si el estado es Disponible o Seleccionado
+    if (state !== SeatState.Disponible && state !== SeatState.Seleccionado) {
+      return;
+    }
+
     const seatId = `${zoneId}-${row}-${col}`;
     const zone = ZONES.find((z) => z.id === zoneId);
     if (!zone) return;
@@ -304,21 +334,22 @@ export default function SeatSelectionPage() {
                   <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(6, 1fr)', padding: '28px 60px 12px' }}>
                     {seatGraph.getZoneSeats('general-a').map((seat) => {
                       const isOrphan = seatGraph.orphanAnalysis.orphanSeats.some((o) => o.id === seat.id);
+                      
+                      // Determinar el SeatState
+                      let state = SeatState.Disponible;
+                      if (seat.status === 'occupied') state = SeatState.Ocupado;
+                      else if (seat.status === 'selected') state = SeatState.Seleccionado;
+                      // Simulamos estados para visualización
+                      else if (seat.id === 'general-a-0-2') state = SeatState.ReservadoTemporal;
+                      else if (seat.id === 'general-a-0-3') state = SeatState.Bloqueado;
+
                       return (
                         <button
                           key={seat.id}
-                          onClick={() => handleSeatToggle('general-a', seat.row, seat.col)}
-                          disabled={seat.status === 'occupied'}
-                          title={`${seat.label} ${seat.status === 'occupied' ? '(Ocupado)' : seat.status === 'selected' ? '(Seleccionado)' : isOrphan ? '(Huérfano)' : '(Disponible)'}`}
-                          className={`w-5 h-5 rounded-full transition-all duration-200 border-2 ${
-                            seat.status === 'occupied'
-                              ? 'bg-zinc-700/60 border-zinc-600/40 cursor-not-allowed opacity-40'
-                              : seat.status === 'selected'
-                              ? 'bg-[#a3defe] border-[#a3defe] shadow-[0_0_10px_rgba(163,222,254,0.8)] scale-110'
-                              : isOrphan
-                              ? 'bg-amber-500/30 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse'
-                              : 'bg-white/10 border-white/20 hover:bg-[#a3defe]/40 hover:border-[#a3defe]/60 hover:scale-110'
-                          }`}
+                          onClick={() => handleSeatToggle('general-a', seat.row, seat.col, state)}
+                          disabled={state !== SeatState.Disponible && state !== SeatState.Seleccionado}
+                          title={`${seat.label} (${state})`}
+                          className={`w-5 h-5 rounded-full transition-all duration-200 ${getSeatStyles(state)} ${isOrphan && state === SeatState.Seleccionado ? 'ring-2 ring-amber-400 animate-pulse' : ''}`}
                         />
                       );
                     })}
@@ -341,21 +372,19 @@ export default function SeatSelectionPage() {
                   <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(4, 1fr)', padding: '24px 16px 8px' }}>
                     {seatGraph.getZoneSeats('vip-l').map((seat) => {
                       const isOrphan = seatGraph.orphanAnalysis.orphanSeats.some((o) => o.id === seat.id);
+                      
+                      let state = SeatState.Disponible;
+                      if (seat.status === 'occupied') state = SeatState.Ocupado;
+                      else if (seat.status === 'selected') state = SeatState.Seleccionado;
+                      else if (seat.id === 'vip-l-0-1') state = SeatState.ReservadoTemporal;
+
                       return (
                         <button
                           key={seat.id}
-                          onClick={() => handleSeatToggle('vip-l', seat.row, seat.col)}
-                          disabled={seat.status === 'occupied'}
-                          title={`${seat.label} ${seat.status === 'occupied' ? '(Ocupado)' : seat.status === 'selected' ? '(Seleccionado)' : isOrphan ? '(Huérfano)' : '(Disponible)'}`}
-                          className={`w-5 h-5 rounded-full transition-all duration-200 border-2 ${
-                            seat.status === 'occupied'
-                              ? 'bg-zinc-700/60 border-zinc-600/40 cursor-not-allowed opacity-40'
-                              : seat.status === 'selected'
-                              ? 'bg-[#c084fc] border-[#c084fc] shadow-[0_0_10px_rgba(192,132,252,0.8)] scale-110'
-                              : isOrphan
-                              ? 'bg-amber-500/30 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse'
-                              : 'bg-white/10 border-white/20 hover:bg-[#c084fc]/40 hover:border-[#c084fc]/60 hover:scale-110'
-                          }`}
+                          onClick={() => handleSeatToggle('vip-l', seat.row, seat.col, state)}
+                          disabled={state !== SeatState.Disponible && state !== SeatState.Seleccionado}
+                          title={`${seat.label} (${state})`}
+                          className={`w-5 h-5 rounded-full transition-all duration-200 ${getSeatStyles(state)} ${isOrphan && state === SeatState.Seleccionado ? 'ring-2 ring-amber-400 animate-pulse' : ''}`}
                         />
                       );
                     })}
@@ -378,21 +407,19 @@ export default function SeatSelectionPage() {
                   <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(4, 1fr)', padding: '24px 16px 8px' }}>
                     {seatGraph.getZoneSeats('vip-r').map((seat) => {
                       const isOrphan = seatGraph.orphanAnalysis.orphanSeats.some((o) => o.id === seat.id);
+                      
+                      let state = SeatState.Disponible;
+                      if (seat.status === 'occupied') state = SeatState.Ocupado;
+                      else if (seat.status === 'selected') state = SeatState.Seleccionado;
+                      else if (seat.id === 'vip-r-0-2') state = SeatState.Bloqueado;
+
                       return (
                         <button
                           key={seat.id}
-                          onClick={() => handleSeatToggle('vip-r', seat.row, seat.col)}
-                          disabled={seat.status === 'occupied'}
-                          title={`${seat.label} ${seat.status === 'occupied' ? '(Ocupado)' : seat.status === 'selected' ? '(Seleccionado)' : isOrphan ? '(Huérfano)' : '(Disponible)'}`}
-                          className={`w-5 h-5 rounded-full transition-all duration-200 border-2 ${
-                            seat.status === 'occupied'
-                              ? 'bg-zinc-700/60 border-zinc-600/40 cursor-not-allowed opacity-40'
-                              : seat.status === 'selected'
-                              ? 'bg-[#c084fc] border-[#c084fc] shadow-[0_0_10px_rgba(192,132,252,0.8)] scale-110'
-                              : isOrphan
-                              ? 'bg-amber-500/30 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse'
-                              : 'bg-white/10 border-white/20 hover:bg-[#c084fc]/40 hover:border-[#c084fc]/60 hover:scale-110'
-                          }`}
+                          onClick={() => handleSeatToggle('vip-r', seat.row, seat.col, state)}
+                          disabled={state !== SeatState.Disponible && state !== SeatState.Seleccionado}
+                          title={`${seat.label} (${state})`}
+                          className={`w-5 h-5 rounded-full transition-all duration-200 ${getSeatStyles(state)} ${isOrphan && state === SeatState.Seleccionado ? 'ring-2 ring-amber-400 animate-pulse' : ''}`}
                         />
                       );
                     })}
@@ -488,7 +515,7 @@ export default function SeatSelectionPage() {
                                 const row = parseInt(parts[parts.length - 2]);
                                 const col = parseInt(parts[parts.length - 1]);
                                 const zoneId = parts.slice(0, -2).join('-');
-                                handleSeatToggle(zoneId, row, col);
+                                handleSeatToggle(zoneId, row, col, SeatState.Disponible);
                               } else {
                                 removeSeat(s.seatId);
                               }

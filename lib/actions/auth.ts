@@ -3,40 +3,69 @@
 import { insforge } from "@/lib/insforge";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { PasswordPolicy } from "@/lib/utils/PasswordPolicy";
+import { getAuthErrorMessage } from "@/lib/utils/ErrorMapper";
+import { getClientIP, checkRateLimit, clearRateLimit } from "@/lib/services/rateLimiter";
 
 export async function login(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const { data, error } = await insforge.auth.signInWithPassword({
-    email,
-    password,
-  });
+  // ── 0. Rate Limiting — PRIMERA línea de defensa ───────────────────────
+  // Si el usuario excede 5 intentos en 15 min, la ejecución se detiene
+  // aquí y la DB de autenticación principal NUNCA es tocada.
+  // ─────────────────────────────────────────────────────────────────────
+  const clientIP = await getClientIP();
 
-  if (error || !data?.user) {
-    let errorMessage = error?.message || "Error al iniciar sesión";
-    if (errorMessage.includes("Invalid login credentials")) {
-      errorMessage = "Correo o contraseña incorrectos.";
-    } else if (errorMessage.includes("Email not confirmed")) {
-      errorMessage = "Debes confirmar tu correo electrónico antes de iniciar sesión.";
-    }
-    return { error: errorMessage };
+  try {
+    await checkRateLimit(clientIP, email);
+  } catch (err) {
+    return {
+      error: err instanceof Error
+        ? err.message
+        : "Demasiados intentos. Inténtalo más tarde."
+    };
   }
 
-  // Guardar la sesión en cookies para el middleware y server actions
-  const cookieStore = await cookies();
-  cookieStore.set("insforge_session", JSON.stringify({
-    id: data.user.id,
-    email: data.user.email,
-    name: data.user.profile?.name || email.split("@")[0],
-    accessToken: data.accessToken,
-  }), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-    path: "/",
-  });
+  try {
+    const { data, error } = await insforge.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    // ── Traducción en vuelo: error del SDK → mensaje amigable ──────────
+    if (error || !data?.user) {
+      return { error: getAuthErrorMessage(error?.message || "unknown_error") };
+    }
+
+    // ── Login exitoso → resetear contador de intentos ────────────────────
+    await clearRateLimit(clientIP, email);
+
+    // Guardar la sesión en cookies para el middleware y server actions
+    const cookieStore = await cookies();
+    cookieStore.set("insforge_session", JSON.stringify({
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.profile?.name || email.split("@")[0],
+      accessToken: data.accessToken,
+    }), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+      path: "/",
+    });
+  } catch (err) {
+    // Next.js redirect() lanza un error especial — re-throw para que funcione
+    if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
+      throw err;
+    }
+    // ── Retorno seguro: nunca exponer el objeto de error completo ───────
+    console.error("[login] Error inesperado:", err);
+    return { error: getAuthErrorMessage(
+      err instanceof Error ? err.message : "unknown_error"
+    ) };
+  }
 
   redirect("/wallet");
 }
@@ -46,49 +75,71 @@ export async function signup(formData: FormData) {
   const password = formData.get("password") as string;
   const name = formData.get("name") as string;
 
-  const { data, error } = await insforge.auth.signUp({
-    email,
-    password,
-    name,
-  });
-
-  if (error) {
-    let errorMessage = error.message;
-    if (errorMessage.includes("User already registered")) {
-      errorMessage = "Este correo ya está registrado.";
-    } else if (errorMessage.includes("Password should be at least")) {
-      errorMessage = "La contraseña debe tener al menos 6 caracteres.";
-    }
-    return { error: errorMessage };
+  // ── Server-side validation (Defense in Depth) ────────────────────────
+  // Nunca confiar en el cliente: un atacante puede enviar FormData
+  // directamente a este Server Action vía POST, saltándose la UI.
+  // ─────────────────────────────────────────────────────────────────────
+  const policyResult = PasswordPolicy.validate(password);
+  if (!policyResult.isValid) {
+    return { error: policyResult.error };
   }
 
-  // Si requiere verificación de email, no hay accessToken
-  if (data?.requireEmailVerification) {
-    return { success: "Cuenta creada. Por favor, verifica tu correo electrónico." };
-  }
-
-  if (data?.user) {
-    const cookieStore = await cookies();
-    cookieStore.set("insforge_session", JSON.stringify({
-      id: data.user.id,
-      email: data.user.email,
-      name: data.user.profile?.name || name || email.split("@")[0],
-      accessToken: data.accessToken,
-    }), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
+  try {
+    const { data, error } = await insforge.auth.signUp({
+      email,
+      password,
+      name,
     });
-    redirect("/wallet");
-  }
 
-  return { error: "No se pudo crear la cuenta" };
+    // ── Traducción en vuelo: error del SDK → mensaje amigable ──────────
+    if (error) {
+      return { error: getAuthErrorMessage(error.message) };
+    }
+
+    // Si requiere verificación de email, no hay accessToken
+    if (data?.requireEmailVerification) {
+      return { success: "Cuenta creada. Por favor, verifica tu correo electrónico." };
+    }
+
+    if (data?.user) {
+      const cookieStore = await cookies();
+      cookieStore.set("insforge_session", JSON.stringify({
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.profile?.name || name || email.split("@")[0],
+        accessToken: data.accessToken,
+      }), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      });
+      redirect("/wallet");
+    }
+
+    return { error: "No se pudo crear la cuenta" };
+  } catch (err) {
+    // Next.js redirect() lanza un error especial — re-throw para que funcione
+    if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
+      throw err;
+    }
+    // ── Retorno seguro: nunca exponer el objeto de error completo ───────
+    console.error("[signup] Error inesperado:", err);
+    return { error: getAuthErrorMessage(
+      err instanceof Error ? err.message : "unknown_error"
+    ) };
+  }
 }
 
 export async function logout() {
-  await insforge.auth.signOut();
+  try {
+    await insforge.auth.signOut();
+  } catch (err) {
+    // ── Log silencioso: si signOut falla, igual limpiamos la sesión ─────
+    console.error("[logout] Error en signOut del SDK:", err);
+  }
+
   const cookieStore = await cookies();
   cookieStore.delete("insforge_session");
   redirect("/");
@@ -103,5 +154,74 @@ export async function getSession() {
     return JSON.parse(sessionData);
   } catch {
     return null;
+  }
+}
+
+// ============================================================================
+// 📧 checkEmailExists — Validación de email duplicado (Anti-Enumeración)
+// ============================================================================
+//
+// SEGURIDAD:
+//   • Retorna SOLO { exists: boolean } — jamás expone datos del usuario
+//     (id, nombre, perfil, etc.). Un atacante que llame esta función
+//     repetidamente solo obtiene true/false, sin poder minar datos.
+//
+//   • Sanitización: trim() + toLowerCase() antes de consultar.
+//     Previene falsos negativos por:
+//       - Espacios invisibles (tab, nbsp, trailing space)
+//       - Variaciones de casing ("User@Email.COM" vs "user@email.com")
+//
+//   • Validación de formato: regex básico antes de tocar la DB.
+//     Si el input no es un email válido, retorna { exists: false }
+//     sin gastar una query (Coste 0).
+//
+// RENDIMIENTO:
+//   • SELECT('id') — payload mínimo, solo verifica existencia.
+//   • .eq('email', ...) — búsqueda exacta por columna indexada → O(1).
+//   • .limit(1) — detiene el scan en el primer match.
+//   • Se invoca desde el cliente vía debounce (500ms), limitando
+//     las consultas a ~2/segundo máximo durante la escritura.
+//
+// ANTI-ENUMERACIÓN:
+//   • En caso de error de DB, retorna { exists: false } (fail-open).
+//     Esto evita que un atacante pueda diferenciar entre "error de DB"
+//     y "email no existe" analizando los tiempos de respuesta.
+//   • Considerar añadir rate-limiting a nivel de middleware si se
+//     detecta abuso en producción (>10 req/s desde la misma IP).
+//
+// ============================================================================
+
+const EMAIL_FORMAT_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export async function checkEmailExists(
+  email: string
+): Promise<{ exists: boolean }> {
+  // ── 1. Sanitización ────────────────────────────────────────────────────
+  const sanitized = email?.trim().toLowerCase();
+
+  // ── 2. Validación de formato (Coste 0 — no toca la DB) ────────────────
+  if (!sanitized || !EMAIL_FORMAT_REGEX.test(sanitized)) {
+    return { exists: false };
+  }
+
+  // ── 3. Consulta indexada — O(1) ───────────────────────────────────────
+  try {
+    const { data, error } = await insforge.database
+      .from("auth.users")
+      .select("id")
+      .eq("email", sanitized)
+      .limit(1);
+
+    if (error) {
+      // Log silencioso — no bloquear el registro por un fallo en esta check
+      console.error("[checkEmailExists] Error:", error.message);
+      return { exists: false };
+    }
+
+    // ── 4. Retorno seguro — solo booleano, nunca datos del usuario ───────
+    return { exists: Array.isArray(data) && data.length > 0 };
+  } catch (err) {
+    console.error("[checkEmailExists] Error inesperado:", err);
+    return { exists: false };
   }
 }

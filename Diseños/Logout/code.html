@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Dropdown - StageFront Tickets</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#e2e2e2",
+                        "primary": "#ffffff",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "background": "#141313",
+                        "surface-tint": "#c6c6c7",
+                        "inverse-primary": "#5d5f5f",
+                        "surface-container-highest": "#353434",
+                        "on-primary-fixed": "#1a1c1c",
+                        "surface-bright": "#3a3939",
+                        "on-surface-variant": "#c4c7c8",
+                        "on-secondary-container": "#b7b4b7",
+                        "on-tertiary": "#2f3131",
+                        "tertiary-container": "#e2e2e2",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "on-secondary": "#313032",
+                        "surface-dim": "#141313",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "on-error-container": "#ffdad6",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface-container": "#201f1f",
+                        "tertiary": "#ffffff",
+                        "on-surface": "#e5e2e1",
+                        "on-primary-container": "#636565",
+                        "on-primary": "#2f3131",
+                        "outline": "#8e9192",
+                        "primary-fixed": "#e2e2e2",
+                        "secondary": "#c8c6c8",
+                        "on-background": "#e5e2e1",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-variant": "#353434",
+                        "surface-container-lowest": "#0e0e0e",
+                        "outline-variant": "#444748",
+                        "surface": "#141313",
+                        "on-tertiary-container": "#636565",
+                        "surface-container-high": "#2a2a2a",
+                        "secondary-fixed": "#e5e1e4",
+                        "tertiary-fixed": "#e2e2e2",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-fixed-variant": "#454747",
+                        "secondary-container": "#474649",
+                        "on-secondary-fixed-variant": "#474649",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-fixed-variant": "#454747"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "stack-sm": "8px",
+                        "unit": "4px",
+                        "stack-md": "24px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "stack-lg": "48px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+    </style>
+</head>
+<body class="min-h-screen font-body-md text-body-md antialiased overflow-hidden flex flex-col">
+<!-- TopAppBar Snippet Context -->
+<header class="docked full-width top-0 z-40 bg-background/80 backdrop-blur-md shadow-none flex justify-between items-center w-full px-6 h-16 border-b border-primary/10">
+<!-- Brand / Logo Area -->
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md text-primary tracking-tighter">Nexus Admin</span>
+</div>
+<!-- Navigation Placeholder (Simulated) -->
+<nav class="hidden md:flex gap-8">
+<!-- Empty for contextual focus -->
+</nav>
+<!-- Right Side Actions & User Dropdown -->
+<div class="flex items-center gap-6 relative">
+<!-- Trailing Actions (Notifications, Settings, etc.) -->
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="hover:bg-primary/5 transition-colors p-2 rounded-full flex items-center justify-center opacity-80 hover:opacity-100 hover:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+<!-- User Dropdown Trigger -->
+<div class="relative group cursor-pointer">
+<div class="flex items-center gap-3 py-1 px-2 rounded-full hover:bg-primary/5 transition-colors">
+<img alt="Administrator Avatar" class="w-8 h-8 rounded-full border border-primary/10 object-cover" data-alt="A cinematic, high-contrast portrait of a professional man in his late 20s. He has short dark hair and a serious expression. The lighting is dramatic, with subtle neon blue accents reflecting on his face, fitting an exclusive, high-tech, dark-mode aesthetic. Deep shadows and pristine white highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjkZ-2Zm6uQlui3rg3ug0jeoUr3d9aphFDhvpGY2EWhpL2r4yCXN5IziIRBpx1kDjDESmMQekRP7UG_5RSy3BILhPKe-y8fgvLfk3U4XviqwQ82YcOj5G-ph4vYRuhe1uKaME5HFeYGttK0NYOclXrodEcb9_YDmgDIa9o-iMZ755qk8ta2Y9ggt_r8M-iUf1RxbDB2NP3gvOkDCHIj4wjoAmi-_NAPXdsk_lPv1fEtZ1GgRJ5gfmUFpKqbg_WKnqPM7xtLjo7sAU"/>
+<span class="font-body-md text-body-md font-medium text-primary hidden md:block">Alex Rivera</span>
+<span class="material-symbols-outlined text-on-surface-variant ml-1 text-sm transition-transform group-hover:rotate-180 duration-300" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Open Dropdown Container -->
+<div class="absolute right-0 top-full mt-2 w-56 z-50 bg-[#18181b]/90 backdrop-blur-md border border-primary/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden transform origin-top-right transition-all duration-200">
+<!-- Menu Options -->
+<div class="py-2 flex flex-col">
+<a class="flex items-center gap-3 px-4 py-3 font-body-md text-sm text-on-surface-variant hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="person">person</span>
+                            Mi Perfil
+                        </a>
+<a class="flex items-center gap-3 px-4 py-3 font-body-md text-sm text-on-surface-variant hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="confirmation_number">confirmation_number</span>
+                            Mis Boletos
+                        </a>
+</div>
+<!-- Divider -->
+<div class="border-t border-primary/10"></div>
+<!-- Logout Action -->
+<div class="py-2">
+<button class="w-full flex items-center gap-3 px-4 py-3 font-body-md text-sm text-error hover:bg-error/10 hover:text-error-container transition-colors text-left">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+                            Cerrar Sesión
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas Canvas Canvas Background (Dark, Cinematic Context) -->
+<main class="flex-1 w-full flex items-center justify-center relative p-gutter">
+<!-- Abstract glowing orbs to emphasize the glassmorphism drop down -->
+<div class="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute bottom-1/3 left-1/3 w-64 h-64 bg-on-secondary-container/5 rounded-full blur-[80px] pointer-events-none"></div>
+<div class="text-center text-on-surface-variant opacity-50 font-body-md">
+            Click the user avatar in the top right to view the dropdown interaction.
+        </div>
+</main>
+</body></html>

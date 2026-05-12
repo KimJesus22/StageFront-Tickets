@@ -15,9 +15,24 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-    setIsLoading(true);
 
+    // ── Defensa de campos vacíos (Coste 0 — no llega al servidor) ───────
     const formData = new FormData(e.currentTarget);
+    const email = (formData.get("email") as string)?.trim();
+    const password = (formData.get("password") as string)?.trim();
+    const name = (formData.get("name") as string)?.trim();
+
+    if (!email || !password) {
+      setError("Completa todos los campos.");
+      return;
+    }
+
+    if (!isLogin && !name) {
+      setError("Completa todos los campos.");
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       if (isLogin) {
@@ -100,8 +115,9 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl font-body-md text-sm mb-6 relative z-10 text-center">
-              {error}
+            <div className="bg-red-500/10 backdrop-blur-md border border-red-500/20 text-red-400 px-4 py-3 rounded-xl font-body-md text-sm mb-6 relative z-10 flex items-center gap-3 animate-[fadeIn_0.3s_ease-out]">
+              <span className="material-symbols-outlined text-lg shrink-0">warning</span>
+              <span>{error}</span>
             </div>
           )}
 
