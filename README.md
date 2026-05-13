@@ -7,18 +7,20 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 ## ✨ Características
 
 - **Landing Page Premium** — Diseño oscuro con estética Glassmorphism, gradientes de neón contextuales y micro-animaciones
-- **Artistas Dinámicos** — Grid Bento alimentado desde PostgreSQL con tarjetas interactivas (BTS, TXT, Blackpink, Twenty One Pilots)
-- **Perfiles de Artista** — Rutas dinámicas `/[slug]` con lista de eventos y diseño blur-background
+- **Artistas Dinámicos** — Cuadrícula interactiva (Bento Grid) alimentada desde PostgreSQL con tarjetas interactivas (BTS, TXT, Blackpink, Twenty One Pilots)
+- **Perfiles de Artista** — Rutas dinámicas `/[slug]` con lista de eventos y diseño de fondo difuminado (blur-background)
 - **Fila Virtual con OTP** — Verificación de identidad por código de 6 dígitos antes de acceder a la cola de compra
-- **Simulador de Cola Activa** — Contador regresivo animado con barra de progreso, posición dinámica y ID de fila único
-- **Selección de Asientos** — Layout dividido (70% mapa / 30% sidebar) con controles de Zoom interactivo, zonas interactivas (VIP/General), sidebar reactivo y bottom sheet móvil
-- **Datos Dinámicos por Evento** — Queue, Seats y Checkout obtienen título, venue, fecha e imagen del evento desde la API de InsForge sin datos estáticos
-- **Checkout Interactivo** — Formulario de pago avanzado con Custom Dropdown de estados, validaciones en tiempo real (Tarjeta, Vencimiento, CVC) y actualización de precios
-- **Bloqueo de Concurrencia (Lazy Release)** — Previene colisiones al reservar `tickets_inventory` usando Server Actions dinámicas (`lockSeats`) y rollback automático.
+- **Simulador de Cola Activa** — Contador regresivo animado con barra de progreso, posición dinámica e ID de fila único
+- **Selección de Asientos** — Layout dividido (70% mapa / 30% barra lateral) con controles de Zoom interactivo, zonas interactivas (VIP/General), barra lateral reactiva (`OrderSummary`) y bottom sheet móvil
+- **Datos Dinámicos por Evento** — Fila, Asientos y Checkout obtienen título, recinto, fecha e imagen del evento desde la API de InsForge sin datos estáticos
+- **Temporizador de Reserva** — Componente reactivo (`ReservationTimer`) que sincroniza el tiempo de bloqueo en MM:SS con limpieza eficiente de memoria, liberando los asientos al expirar.
+- **Checkout Interactivo** — Formulario de pago avanzado con menús personalizados, validaciones en tiempo real (Tarjeta, Vencimiento, CVC) y actualización de precios
+- **Bloqueo de Concurrencia (Lazy Release)** — Previene colisiones al reservar temporalmente usando la tabla `seat_holds` y Server Actions dinámicas (`createHold`, `cleanExpiredHolds` de costo cero).
+- **Prevención de Sobrevendidos (Overselling)** — Intercepta la restricción de unicidad (`UNIQUE Constraint` código 23505) de PostgreSQL, simulando reembolsos automáticos y mostrando un manejo de errores amigable.
 - **Autenticación Segura y Defensiva** — Inicio de sesión y registro impulsado por InsForge Auth con mitigación de Fuerza Bruta (Rate Limiting) y Anti-Enumeración.
 - **Seguridad Criptográfica** — OTPs encriptados con SHA-256 y validador POO (quemado de códigos automático).
 - **Mapa de Asientos Multiestado** — Soporte para 5 estados en tiempo real (Disponible, Seleccionado, ReservadoTemporal, Ocupado, Bloqueado) con mapeo Tailwind.
-- **Pago Exitoso** — Confirmación interactiva con renderizado multi-boleto, inyección de datos reales desde InsForge y redirección fluida a `/success` antes de la Billetera
+- **Pago Exitoso** — Confirmación interactiva con renderizado multi-boleto, inyección de datos reales desde InsForge, animación de *Confetti* en CSS puro y redirección fluida a `/success` antes de la Billetera.
 - **Billetera Digital** — Ruta `/wallet` conectada a DB con boletos de diseño Skeuomorphic (perforaciones y QR simulados)
 - **Panel de Administración** — Dashboard en `/admin` con métricas clave, control de acceso y ventas recientes
 - **Portal de Artista** — Dashboard en `/portal` con ventas e ingresos por artista

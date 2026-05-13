@@ -8,7 +8,7 @@ import { useSeatGraph } from '@/hooks/useSeatGraph';
 import type { SeatNode } from '@/lib/graph/SeatGraph';
 
 // ---------------------------------------------------------------------------
-// Types & Data
+// Tipos y Datos
 // ---------------------------------------------------------------------------
 
 export enum SeatState {
@@ -45,7 +45,7 @@ interface SelectedSeat {
   color: string;
 }
 
-/** Simulated zone data for the stadium map */
+/** Datos simulados de zonas para el mapa del estadio */
 const ZONES = [
   { id: 'vip-l', zona: 'VIP L', label: 'Fila A, Asiento', tipo: 'Admisión General VIP', precio: 500, color: '#c084fc', maxSeats: 4 },
   { id: 'vip-r', zona: 'VIP R', label: 'Fila A, Asiento', tipo: 'Admisión General VIP', precio: 500, color: '#c084fc', maxSeats: 4 },
@@ -53,7 +53,7 @@ const ZONES = [
 ] as const;
 
 // ---------------------------------------------------------------------------
-// Component
+// Componente
 // ---------------------------------------------------------------------------
 
 export default function SeatSelectionPage() {
@@ -64,21 +64,21 @@ export default function SeatSelectionPage() {
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const [scale, setScale] = useState(1);
 
-  // Integrity Filter — bot detection
+  // Filtro de Integridad — detección de bots
   const integrity = useIntegrityFilter();
   const [showIntegrityModal, setShowIntegrityModal] = useState(false);
   const [integrityVerdict, setIntegrityVerdict] = useState<'human' | 'suspect' | 'bot'>('human');
   const [integrityOtp, setIntegrityOtp] = useState('');
   const [integrityOtpError, setIntegrityOtpError] = useState('');
 
-  // Seat Graph — adjacency matrix for orphan detection
+  // Grafo de Asientos — matriz de adyacencia para detección de huérfanos
   const seatGraph = useSeatGraph();
 
   const handleZoomIn = useCallback(() => setScale((s) => Math.min(s + 0.2, 3)), []);
   const handleZoomOut = useCallback(() => setScale((s) => Math.max(s - 0.2, 0.5)), []);
   const handleReset = useCallback(() => setScale(1), []);
 
-  // Event data (fetched dynamically)
+  // Datos del evento (obtenidos dinámicamente)
   const [eventData, setEventData] = useState<{
     title: string;
     venue: string;
@@ -98,17 +98,17 @@ export default function SeatSelectionPage() {
     ? new Intl.DateTimeFormat('es-MX', { month: 'short', day: 'numeric' }).format(new Date(eventData.date))
     : '...';
 
-  // Counter per zone to generate unique seat IDs
+  // Contador por zona para generar IDs de asientos únicos
   const [zoneCounts, setZoneCounts] = useState<Record<string, number>>({});
 
   const toggleZone = useCallback((zone: typeof ZONES[number]) => {
     setSelectedSeats((prev) => {
       const existing = prev.find((s) => s.zona === zone.zona);
       if (existing) {
-        // Remove all seats from this zone
+        // Eliminar todos los asientos de esta zona
         return prev.filter((s) => s.zona !== zone.zona);
       }
-      // Add a seat to this zone
+      // Agregar un asiento a esta zona
       const count = (zoneCounts[zone.id] || 0) + 1;
       setZoneCounts((c) => ({ ...c, [zone.id]: count }));
       return [
@@ -127,7 +127,7 @@ export default function SeatSelectionPage() {
 
   const addSeatToZone = useCallback((zone: typeof ZONES[number]) => {
     const currentCount = selectedSeats.filter((s) => s.zona === zone.zona).length;
-    if (currentCount >= zone.maxSeats) return; // max reached
+    if (currentCount >= zone.maxSeats) return; // límite máximo alcanzado
     const seatNum = currentCount + 1;
     setSelectedSeats((prev) => [
       ...prev,
@@ -142,7 +142,7 @@ export default function SeatSelectionPage() {
     ]);
   }, [selectedSeats]);
 
-  // ─── Graph seat toggle (individual seat-level clicks) ───
+  // ─── Alternancia de asientos en el grafo (clics individuales por asiento) ───
   const handleSeatToggle = useCallback((zoneId: string, row: number, col: number, state: SeatState) => {
     // El evento onClick solo funciona si el estado es Disponible o Seleccionado
     if (state !== SeatState.Disponible && state !== SeatState.Seleccionado) {
@@ -153,32 +153,35 @@ export default function SeatSelectionPage() {
     const zone = ZONES.find((z) => z.id === zoneId);
     if (!zone) return;
 
-    const currentStatus = seatGraph.getZoneSeats(zoneId).find(
-      (s) => s.id === seatId
-    )?.status;
+    setSelectedSeats((prev) => {
+      const isSelected = prev.some((s) => s.id === seatId);
+      
+      if (isSelected) {
+        // Deseleccionar del grafo
+        seatGraph.deselectSeat(seatId);
+        // Eliminar del estado local
+        return prev.filter((s) => s.id !== seatId);
+      } else {
+        // Límite máximo de 4 boletos por orden
+        if (prev.length >= 4) return prev;
 
-    if (currentStatus === 'selected') {
-      // Deselect from graph
-      seatGraph.deselectSeat(seatId);
-      // Remove from local state
-      setSelectedSeats((prev) => prev.filter((s) => s.id !== seatId));
-    } else if (currentStatus === 'available') {
-      // Select in graph
-      seatGraph.selectSeat(zoneId, row, col);
-      // Add to local state
-      const label = `Fila ${String.fromCharCode(65 + row)}, Asiento ${col + 1}`;
-      setSelectedSeats((prev) => [
-        ...prev,
-        {
-          id: seatId,
-          zona: zone.zona,
-          label,
-          tipo: zone.tipo,
-          precio: zone.precio,
-          color: zone.color,
-        },
-      ]);
-    }
+        // Seleccionar en el grafo
+        seatGraph.selectSeat(zoneId, row, col);
+        // Agregar al estado local
+        const label = `Fila ${String.fromCharCode(65 + row)}, Asiento ${col + 1}`;
+        return [
+          ...prev,
+          {
+            id: seatId,
+            zona: zone.zona,
+            label,
+            tipo: zone.tipo,
+            precio: zone.precio,
+            color: zone.color,
+          },
+        ];
+      }
+    });
   }, [seatGraph]);
 
   const removeSeat = useCallback((seatId: string) => {
@@ -191,29 +194,30 @@ export default function SeatSelectionPage() {
     setSelectedSeats([]);
   }, [seatGraph]);
 
-  const total = selectedSeats.reduce((sum, s) => sum + s.precio, 0);
+  const seatCount = selectedSeats.length;
+  const totalPrice = useMemo(() => selectedSeats.reduce((sum, seat) => sum + seat.precio, 0), [selectedSeats]);
 
   const handleCheckout = useCallback(async () => {
     if (selectedSeats.length === 0) return;
 
-    // ─── Integrity Check (bot detection) ───
+    // ─── Verificación de Integridad (detección de bots) ───
     const result = await integrity.validate();
 
     if (result.verdict === 'bot') {
-      // Hard block — mostrar modal de rechazo
+      // Bloqueo estricto — mostrar modal de rechazo
       setIntegrityVerdict('bot');
       setShowIntegrityModal(true);
       return;
     }
 
     if (result.verdict === 'suspect') {
-      // Soft block — pedir OTP de verificación extra
+      // Bloqueo leve — pedir OTP de verificación extra
       setIntegrityVerdict('suspect');
       setShowIntegrityModal(true);
       return;
     }
 
-    // ─── Human verified — continuar al checkout ───
+    // ─── Humano verificado — continuar al pago ───
     proceedToCheckout();
   }, [selectedSeats, integrity]);
 
@@ -240,7 +244,7 @@ export default function SeatSelectionPage() {
 
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden bg-background text-on-background">
-      {/* ============ Top Event Banner ============ */}
+      {/* ============ Banner Superior del Evento ============ */}
       <header className="w-full bg-surface-container-lowest border-b border-outline-variant/30 flex-shrink-0 z-20 relative">
         <div className="flex items-center justify-between px-gutter py-stack-sm h-20">
           <div className="flex items-center gap-stack-md">
@@ -251,7 +255,7 @@ export default function SeatSelectionPage() {
               <span className="material-symbols-outlined">arrow_back</span>
             </Link>
             <div className="flex items-center gap-stack-sm">
-              {/* Artist avatar */}
+              {/* Avatar del artista */}
               <div className="w-12 h-12 rounded-full bg-surface-container-high border border-white/10 flex items-center justify-center overflow-hidden">
                 <span className="material-symbols-outlined text-on-surface-variant">groups</span>
               </div>
@@ -267,7 +271,7 @@ export default function SeatSelectionPage() {
               </div>
             </div>
           </div>
-          {/* Info pill (desktop) */}
+          {/* Píldora de información (escritorio) */}
           <div className="hidden md:flex items-center">
             <div className="bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest">
               <span className="material-symbols-outlined text-[16px]">info</span>
@@ -277,11 +281,11 @@ export default function SeatSelectionPage() {
         </div>
       </header>
 
-      {/* ============ Main Workspace ============ */}
+      {/* ============ Área de Trabajo Principal ============ */}
       <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
-        {/* ---- Left: Map Area ---- */}
+        {/* ---- Izquierda: Área del Mapa ---- */}
         <section className="flex-1 relative bg-surface overflow-hidden flex items-center justify-center">
-          {/* Map Legend (Top Left) */}
+          {/* Leyenda del Mapa (Arriba a la Izquierda) */}
           <div className="absolute top-stack-md left-stack-md z-10 bg-surface-container/40 backdrop-blur-[20px] border border-white/10 rounded-lg p-4 flex flex-col gap-3">
             <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Simbología</h3>
             <div className="flex items-center gap-2">
@@ -298,7 +302,7 @@ export default function SeatSelectionPage() {
             </div>
           </div>
 
-          {/* Floating Zoom Controls (Right Edge) */}
+          {/* Controles de Zoom Flotantes (Borde Derecho) */}
           <div className="absolute right-stack-md top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2">
             <button onClick={handleZoomIn} className="bg-surface-container/40 backdrop-blur-[20px] border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors">
               <span className="material-symbols-outlined">add</span>
@@ -311,14 +315,14 @@ export default function SeatSelectionPage() {
             </button>
           </div>
 
-          {/* ---- Stadium Map Graphic ---- */}
+          {/* ---- Gráfico del Mapa del Estadio ---- */}
           <div className="w-full h-full relative flex items-center justify-center opacity-80" style={{ transform: `scale(${scale})`, transition: 'transform 0.3s ease', transformOrigin: 'center' }}>
             <div className="relative w-[800px] h-[600px]">
-              {/* Outer gradas (decorative) */}
+              {/* Gradas exteriores (decorativas) */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-40 border-t-4 border-l-4 border-r-4 border-surface-container-high rounded-t-[400px] opacity-30" />
               <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-32 border-t-4 border-l-4 border-r-4 border-surface-container-high rounded-t-[350px] opacity-50" />
 
-              {/* General A — zone + individual seats */}
+              {/* General A — zona + asientos individuales */}
               <div
                 className={`absolute bottom-[340px] left-1/2 -translate-x-1/2 w-[600px] h-40 rounded-t-[100px] backdrop-blur-sm transition-all duration-300 border overflow-hidden ${
                   isZoneSelected('general-a')
@@ -329,7 +333,7 @@ export default function SeatSelectionPage() {
                 <div className="absolute top-2 left-1/2 -translate-x-1/2">
                   <span className="font-label-caps text-[10px] text-white/50 uppercase tracking-widest">General A — $250</span>
                 </div>
-                {/* Individual seat dots */}
+                {/* Puntos de asientos individuales */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(6, 1fr)', padding: '28px 60px 12px' }}>
                     {seatGraph.getZoneSeats('general-a').map((seat) => {
@@ -357,7 +361,7 @@ export default function SeatSelectionPage() {
                 </div>
               </div>
 
-              {/* VIP L — zone + individual seats */}
+              {/* VIP L — zona + asientos individuales */}
               <div
                 className={`absolute bottom-48 left-[25%] w-48 h-32 rounded-lg backdrop-blur-sm transition-all duration-300 border overflow-hidden ${
                   isZoneSelected('vip-l')
@@ -392,7 +396,7 @@ export default function SeatSelectionPage() {
                 </div>
               </div>
 
-              {/* VIP R — zone + individual seats */}
+              {/* VIP R — zona + asientos individuales */}
               <div
                 className={`absolute bottom-48 right-[25%] w-48 h-32 rounded-lg backdrop-blur-sm transition-all duration-300 border overflow-hidden ${
                   isZoneSelected('vip-r')
@@ -427,7 +431,7 @@ export default function SeatSelectionPage() {
                 </div>
               </div>
 
-              {/* Stage */}
+              {/* Escenario */}
               <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-96 h-32 rounded-t-[200px] bg-gradient-to-t from-surface-container-high to-surface-variant border-t-2 border-[#c084fc] flex items-center justify-center shadow-[0_-20px_60px_rgba(192,132,252,0.2)]">
                 <span className="font-headline-md text-headline-md text-on-surface font-bold tracking-widest">ESCENARIO</span>
               </div>
@@ -435,9 +439,9 @@ export default function SeatSelectionPage() {
           </div>
         </section>
 
-        {/* ---- Right: Sidebar (Desktop) ---- */}
+        {/* ---- Derecha: Barra Lateral (Escritorio) ---- */}
         <aside className="hidden md:flex w-[400px] bg-surface-container-low border-l border-white/10 flex-col z-20 shadow-[-20px_0_40px_rgba(0,0,0,0.5)]">
-          {/* Filters Header */}
+          {/* Encabezado de Filtros */}
           <div className="p-6 border-b border-white/5 flex flex-col gap-4">
             <h2 className="font-headline-md text-headline-md text-primary">Filtros</h2>
             <div className="grid grid-cols-3 gap-2">
@@ -453,13 +457,13 @@ export default function SeatSelectionPage() {
             </div>
           </div>
 
-          {/* Selected Seats List */}
+          {/* Lista de Asientos Seleccionados */}
           <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
             {selectedSeats.length > 0 ? (
               <>
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
-                    {selectedSeats.length} {selectedSeats.length === 1 ? 'Asiento Seleccionado' : 'Asientos Seleccionados'}
+                    {seatCount} {seatCount === 1 ? 'asiento reservado' : 'asientos reservados'}
                   </span>
                   <button onClick={clearAll} className="text-error text-sm font-body-md hover:underline">Limpiar</button>
                 </div>
@@ -495,9 +499,9 @@ export default function SeatSelectionPage() {
             )}
           </div>
 
-          {/* Checkout Footer */}
+          {/* Pie de página de Pago */}
           <div className="p-6 bg-surface-container-highest border-t border-white/10 mt-auto">
-            {/* Orphan Seat Warning */}
+            {/* Advertencia de Asientos Huérfanos */}
             {seatGraph.hasWarning && (
               <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
                 <div className="flex items-start gap-2.5">
@@ -542,13 +546,13 @@ export default function SeatSelectionPage() {
             )}
             <div className="flex justify-between items-center mb-6">
               <span className="font-body-md text-body-md text-on-surface-variant text-lg">Total</span>
-              <span className="font-headline-lg text-headline-lg text-white">${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+              <span className="font-headline-lg text-headline-lg text-white">Total: ${totalPrice.toFixed(2)}</span>
             </div>
             <button
               onClick={handleCheckout}
-              disabled={selectedSeats.length === 0}
+              disabled={seatCount === 0}
               className={`w-full font-label-caps text-label-caps py-4 rounded-lg uppercase tracking-widest flex items-center justify-center gap-2 font-bold transition-colors ${
-                selectedSeats.length > 0
+                seatCount > 0
                   ? 'bg-primary text-background hover:bg-white/90'
                   : 'bg-surface-container-high text-on-surface-variant cursor-not-allowed'
               }`}
@@ -559,9 +563,9 @@ export default function SeatSelectionPage() {
           </div>
         </aside>
 
-        {/* ---- Mobile: Floating Summary / Bottom Sheet ---- */}
+        {/* ---- Móvil: Resumen Flotante / Hoja Inferior ---- */}
         <div className="md:hidden fixed bottom-0 left-0 w-full z-50">
-          {/* Collapsed bar */}
+          {/* Barra colapsada */}
           {!mobileSheetOpen && (
             <button
               onClick={() => setMobileSheetOpen(true)}
@@ -570,27 +574,27 @@ export default function SeatSelectionPage() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 relative">
                   <span className="material-symbols-outlined text-on-surface-variant">shopping_cart</span>
-                  {selectedSeats.length > 0 && (
+                  {seatCount > 0 && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center text-[10px] font-bold text-background">
-                      {selectedSeats.length}
+                      {seatCount}
                     </div>
                   )}
                 </div>
                 <div className="text-left">
                   <p className="font-body-md text-on-surface-variant text-xs">
-                    {selectedSeats.length} {selectedSeats.length === 1 ? 'asiento' : 'asientos'}
+                    {seatCount} {seatCount === 1 ? 'asiento reservado' : 'asientos reservados'}
                   </p>
-                  <p className="font-headline-md text-primary text-lg font-bold">${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                  <p className="font-headline-md text-primary text-lg font-bold">Total: ${totalPrice.toFixed(2)}</p>
                 </div>
               </div>
               <span className="material-symbols-outlined text-on-surface-variant">expand_less</span>
             </button>
           )}
 
-          {/* Expanded sheet */}
+          {/* Hoja expandida */}
           {mobileSheetOpen && (
             <div className="bg-surface-container-lowest/95 backdrop-blur-2xl border-t border-white/10 rounded-t-2xl max-h-[70vh] flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.7)]">
-              {/* Handle */}
+              {/* Manija */}
               <button
                 onClick={() => setMobileSheetOpen(false)}
                 className="w-full flex justify-center py-3"
@@ -600,15 +604,15 @@ export default function SeatSelectionPage() {
 
               <div className="px-6 pb-2 flex items-center justify-between">
                 <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
-                  {selectedSeats.length} {selectedSeats.length === 1 ? 'Asiento' : 'Asientos'}
+                  {seatCount} {seatCount === 1 ? 'asiento reservado' : 'asientos reservados'}
                 </span>
-                {selectedSeats.length > 0 && (
+                {seatCount > 0 && (
                   <button onClick={clearAll} className="text-error text-sm font-body-md hover:underline">Limpiar</button>
                 )}
               </div>
 
               <div className="flex-1 overflow-y-auto px-6 pb-4 flex flex-col gap-3">
-                {selectedSeats.length === 0 ? (
+                {seatCount === 0 ? (
                   <p className="text-center text-on-surface-variant/60 py-8 font-body-md">
                     Da clic en una zona del mapa para seleccionar asientos
                   </p>
@@ -633,17 +637,17 @@ export default function SeatSelectionPage() {
                 )}
               </div>
 
-              {/* Checkout */}
+              {/* Pago */}
               <div className="px-6 pb-6 pt-3 border-t border-white/5">
                 <div className="flex justify-between items-center mb-4">
                   <span className="font-body-md text-on-surface-variant">Total</span>
-                  <span className="font-headline-lg text-headline-lg text-white">${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  <span className="font-headline-lg text-headline-lg text-white">Total: ${totalPrice.toFixed(2)}</span>
                 </div>
                 <button
                   onClick={handleCheckout}
-                  disabled={selectedSeats.length === 0}
+                  disabled={seatCount === 0}
                   className={`w-full font-label-caps text-label-caps py-4 rounded-lg uppercase tracking-widest flex items-center justify-center gap-2 font-bold transition-colors ${
-                    selectedSeats.length > 0
+                    seatCount > 0
                       ? 'bg-primary text-background hover:bg-white/90'
                       : 'bg-surface-container-high text-on-surface-variant cursor-not-allowed'
                   }`}
