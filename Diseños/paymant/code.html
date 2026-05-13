@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StageFront - Checkout</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#3a3939",
+                        "on-primary-container": "#636565",
+                        "inverse-surface": "#e5e2e1",
+                        "on-background": "#e5e2e1",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-error-container": "#ffdad6",
+                        "primary": "#ffffff",
+                        "secondary-container": "#474649",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "primary-container": "#e2e2e2",
+                        "outline-variant": "#444748",
+                        "inverse-primary": "#5d5f5f",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "tertiary": "#ffffff",
+                        "outline": "#8e9192",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#474649",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface-variant": "#c4c7c8",
+                        "secondary": "#c8c6c8",
+                        "surface-container-highest": "#353434",
+                        "on-tertiary": "#2f3131",
+                        "on-tertiary-container": "#636565",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-fixed": "#e2e2e2",
+                        "primary-fixed": "#e2e2e2",
+                        "inverse-on-surface": "#313030",
+                        "on-secondary-container": "#b7b4b7",
+                        "on-primary-fixed-variant": "#454747",
+                        "error-container": "#93000a",
+                        "background": "#141313",
+                        "secondary-fixed": "#e5e1e4",
+                        "surface-tint": "#c6c6c7",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary": "#313032",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#353434",
+                        "surface-dim": "#141313",
+                        "tertiary-container": "#e2e2e2",
+                        "surface-container": "#201f1f",
+                        "surface": "#141313",
+                        "on-primary": "#2f3131",
+                        "on-primary-fixed": "#1a1c1c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-desktop": "48px",
+                        "stack-sm": "8px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "stack-md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Staging Alert Banner -->
+<div class="w-full bg-indigo-500/10 text-indigo-400 border-b border-indigo-500/20 py-3 px-6 text-center backdrop-blur-md sticky top-0 z-50 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span class="font-label-caps text-label-caps">MODO DEMO: Estás en un entorno de pruebas. No se realizarán cargos reales.</span>
+</div>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<!-- Header -->
+<div class="mb-stack-lg flex items-center gap-4">
+<button aria-label="Volver" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/20 flex items-center justify-center text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-primary">Finalizar Compra</h1>
+</div>
+<!-- Two Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Payment Form -->
+<div class="lg:col-span-7 flex flex-col gap-stack-md">
+<section class="bg-surface-container-low rounded-xl border border-outline/10 p-6 md:p-8 backdrop-blur-xl">
+<div class="flex items-center gap-3 mb-8 pb-4 border-b border-outline/10">
+<span class="material-symbols-outlined text-primary text-[28px]">credit_card</span>
+<h2 class="font-headline-md text-headline-md text-primary">Detalles de Pago</h2>
+</div>
+<form class="flex flex-col gap-6">
+<!-- Cardholder Name -->
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase" for="cardName">Nombre en la tarjeta</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border border-outline/20 rounded-lg py-4 px-4 text-primary font-body-md focus:outline-none focus:border-primary/50 focus:bg-surface-bright transition-all" id="cardName" placeholder="Ej. Jane Doe" type="text" value="Alex Mercer"/>
+</div>
+</div>
+<!-- Card Number -->
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase" for="cardNumber">Número de tarjeta</label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-highest border border-outline/20 rounded-lg py-4 pl-4 pr-12 text-primary font-body-md focus:outline-none focus:border-primary/50 focus:bg-surface-bright transition-all tracking-wider text-opacity-80" id="cardNumber" readonly="" type="text" value="**** **** **** 4242"/>
+<span class="material-symbols-outlined absolute right-4 text-on-surface-variant">check_circle</span>
+</div>
+</div>
+<!-- Expiry & CVC Row -->
+<div class="grid grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase" for="expiry">Vencimiento</label>
+<input class="w-full bg-surface-container-highest border border-outline/20 rounded-lg py-4 px-4 text-primary font-body-md focus:outline-none focus:border-primary/50 focus:bg-surface-bright transition-all" id="expiry" placeholder="MM/AA" type="text" value="12/25"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase" for="cvc">CVC</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border border-outline/20 rounded-lg py-4 px-4 text-primary font-body-md focus:outline-none focus:border-primary/50 focus:bg-surface-bright transition-all" id="cvc" placeholder="123" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">help</span>
+</div>
+</div>
+</div>
+</form>
+</section>
+</div>
+<!-- Right Column: Order Summary -->
+<div class="lg:col-span-5 flex flex-col gap-stack-md sticky top-24">
+<div class="relative rounded-2xl overflow-hidden border border-outline/20 bg-surface-container/60 backdrop-blur-2xl shadow-2xl">
+<!-- Glassmorphism atmospheric background -->
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-high to-surface-container-lowest opacity-80 z-0"></div>
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-[60px] z-0"></div>
+<div class="relative z-10 p-6 md:p-8 flex flex-col gap-6">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest border-b border-outline/10 pb-4">Resumen de Orden</h3>
+<!-- Event Details -->
+<div class="flex gap-4 items-start">
+<div class="w-20 h-20 rounded-lg bg-surface-variant overflow-hidden shrink-0 border border-outline/10">
+<img alt="Concert Crowd" class="w-full h-full object-cover opacity-80" data-alt="A tightly packed concert crowd illuminated by piercing red and blue stage lasers cutting through thick atmospheric fog. The scene is shot from a low angle, emphasizing the sheer scale of the event in a massive, dark arena setting. The mood is highly energetic, chaotic, and technologically advanced, fitting a premium, high-production electronic music festival aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuo0-Bp30XaADM48jmmLTmU_ySJqW98X0KvBw1JpO5IN35u85OkkUWcPKyYXWy-lw27WXCIpk3RlOA9waP_4OMC9VOzmbL_RCJfHUm_cbOHPGPEfyWynoUvQncKVNnjygpCbcpVLEaYeFranOWig0S5jMaubzIhxaMsnV7FRjb-qDUxYLvFEIQLxdHMHMBvXRsHWyALES5Y2IVnPv0FO9M40B5FoplSzbt9Lmjf8RYo1VfVvO-PhuPUgEYWUWcpJvQiTtsgn_vZ5g"/>
+</div>
+<div class="flex flex-col gap-1">
+<h4 class="font-headline-md text-[20px] font-semibold text-primary leading-tight">SYNERGY World Tour 2024</h4>
+<p class="font-body-md text-[14px] text-on-surface-variant flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                                    Viernes, 24 Nov • 21:00
+                                </p>
+<p class="font-body-md text-[14px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                                    Estadio Neo, Sector VIP
+                                </p>
+</div>
+</div>
+<!-- Ticket Details -->
+<div class="bg-surface-container-highest/50 rounded-lg p-4 border border-outline/5 flex justify-between items-center mt-2">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-primary">Pase Acceso Total (VIP)</span>
+<span class="font-body-md text-[14px] text-on-surface-variant">Asiento Asignado: Fila A, 12</span>
+</div>
+<span class="font-headline-md text-[18px] text-primary">x2</span>
+</div>
+<!-- Pricing Breakdown -->
+<div class="flex flex-col gap-3 pt-4 border-t border-outline/10">
+<div class="flex justify-between items-center">
+<span class="font-body-md text-on-surface-variant text-[15px]">Subtotal (2 Entradas)</span>
+<span class="font-body-md text-primary text-[15px]">$450.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-on-surface-variant text-[15px]">Cargos por Servicio</span>
+<span class="font-body-md text-primary text-[15px]">$45.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-on-surface-variant text-[15px]">Impuestos</span>
+<span class="font-body-md text-primary text-[15px]">$32.50</span>
+</div>
+</div>
+<!-- Total -->
+<div class="flex justify-between items-end pt-4 border-t border-outline/20 mt-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Total a Pagar</span>
+<span class="font-headline-lg text-headline-lg text-primary leading-none">$527.50</span>
+</div>
+<!-- Main Action Button -->
+<button class="mt-4 w-full bg-primary text-surface-container-lowest font-label-caps text-label-caps py-5 px-6 rounded-xl hover:bg-primary-container transition-all active:scale-[0.98] flex items-center justify-center gap-2 uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">lock</span>
+                            Confirmar Compra Demo
+                        </button>
+<p class="text-center font-body-md text-[12px] text-on-surface-variant mt-2">
+                            Al hacer clic, aceptas los Términos de Servicio y la Política de Privacidad de StageFront.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
