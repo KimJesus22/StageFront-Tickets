@@ -58,6 +58,79 @@ export async function getAllUpcomingEvents(): Promise<EventWithArtist[]> {
 }
 
 /**
+ * Obtiene eventos filtrados basados en SearchParams de URL.
+ */
+export async function getFilteredEvents(params: {
+  status?: string;
+  min_price?: string;
+  max_price?: string;
+  q?: string;
+  date?: string;
+}): Promise<EventWithArtist[]> {
+  // Construimos la base, si hay filtro de precio necesitamos inner join con zones
+  const hasPriceFilter = params.min_price || params.max_price;
+  
+  let query = insforge.database
+    .from("events")
+    .select(`
+      *,
+      artists!inner (*)
+      ${hasPriceFilter ? ", zones!inner(price)" : ""}
+    `);
+
+  // Estatus
+  if (params.status === 'ON_SALE') {
+    query = query.eq("status", "en_venta");
+  } else if (params.status === 'UPCOMING') {
+    query = query.eq("status", "programado");
+  } else {
+    query = query.in("status", ["en_venta", "programado", "agotado"]);
+  }
+
+  // Texto (Ciudad/Artista)
+  if (params.q && params.q.trim() !== '') {
+    const term = `%${params.q.trim()}%`;
+    query = query.or(`city.ilike.${term},artists.name.ilike.${term}`);
+  }
+
+  // Fecha
+  if (params.date) {
+    query = query.gte("date", params.date);
+  } else {
+    query = query.gte("date", new Date().toISOString());
+  }
+
+  // Precio (BETWEEN) usando foreign table filtering
+  if (params.min_price) {
+    query = query.gte("zones.price", params.min_price);
+  }
+  if (params.max_price) {
+    query = query.lte("zones.price", params.max_price);
+  }
+
+  const { data, error } = await query.order("date", { ascending: true });
+
+  if (error) {
+    console.error("[getFilteredEvents] Error:", error);
+    return [];
+  }
+
+  // Si cruzamos con zones, PostgreSQL puede devolver filas duplicadas por cada zona. 
+  // Deduplicamos los eventos en memoria por ID (O(n)).
+  if (hasPriceFilter && data) {
+    const uniqueEvents = new Map();
+    for (const item of data) {
+      if (!uniqueEvents.has(item.id)) {
+        uniqueEvents.set(item.id, item);
+      }
+    }
+    return Array.from(uniqueEvents.values()) as EventWithArtist[];
+  }
+
+  return (data as EventWithArtist[]) ?? [];
+}
+
+/**
  * Obtiene los eventos destacados para la landing page.
  * Como no existe columna is_featured, usamos los más próximos (limit 4)
  * con su artista embebido.

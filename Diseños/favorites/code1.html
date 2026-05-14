@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Favorites - StageFront Tickets</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-container-highest": "#353434",
+                        "surface-variant": "#353434",
+                        "secondary-fixed": "#e5e1e4",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-dim": "#141313",
+                        "on-tertiary-container": "#636565",
+                        "inverse-primary": "#5d5f5f",
+                        "outline-variant": "#444748",
+                        "on-tertiary": "#2f3131",
+                        "surface-bright": "#3a3939",
+                        "outline": "#8e9192",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-error": "#690005",
+                        "tertiary-container": "#e2e2e2",
+                        "on-primary-fixed": "#1a1c1c",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-primary-container": "#636565",
+                        "secondary": "#c8c6c8",
+                        "primary": "#ffffff",
+                        "on-secondary-container": "#b7b4b7",
+                        "tertiary": "#ffffff",
+                        "on-primary": "#2f3131",
+                        "background": "#141313",
+                        "surface": "#141313",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "inverse-on-surface": "#313030",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-tint": "#c6c6c7",
+                        "on-surface-variant": "#c4c7c8",
+                        "secondary-container": "#474649",
+                        "on-secondary": "#313032",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "on-secondary-fixed-variant": "#474649",
+                        "error-container": "#93000a",
+                        "primary-container": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface": "#e5e2e1",
+                        "surface-container": "#201f1f",
+                        "error": "#ffb4ab",
+                        "inverse-surface": "#e5e2e1",
+                        "on-primary-fixed-variant": "#454747",
+                        "on-background": "#e5e2e1",
+                        "primary-fixed": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "display-xl": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "label-caps": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(20, 19, 19, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel-hover:hover {
+            background: rgba(20, 19, 19, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(30px);
+        }
+        .neon-text-emerald {
+            color: #10b981;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .neon-border-emerald {
+            border-bottom-color: #10b981;
+            box-shadow: 0 2px 10px -2px rgba(16, 185, 129, 0.5);
+        }
+        .heart-active {
+            color: #f43f5e;
+            text-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+        }
+        .heart-inactive {
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md selection:bg-white/20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-white/10 shadow-none">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-stack-md">
+<a class="font-display-xl text-headline-lg tracking-tighter text-primary uppercase scale-95 active:scale-90 transition-transform" href="#">STAGEFRONT</a>
+<!-- Web Nav -->
+<nav class="hidden md:flex items-center gap-stack-sm ml-stack-md">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-DEFAULT" href="#">Explore</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-DEFAULT" href="#">Artists</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-DEFAULT" href="#">Venues</a>
+<!-- Active State on Exclusives just for semantic matching if My Favorites falls under it, else leaving all inactive as none perfectly match 'Favorites' in the base list -->
+<a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1 hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-DEFAULT" href="#">Exclusives</a>
+</nav>
+</div>
+<div class="flex items-center gap-stack-sm">
+<button class="text-primary hover:bg-white/5 transition-all duration-300 p-2 rounded-full scale-95 active:scale-90 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
+</button>
+<button class="text-primary hover:bg-white/5 transition-all duration-300 p-2 rounded-full scale-95 active:scale-90 transition-transform flex items-center justify-center relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+</button>
+<button class="ml-2 hover:bg-white/5 transition-all duration-300 p-1 rounded-full scale-95 active:scale-90 transition-transform">
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full object-cover border border-white/20" data-alt="Close-up portrait of a young person in atmospheric cyberpunk neon lighting, moody cinematic shadows, deep blues and purples." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnXiocOPTRqzsXOOEZWIltSvX2ghtD-eyQ5ZyxU1T1pYuYQuw2p3s1h3pSV1ggfX6uHqD0GxxpLbyYwddtpMjohid7JyH_o45rvUibQzsAfdE1KZSmP4DNqP0geBjHRxHVArU4pilQNMDUVWribPK5m2u5lPldUA5YTgcFFOLPOhq1kQtBaYzQjEOTxGwtT_YyQA2Mn0mdQbUEkyoia13oYGnWhokGleoxQDIw2pZznecmgoRSJmiTOdik-KOBHO88UzUr1r_6nQI"/>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-32 pb-stack-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Header -->
+<div class="mb-stack-lg">
+<h1 class="font-display-xl text-display-xl text-primary mb-2">Mis Favoritos</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Tu selección exclusiva de eventos y artistas</p>
+</div>
+<!-- Tabs -->
+<div class="flex border-b border-white/10 mb-stack-lg gap-stack-md">
+<button class="pb-3 px-1 font-label-caps text-label-caps text-primary border-b-2 neon-border-emerald uppercase tracking-widest">
+                Eventos Guardados
+            </button>
+<button class="pb-3 px-1 font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors uppercase tracking-widest">
+                Artistas Favoritos
+            </button>
+</div>
+<!-- Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Card 1 (Active Heart) -->
+<div class="glass-panel glass-panel-hover rounded-xl overflow-hidden group relative flex flex-col h-[400px]">
+<div class="absolute top-4 right-4 z-10">
+<button class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-black/60 transition-colors">
+<span class="material-symbols-outlined heart-active" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="h-2/3 w-full relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-[1]"></div>
+<img alt="Concert image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A massive, high-tech electronic music stage with towering LED screens displaying abstract futuristic visuals. Intense green lasers cut through thick atmospheric fog. A silhouetted DJ performs for a massive crowd. Cyberpunk ethereal tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxA5xUuDxRWHWfz1HOw9efmFPweIscuHpCS5wd0FCuQUxtl_PhETTWBJD5LvkTJcpr7mayldbf7zgVd5xGVf6T0-_TSlE7iZuItrlZgFTDBcdsfgPnUx4-AGBibytRUJOoYRv6XXoqtrhqqytqOUfyVF73Oos88oEbQVXxZ76SkfUFOfcLRA5arYcT9GrfKvDhc_qjxuNfD4mL1yuhLprLFSsYcOaiN_Boi_eza6f992uWzm4Hp1tAzuv32uuNluchi4UcJgHXVIg"/>
+</div>
+<div class="p-stack-md flex flex-col justify-end flex-grow z-10 -mt-12 bg-gradient-to-t from-surface via-surface/90 to-transparent">
+<div class="flex gap-2 mb-2">
+<span class="px-2 py-1 rounded-full border border-white/20 bg-white/5 font-label-caps text-[10px] text-primary uppercase backdrop-blur-sm shadow-[0_0_8px_rgba(255,255,255,0.1)]">Electronic</span>
+<span class="px-2 py-1 rounded-full border border-white/20 bg-white/5 font-label-caps text-[10px] text-primary uppercase backdrop-blur-sm">VIP Avail</span>
+</div>
+<h3 class="font-headline-lg text-headline-md text-primary mb-1">Anyma presents Genesys</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                        Sphere, Las Vegas
+                    </p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-3 text-emerald-400">OCT 15, 2024</p>
+</div>
+</div>
+<!-- Card 2 (Active Heart) -->
+<div class="glass-panel glass-panel-hover rounded-xl overflow-hidden group relative flex flex-col h-[400px]">
+<div class="absolute top-4 right-4 z-10">
+<button class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-black/60 transition-colors">
+<span class="material-symbols-outlined heart-active" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="h-2/3 w-full relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-[1]"></div>
+<img alt="Concert image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A massive stadium concert at night illuminated by thousands of glowing purple and pink lightsticks held by the crowd. A massive stage structure stands in the distance under a dark sky. High-end pop concert production." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMo_LIrFl4AR3_XDHIhcqU8kzXPk5wCDZjxkPa2wdkGRsaz8i6glkYU6QKB5n2qNFGWHgWNn0VTK5H4imtV1zB9MvfPO-4c0DmHTexWe5vCP_AiNA0q9A-9D2-8lZEmaNZOroExQw5x0Yl0bTf6R31Tq0IU99EuEx0zK4_U5LRWBJwvZgzb36YVu91gBub9UgmSYr2gb-zAmLaGczCqKBiN9oo_GOoiLWpqJ_FgrBvmN94quTvwqMDSDh4vAS5TzVsR6OXnSE0SO8"/>
+</div>
+<div class="p-stack-md flex flex-col justify-end flex-grow z-10 -mt-12 bg-gradient-to-t from-surface via-surface/90 to-transparent">
+<div class="flex gap-2 mb-2">
+<span class="px-2 py-1 rounded-full border border-[#d8b4e2]/30 bg-[#d8b4e2]/10 font-label-caps text-[10px] text-[#d8b4e2] uppercase backdrop-blur-sm shadow-[0_0_8px_rgba(216,180,226,0.2)]">K-Pop</span>
+</div>
+<h3 class="font-headline-lg text-headline-md text-primary mb-1">BTS: Yet To Come</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                        Wembley Stadium, London
+                    </p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-3 text-emerald-400">NOV 02, 2024</p>
+</div>
+</div>
+<!-- Card 3 (Inactive Heart to show toggle) -->
+<div class="glass-panel glass-panel-hover rounded-xl overflow-hidden group relative flex flex-col h-[400px]">
+<div class="absolute top-4 right-4 z-10">
+<button class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-black/60 transition-colors">
+<span class="material-symbols-outlined heart-inactive" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</button>
+</div>
+<div class="h-2/3 w-full relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-[1]"></div>
+<img alt="Concert image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 grayscale-[30%]" data-alt="A moody, atmospheric shot of a lone musician playing a synthesizer on a dimly lit stage. Cool blue and stark white spotlights pierce through heavy fog. Intimate, ethereal tech aesthetic with deep shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjJlr_EAmHkPT6wzqRREV9hmJbbKfOqmoo8X5qOWMpDff5zS5WMKKULlIwbOWGMhOs1IHxU_rgjaaL2Acrtvsn7kJ0fGhKRCBu6ignBgE7p-KMcNDBIZoyXgmXBI4_BuyznjdWBZ0W-LxMunHshhza4JTor8KhfNB1A6ZZv_yzTAJaoBmpJg3qnwtuGTMDf4YvtGK6HdYh3xwSxSkKnkmTYUJKFmR2W1yYhs26JPs13gvZ6g5EfJlFxlrMSwS9ZZi9VhB_zwYt2d0"/>
+</div>
+<div class="p-stack-md flex flex-col justify-end flex-grow z-10 -mt-12 bg-gradient-to-t from-surface via-surface/90 to-transparent">
+<div class="flex gap-2 mb-2">
+<span class="px-2 py-1 rounded-full border border-white/20 bg-white/5 font-label-caps text-[10px] text-primary uppercase backdrop-blur-sm">Alternative</span>
+</div>
+<h3 class="font-headline-lg text-headline-md text-primary mb-1">The Midnight</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                        The Wiltern, LA
+                    </p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-3 text-emerald-400">DEC 12, 2024</p>
+</div>
+</div>
+<!-- Card 4 (Active Heart) -->
+<div class="glass-panel glass-panel-hover rounded-xl overflow-hidden group relative flex flex-col h-[400px]">
+<div class="absolute top-4 right-4 z-10">
+<button class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-black/60 transition-colors">
+<span class="material-symbols-outlined heart-active" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="h-2/3 w-full relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-[1]"></div>
+<img alt="Concert image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A high-energy pop concert with intense magenta and pink lighting sweeping across the stage and crowd. Silhouettes of four performers are visible against a massive, glowing pink LED backdrop. Ethereal, premium production value." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5oQxYa1lvF1ftsoorohlaYGbJ3tIblUvoxu-OZkTjWrbSksHdeMqzfmlo-bIuIzdIGy46KGtBxB0JlRqTLy5_8U_KCzG7OVTKZ7axnNa57Dv7v_TkPPg8XoYJ0b16HT1aSaK69xBS86gaoOniIThgSQ2pKhgFkbMmXJIYgHRXJp4asFIrk_MPI0h2MPLSeRSAnriWBpPn0b-CfCndT3zFMPsanJJBXsX41fi5T7sEZl6CIs40opr8XxhjrvMRyXlCxWI_LFE2qY4"/>
+</div>
+<div class="p-stack-md flex flex-col justify-end flex-grow z-10 -mt-12 bg-gradient-to-t from-surface via-surface/90 to-transparent">
+<div class="flex gap-2 mb-2">
+<span class="px-2 py-1 rounded-full border border-pink-500/30 bg-pink-500/10 font-label-caps text-[10px] text-pink-400 uppercase backdrop-blur-sm shadow-[0_0_8px_rgba(244,114,182,0.2)]">Pop</span>
+</div>
+<h3 class="font-headline-lg text-headline-md text-primary mb-1">BLACKPINK World Tour</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                        MetLife Stadium, NY
+                    </p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-3 text-emerald-400">JAN 20, 2025</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-dim w-full py-stack-lg border-t border-white/5 shadow-none mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop gap-gutter max-w-container-max mx-auto">
+<div class="font-display-xl text-headline-md text-primary uppercase text-center md:text-left mb-stack-sm md:mb-0">
+                STAGEFRONT
+            </div>
+<nav class="flex flex-wrap justify-center gap-stack-md mb-stack-sm md:mb-0">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 opacity-80 hover:opacity-100 uppercase" href="#">Privacy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 opacity-80 hover:opacity-100 uppercase" href="#">Terms</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 opacity-80 hover:opacity-100 uppercase" href="#">Artist Portal</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 opacity-80 hover:opacity-100 uppercase" href="#">Support</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 opacity-80 hover:opacity-100 uppercase" href="#">Membership</a>
+</nav>
+<div class="font-body-md text-body-md text-on-surface-variant text-sm text-center md:text-right">
+                © 2024 STAGEFRONT TICKETS. THE ARTIST'S WORLD AWAITS.
+            </div>
+</div>
+</footer>
+</body></html>

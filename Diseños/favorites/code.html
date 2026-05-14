@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STAGEFRONT - Artistas Favoritos (Empty State)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#e2e2e2",
+                      "surface-container-highest": "#353434",
+                      "surface-variant": "#353434",
+                      "secondary-fixed": "#e5e1e4",
+                      "primary-fixed-dim": "#c6c6c7",
+                      "on-error-container": "#ffdad6",
+                      "surface-container-low": "#1c1b1b",
+                      "surface-dim": "#141313",
+                      "on-tertiary-container": "#636565",
+                      "inverse-primary": "#5d5f5f",
+                      "outline-variant": "#444748",
+                      "on-tertiary": "#2f3131",
+                      "surface-bright": "#3a3939",
+                      "outline": "#8e9192",
+                      "tertiary-fixed-dim": "#c6c6c7",
+                      "on-error": "#690005",
+                      "tertiary-container": "#e2e2e2",
+                      "on-primary-fixed": "#1a1c1c",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "on-primary-container": "#636565",
+                      "secondary": "#c8c6c8",
+                      "primary": "#ffffff",
+                      "on-secondary-container": "#b7b4b7",
+                      "tertiary": "#ffffff",
+                      "on-primary": "#2f3131",
+                      "background": "#141313",
+                      "surface": "#141313",
+                      "secondary-fixed-dim": "#c8c6c8",
+                      "inverse-on-surface": "#313030",
+                      "surface-container-lowest": "#0e0e0e",
+                      "surface-tint": "#c6c6c7",
+                      "on-surface-variant": "#c4c7c8",
+                      "secondary-container": "#474649",
+                      "on-secondary": "#313032",
+                      "surface-container-high": "#2a2a2a",
+                      "on-secondary-fixed": "#1c1b1d",
+                      "on-secondary-fixed-variant": "#474649",
+                      "error-container": "#93000a",
+                      "primary-container": "#e2e2e2",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "on-surface": "#e5e2e1",
+                      "surface-container": "#201f1f",
+                      "error": "#ffb4ab",
+                      "inverse-surface": "#e5e2e1",
+                      "on-primary-fixed-variant": "#454747",
+                      "on-background": "#e5e2e1",
+                      "primary-fixed": "#e2e2e2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "margin-desktop": "48px",
+                      "gutter": "24px",
+                      "stack-sm": "8px",
+                      "stack-md": "24px",
+                      "stack-lg": "48px",
+                      "margin-mobile": "16px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "display-xl": [
+                              "Space Grotesk"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Space Grotesk"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Space Grotesk"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "display-xl": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen flex flex-col antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-white/10 shadow-none">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<!-- Brand Logo -->
+<a class="font-display-xl text-headline-lg tracking-tighter text-primary uppercase" href="#">
+                STAGEFRONT
+            </a>
+<!-- Desktop Navigation -->
+<nav class="hidden md:flex gap-gutter items-center">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-2 px-3 rounded-lg hover:bg-white/5 transition-all duration-300" href="#">Explore</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-2 px-3 rounded-lg hover:bg-white/5 transition-all duration-300" href="#">Artists</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-2 px-3 rounded-lg hover:bg-white/5 transition-all duration-300" href="#">Venues</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors py-2 px-3 rounded-lg hover:bg-white/5 transition-all duration-300" href="#">Exclusives</a>
+</nav>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-4 text-primary">
+<button aria-label="shopping_bag" class="scale-95 active:scale-90 transition-transform hover:bg-white/5 p-2 rounded-full duration-300">
+<span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+</button>
+<button aria-label="notifications" class="scale-95 active:scale-90 transition-transform hover:bg-white/5 p-2 rounded-full duration-300">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+</button>
+<button class="scale-95 active:scale-90 transition-transform w-8 h-8 rounded-full overflow-hidden border border-white/20 ml-2">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A cinematic, high-fashion portrait of a young woman used as a user profile avatar. The lighting is dramatic and moody, reflecting the premium dark aesthetic of the UI. She has a subtle, confident expression, captured against a pure black background to ensure seamless integration into a dark mode interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC7gNL47GyAinAJzCRmwu-SKIV44r8BfzCxOIIesLSInG3tgf_YMgwPA95GetaD75diJTFVHKmnHtgF-x4dlmr72pIABzv-bMsVAwxSuLlA8toEMyRshN_vZGqPMEItomaL210khSKIsj2jKl0KAgI8IsL8p55DndMqtk9TvH9aiZDOp2wDTiliJ_3G7fTjSo8pzxNTc33W74CzT4ilOR8YK6aDVCVCx9jYDhTC7IQed8DNZc11SR7La5jzU1bBSruFJsjC9EdZPo"/>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow pt-[100px] pb-stack-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex flex-col">
+<!-- Page Header & Tabs -->
+<div class="mb-stack-md flex flex-col gap-stack-sm">
+<h1 class="font-display-xl text-headline-lg text-primary uppercase tracking-tighter">Mis Favoritos</h1>
+<!-- Custom Tabs for Favorites -->
+<div class="flex gap-4 border-b border-white/10 pb-2 mt-4">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors pb-2" href="#">EVENTOS GUARDADOS</a>
+<a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-2" href="#">ARTISTAS FAVORITOS</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors pb-2" href="#">VENUES</a>
+</div>
+</div>
+<!-- Empty State Container -->
+<div class="flex-grow flex flex-col items-center justify-center text-center py-stack-lg px-4 md:px-margin-desktop bg-surface-container-low/30 backdrop-blur-[20px] rounded-xl border border-white/5 relative overflow-hidden min-h-[512px]">
+<!-- Subtle background glow -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none"></div>
+<!-- Icon -->
+<div class="mb-stack-md relative">
+<span class="material-symbols-outlined text-[64px] text-surface-tint drop-shadow-[0_0_12px_rgba(198,198,199,0.3)]" style="font-variation-settings: 'FILL' 0, 'wght' 200;">heart_broken</span>
+</div>
+<!-- Text Content -->
+<h2 class="font-headline-md text-headline-md text-primary mb-stack-sm">Aún no tienes artistas favoritos</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mx-auto mb-stack-md">Sigue a tus artistas preferidos para recibir notificaciones exclusivas y acceso prioritario.</p>
+<!-- Action Button -->
+<button class="bg-primary text-on-primary font-headline-md text-headline-md px-8 py-4 rounded-full hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                Explorar Cartelera
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-dim border-t border-white/5 w-full py-stack-lg mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop gap-gutter max-w-container-max mx-auto">
+<!-- Brand -->
+<div class="font-display-xl text-headline-md text-primary uppercase opacity-80 hover:opacity-100 transition-opacity">
+                STAGEFRONT
+            </div>
+<!-- Links -->
+<nav class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-4">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 uppercase" href="#">Privacy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 uppercase" href="#">Terms</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 uppercase" href="#">Artist Portal</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 uppercase" href="#">Support</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200 uppercase" href="#">Membership</a>
+</nav>
+<!-- Copyright -->
+<div class="font-body-md text-body-md text-on-surface-variant mt-4 md:mt-0 text-center md:text-left text-sm opacity-60">
+                © 2024 STAGEFRONT TICKETS. THE ARTIST'S WORLD AWAITS.
+            </div>
+</div>
+</footer>
+</body></html>

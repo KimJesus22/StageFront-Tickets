@@ -26,6 +26,8 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Panel de Administración (RBAC)** — Dashboard protegido con Middleware Edge. Incluye CRUD de Artistas con Interfaz Optimista (`useOptimistic`) y CRUD de Eventos con validación de precios en JSONB.
 - **Editor de Inventario Atómico** — Administración de asientos en `/admin` utilizando operaciones por lote ($O(1)$) y transacciones atómicas para inicializar y bloquear zonas completas.
 - **Buscador Híbrido "Mega Search"** — Implementación con debounce del lado del cliente, filtrado local instantáneo (0ms latencia) y fallback SQL mediante operador `ILIKE` sobre vistas (`v_search_events`).
+- **Filtrado Server-Side URL** — Sincronización de estado vía URL (`searchParams`) en `/events`, con filtrado multicriterio avanzado (`BETWEEN` para precios cruzados en `zones`) y esqueletos de carga (`Suspense`) para fluidez visual.
+- **Sistema de Favoritos Resiliente** — Guardado de artistas y eventos mediante `toggleFavorite`, usando silenciamiento atómico de la restricción `UNIQUE` de PostgreSQL para prevenir fallos por colisiones de red, acompañado de una UI interactiva (`useOptimistic`) de latencia 0ms.
 - **Portal de Artista** — Dashboard en `/portal` con ventas e ingresos por artista
 - **Páginas Legales y Soporte** — Centro de Ayuda (`/help`) y Centro de Seguridad (`/security`) estáticos con UI Glassmorphism y FAQs interactivas nativas
 - **Protección de Rutas** — Enrutamiento protegido por middleware (`proxy.ts` de Next.js 16)
@@ -399,6 +401,8 @@ pnpm start
 | **Optimistic UI** | `ArtistClient.tsx` | Predicción visual de mutaciones (toggle) sin bloqueo de hilo de red |
 | **Hybrid Search** | `SearchClient.tsx` | Reducción de latencia de I/O de DB con filtro en memoria y debounce |
 | **Batch Update** | `seats-admin.ts` | Reducción dramática de peticiones HTTP con clausuras SQL IN ($O(1)$) |
+| **URL State Sync** | `FilterClient.tsx` | Preservación de estado de navegación sin side-effects locales pesados |
+| **Silent Constraint Catch** | `favorites.ts` | Prevención de caídas 500 ignorando violaciones UNIQUE 23505 |
 
 ## 📈 Próximos Pasos
 
