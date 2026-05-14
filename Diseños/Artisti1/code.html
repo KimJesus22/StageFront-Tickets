@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Artistas - StageFront Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#c6c6c7",
+                      "surface-bright": "#3a3939",
+                      "surface-variant": "#353434",
+                      "surface": "#141313",
+                      "error": "#ffb4ab",
+                      "surface-container-low": "#1c1b1b",
+                      "primary-container": "#e2e2e2",
+                      "surface-container-high": "#2a2a2a",
+                      "outline": "#8e9192",
+                      "on-secondary": "#313032",
+                      "on-secondary-container": "#b7b4b7",
+                      "background": "#141313",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "on-error": "#690005",
+                      "on-primary-fixed-variant": "#454747",
+                      "error-container": "#93000a",
+                      "on-tertiary": "#2f3131",
+                      "on-primary-container": "#636565",
+                      "tertiary-fixed-dim": "#c6c6c7",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "secondary-container": "#474649",
+                      "on-secondary-fixed": "#1c1b1d",
+                      "inverse-surface": "#e5e2e1",
+                      "outline-variant": "#444748",
+                      "on-tertiary-container": "#636565",
+                      "tertiary-container": "#e2e2e2",
+                      "tertiary-fixed": "#e2e2e2",
+                      "surface-container-lowest": "#0e0e0e",
+                      "primary-fixed": "#e2e2e2",
+                      "secondary": "#c8c6c8",
+                      "on-error-container": "#ffdad6",
+                      "surface-container": "#201f1f",
+                      "tertiary": "#ffffff",
+                      "on-surface": "#e5e2e1",
+                      "on-primary-fixed": "#1a1c1c",
+                      "primary": "#ffffff",
+                      "on-primary": "#2f3131",
+                      "surface-dim": "#141313",
+                      "on-surface-variant": "#c4c7c8",
+                      "on-secondary-fixed-variant": "#474649",
+                      "inverse-on-surface": "#313030",
+                      "secondary-fixed": "#e5e1e4",
+                      "on-background": "#e5e2e1",
+                      "inverse-primary": "#5d5f5f",
+                      "primary-fixed-dim": "#c6c6c7",
+                      "secondary-fixed-dim": "#c8c6c8",
+                      "surface-container-highest": "#353434",
+                      "neon-green": "#39ff14"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "stack-md": "24px",
+                      "stack-lg": "48px",
+                      "gutter": "24px",
+                      "stack-sm": "8px",
+                      "unit": "4px",
+                      "margin-desktop": "48px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Space Grotesk"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Space Grotesk"
+                      ],
+                      "display-xl": [
+                              "Space Grotesk"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-xl": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+      </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel {
+            background: rgba(20, 19, 19, 0.85);
+            backdrop-filter: blur(40px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-glow {
+            box-shadow: 0 0 12px rgba(57, 255, 20, 0.4);
+        }
+      </style>
+</head>
+<body class="bg-zinc-950 text-on-background font-body-md min-h-screen overflow-x-hidden selection:bg-surface-variant">
+<!-- SideNavBar -->
+<nav class="bg-zinc-950 border-r border-white/10 h-screen w-64 fixed left-0 top-0 z-50 flex flex-col py-6 gap-2 shadow-2xl shadow-black/50 hidden md:flex">
+<div class="px-6 mb-8">
+<h1 class="text-white font-black tracking-widest font-headline-md text-headline-md">NEXUS</h1>
+<p class="text-zinc-400 font-label-caps text-label-caps mt-1">Enterprise Portal</p>
+</div>
+<div class="flex-1 px-2 space-y-1">
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Space_Grotesk'] text-sm font-medium">Dashboard</span>
+</a>
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">confirmation_number</span>
+<span class="font-['Space_Grotesk'] text-sm font-medium">Events</span>
+</a>
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-['Space_Grotesk'] text-sm font-medium">Tickets</span>
+</a>
+<!-- Active Tab Based on Context: Customers/Artists -->
+<a class="bg-white text-zinc-950 rounded-lg flex items-center gap-3 px-4 py-3 mx-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-['Space_Grotesk'] text-sm font-medium">Gestión de Artistas</span>
+</a>
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-['Space_Grotesk'] text-sm font-medium">Analytics</span>
+</a>
+</div>
+<div class="px-2 mt-auto space-y-1">
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">shield</span>
+<span class="font-['Space_Grotesk'] text-sm font-medium">Security</span>
+</a>
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="font-['Space_Grotesk'] text-sm font-medium">Support</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="bg-zinc-950/80 backdrop-blur-md docked full-width top-0 z-40 shadow-none border-b border-white/10 flex justify-between items-center w-full px-6 h-16 md:ml-64 w-[calc(100%-16rem)] fixed">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-zinc-400 md:hidden">menu</span>
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">search</span>
+<input class="bg-surface-container-high border-none rounded-full py-1.5 pl-10 pr-4 text-sm font-body-md text-on-surface focus:ring-1 focus:ring-white/20 w-64 placeholder:text-zinc-500" placeholder="Search artists..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-zinc-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant ml-2 overflow-hidden border border-white/10">
+<img alt="Admin Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgHeup2UY1UUibf_mAHAcsS_l6mHc_RMFHReMNzzuvsCkGj3P5NKu5qi7qoQRiDAHwMlC9jNqlrnqTa4aXGbWJLCKoi4HxOm7JAYyBYFwjZ1t1ks3L52zZAnRTslcG7Xk2f5GEgRH6gOEmKZRH0LEpoz9GczkAGLUzBIbXsV4G5W7vBvuXyK-YGt43ygdytN6uTa-8Ty_TPALQ0iExcrkQezYkfZWiOf9Jvk1w3fZoA70rHZF-KG5oUQQUM9oR9trPJeaYOwi19zs"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="pt-24 pb-12 px-6 md:ml-64 md:px-12 max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-10">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-white mb-2">Gestión de Artistas</h2>
+<p class="font-body-md text-body-md text-zinc-400">Manage your exclusive artist roster, update profiles, and control active status.</p>
+</div>
+<button class="bg-white text-black font-headline-md text-sm font-bold px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors flex items-center gap-2 self-start md:self-auto">
+<span class="material-symbols-outlined text-sm font-bold">add</span>
+                Agregar Artista
+            </button>
+</div>
+<!-- Artist Table (Glassmorphism List) -->
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-white/10 text-zinc-400 font-label-caps text-label-caps uppercase tracking-wider">
+<th class="p-6 font-medium">Artist</th>
+<th class="p-6 font-medium hidden sm:table-cell">Description</th>
+<th class="p-6 font-medium">Status</th>
+<th class="p-6 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- Row 1 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="p-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-white/10 bg-surface-container-high flex-shrink-0">
+<img alt="Artist Avatar" class="w-full h-full object-cover" data-alt="A striking portrait of an electronic music artist bathed in moody, cinematic neon blue and magenta lighting. The background is a deep, immersive black, highlighting the artist's enigmatic expression. The overall aesthetic perfectly matches the ethereal tech and premium glassmorphism style of the UI, emphasizing high contrast and digital exclusivity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByrLYgcr7HhQJc2IltqWbiy1Z1tKzl5j5TtsIzPnFv3VBU4ia0KLzYjoaYH_uTytkRx_F_ffWJKnRgQ7Ox6LDcVzBS7CldDsa0aYNzO8ACjCKEaDByeGaI4KNsVYccDDhXdIf4XJuBHllkC3tai5FuqERwL24hTlHlb91JkpCSeLmwkX63YikfyqamamEVXlN-PDhA0DE-zrvHAsVnBUupBMA86cTju6OZyaHsF0HbSt8NgnMmGLx10VY7wILGS5a2bWVV4ZfDCg0"/>
+</div>
+<div>
+<div class="font-headline-md text-body-md font-bold text-white group-hover:text-primary transition-colors">Anyma</div>
+<div class="font-body-md text-sm text-zinc-500">Electronic / Techno</div>
+</div>
+</div>
+</td>
+<td class="p-6 hidden sm:table-cell w-1/3">
+<p class="font-body-md text-sm text-zinc-400 line-clamp-2">Pioneering melodic techno with visually stunning, narrative-driven live performances that bridge reality and the digital realm.</p>
+</td>
+<td class="p-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 text-neon-green font-label-caps text-xs border border-green-500/20 neon-glow">
+<span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse"></span>
+                                    Active
+                                </span>
+</td>
+<td class="p-6 text-right">
+<div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-zinc-400 hover:text-white transition-colors p-1" title="Edit">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+<button class="text-zinc-400 hover:text-error transition-colors p-1" title="Delete">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="p-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-white/10 bg-surface-container-high flex-shrink-0">
+<img alt="Artist Avatar" class="w-full h-full object-cover" data-alt="A high-contrast profile photo of an avant-garde musician set against a minimalist pitch-black background. Subtle, cool-toned rim lighting defines their silhouette, creating a sense of mystery and premium exclusivity. The visual tone is cinematic, sharp, and perfectly aligned with a dark-mode, Ethereal Tech design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARmBdqAm0WLBjnkIDO7v1T2Rh_vwFprOrOyLgzivvwci9mFFQqrpQc5N3tnsEb4dqfSh-nFgXgATA5GnAHb1SGjomvNy-3CVpfTUUt9TB_dsHKLt_DpKyNhfR5s0SNwxohuGWKNXYTFWJcbhs4bpDaatqsY-FkqZVV8NyV4Z8B6KneMrgrdsxu39Qo6yuinn-1fkGUhN9oWCHoIhyxg9XvwKqF0f0KC-TWKgxntSupL4lhXNWYxnbyJTAgmXK49b4x_RDOgL3qZ6E"/>
+</div>
+<div>
+<div class="font-headline-md text-body-md font-bold text-white group-hover:text-primary transition-colors">Tale Of Us</div>
+<div class="font-body-md text-sm text-zinc-500">Melodic Techno</div>
+</div>
+</div>
+</td>
+<td class="p-6 hidden sm:table-cell w-1/3">
+<p class="font-body-md text-sm text-zinc-400 line-clamp-2">Italian duo known for their emotive, deeply moving electronic soundscapes and the creation of the Afterlife imprint.</p>
+</td>
+<td class="p-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 text-neon-green font-label-caps text-xs border border-green-500/20 neon-glow">
+<span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse"></span>
+                                    Active
+                                </span>
+</td>
+<td class="p-6 text-right">
+<div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-zinc-400 hover:text-white transition-colors p-1" title="Edit">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+<button class="text-zinc-400 hover:text-error transition-colors p-1" title="Delete">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="p-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-white/10 bg-surface-container-high flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-zinc-600">person</span>
+</div>
+<div>
+<div class="font-headline-md text-body-md font-bold text-white group-hover:text-primary transition-colors">Rüfüs Du Sol</div>
+<div class="font-body-md text-sm text-zinc-500">Alternative Dance</div>
+</div>
+</div>
+</td>
+<td class="p-6 hidden sm:table-cell w-1/3">
+<p class="font-body-md text-sm text-zinc-400 line-clamp-2">Live electronic trio blending organic instruments with driving house rhythms for arena-scale performances.</p>
+</td>
+<td class="p-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant text-zinc-400 font-label-caps text-xs border border-white/5">
+<span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
+                                    Inactive
+                                </span>
+</td>
+<td class="p-6 text-right">
+<div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-zinc-400 hover:text-white transition-colors p-1" title="Edit">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+<button class="text-zinc-400 hover:text-error transition-colors p-1" title="Delete">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<!-- Side Panel / Slide-over (Simulated Open State) -->
+<!-- In a real implementation, this would have transform utilities toggled by JS. Here we position it visibly to satisfy the prompt requirements -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-end">
+<aside class="glass-panel w-full max-w-md h-full flex flex-col shadow-2xl shadow-black/80">
+<!-- Panel Header -->
+<div class="flex items-center justify-between p-6 border-b border-white/10">
+<h3 class="font-headline-md text-headline-md text-white">Agregar Artista</h3>
+<button class="text-zinc-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Panel Content (Form) -->
+<div class="flex-1 overflow-y-auto p-6 space-y-8">
+<!-- Artist Name -->
+<div class="space-y-2">
+<label class="block font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest">Nombre del Artista</label>
+<input class="w-full bg-white/5 border-b border-white/10 focus:border-white focus:ring-0 text-white font-headline-md px-0 py-3 transition-colors placeholder:text-zinc-600 rounded-none h-12" placeholder="e.g., Anyma" type="text"/>
+</div>
+<!-- Genre (Not requested explicitly but good UX) -->
+<div class="space-y-2">
+<label class="block font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest">Género Principal</label>
+<input class="w-full bg-white/5 border-b border-white/10 focus:border-white focus:ring-0 text-white font-headline-md px-0 py-3 transition-colors placeholder:text-zinc-600 rounded-none h-12" placeholder="e.g., Melodic Techno" type="text"/>
+</div>
+<!-- Image URL -->
+<div class="space-y-2">
+<label class="block font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest">URL de la Imagen</label>
+<div class="flex gap-4 items-end">
+<div class="w-16 h-16 rounded-lg border border-white/10 bg-surface-container-high flex items-center justify-center flex-shrink-0 overflow-hidden">
+<span class="material-symbols-outlined text-zinc-600 text-2xl">image</span>
+</div>
+<input class="flex-1 bg-white/5 border-b border-white/10 focus:border-white focus:ring-0 text-white font-body-md px-0 py-3 transition-colors placeholder:text-zinc-600 rounded-none h-12" placeholder="https://" type="url"/>
+</div>
+</div>
+<!-- Biography -->
+<div class="space-y-2">
+<label class="block font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest">Biografía / Descripción</label>
+<textarea class="w-full bg-white/5 border border-white/10 focus:border-white focus:ring-0 text-zinc-300 font-body-md p-4 transition-colors placeholder:text-zinc-600 rounded-lg resize-none" placeholder="Enter artist biography..." rows="4"></textarea>
+</div>
+<!-- Status Toggle -->
+<div class="space-y-4 pt-4 border-t border-white/5">
+<div class="flex items-center justify-between">
+<div>
+<label class="block font-headline-md text-sm font-bold text-white">Estado del Artista</label>
+<p class="font-body-md text-xs text-zinc-500 mt-1">Activating makes the artist visible on the frontend.</p>
+</div>
+<!-- Custom Toggle Switch -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500/20 border border-white/10 peer-checked:border-green-500/30"></div>
+<span class="ml-3 font-label-caps text-xs text-neon-green tracking-widest uppercase">Active</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Panel Footer (Actions) -->
+<div class="p-6 border-t border-white/10 bg-zinc-950/50 flex justify-end gap-4">
+<button class="px-6 py-2.5 rounded-lg font-headline-md text-sm font-medium text-white border border-white/10 hover:bg-white/5 transition-colors">
+                    Cancelar
+                </button>
+<button class="px-6 py-2.5 rounded-lg font-headline-md text-sm font-bold text-zinc-950 bg-white hover:bg-zinc-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    Guardar Artista
+                </button>
+</div>
+</aside>
+</div>
+</body></html>

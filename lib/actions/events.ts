@@ -3,6 +3,8 @@
 import { insforge } from "@/lib/insforge";
 import type { Event, Artist, EventWithArtist } from "@/lib/types/database";
 import { getArtistBySlug } from "./artists";
+import { revalidatePath } from "next/cache";
+import { verifyAdmin } from "./auth";
 
 /**
  * Obtiene todos los eventos programados para un artista basado en su slug.
@@ -80,4 +82,156 @@ export async function getFeaturedEvents(
   }
 
   return (data as EventWithArtist[]) ?? [];
+}
+
+// ============================================================================
+// Funciones Administrativas (CRUD)
+// ============================================================================
+
+/**
+ * Valida que el mapa de precios tenga un formato JSON correcto.
+ * Se espera: { "NombreZona": PrecioNumerico, ... }
+ */
+function validatePriceMap(priceMapStr: string | null): Record<string, number> {
+  if (!priceMapStr) return {};
+  try {
+    const parsed = JSON.parse(priceMapStr);
+    const validated: Record<string, number> = {};
+    
+    // Verificar que sea un objeto
+    if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) {
+      throw new Error("Formato de precios inválido");
+    }
+
+    // Verificar que cada llave sea string y cada valor sea numérico
+    for (const [zone, price] of Object.entries(parsed)) {
+      const numericPrice = Number(price);
+      if (isNaN(numericPrice) || numericPrice < 0) {
+        throw new Error(`Precio inválido para la zona: ${zone}`);
+      }
+      validated[zone] = numericPrice;
+    }
+    return validated;
+  } catch (err) {
+    throw new Error("El mapa de precios debe ser un JSON válido con montos numéricos.");
+  }
+}
+
+/**
+ * Crea un nuevo evento en el sistema.
+ */
+export async function createEvent(formData: FormData) {
+  // Seguridad: RBAC - Lanza error si no es admin
+  await verifyAdmin();
+
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const date = formData.get("date") as string; // Fecha completa o ISO string
+  const image_url = formData.get("image_url") as string;
+  const is_active = formData.get("is_active") === "true";
+  const priceMapStr = formData.get("price_map") as string;
+  const artist_id = formData.get("artist_id") as string; // Requerido para relacionarlo
+
+  const price_map = validatePriceMap(priceMapStr);
+
+  const { data, error } = await insforge.database
+    .from("events")
+    .insert({
+      title,
+      description,
+      date,
+      image_url,
+      is_active,
+      price_map,
+      artist_id,
+      // Status fallback asumiendo el tipo anterior (opcional si es db fallback)
+      status: is_active ? "en_venta" : "programado" 
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("[createEvent] Error:", error);
+    throw new Error("Error al crear el evento en la base de datos.");
+  }
+
+  // Caché: Revalidar ambas rutas para impacto inmediato
+  revalidatePath("/admin/events");
+  revalidatePath("/events");
+
+  return data;
+}
+
+/**
+ * Actualiza un evento existente.
+ */
+export async function updateEvent(eventId: string, formData: FormData) {
+  // Seguridad: RBAC - Lanza error si no es admin
+  await verifyAdmin();
+
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const date = formData.get("date") as string;
+  const image_url = formData.get("image_url") as string;
+  const is_active = formData.get("is_active") === "true";
+  const priceMapStr = formData.get("price_map") as string;
+
+  const updates: any = {};
+  if (title) updates.title = title;
+  if (description) updates.description = description;
+  if (date) updates.date = date;
+  if (image_url) updates.image_url = image_url;
+  if (formData.has("is_active")) updates.is_active = is_active;
+  if (priceMapStr) updates.price_map = validatePriceMap(priceMapStr);
+
+  const { data, error } = await insforge.database
+    .from("events")
+    .update(updates)
+    .eq("id", eventId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("[updateEvent] Error:", error);
+    throw new Error("Error al actualizar el evento.");
+  }
+
+  // Caché y revalidación
+  revalidatePath("/admin/events");
+  revalidatePath("/events");
+  revalidatePath(`/event/${eventId}`);
+
+  return data;
+}
+
+/**
+ * Mutación rápida para alternar el estado activo/inactivo de un evento.
+ */
+export async function toggleEventStatus(eventId: string, currentStatus: boolean) {
+  // Seguridad: RBAC - Lanza error si no es admin
+  await verifyAdmin();
+
+  const newStatus = !currentStatus;
+
+  const { data, error } = await insforge.database
+    .from("events")
+    .update({ 
+      is_active: newStatus,
+      // Sincronizar campo enum legacy de ser necesario
+      status: newStatus ? "en_venta" : "programado" 
+    })
+    .eq("id", eventId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("[toggleEventStatus] Error:", error);
+    throw new Error("Error al cambiar el estado del evento.");
+  }
+
+  // Caché y revalidación inmediata
+  revalidatePath("/admin/events");
+  revalidatePath("/events");
+
+  return data;
 }

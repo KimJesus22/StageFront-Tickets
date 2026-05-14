@@ -23,7 +23,9 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Pago Exitoso** — Confirmación interactiva con renderizado multi-boleto, inyección de datos reales desde InsForge, animación de *Confetti* en CSS puro y redirección fluida a `/success` antes de la Billetera.
 - **Billetera Digital Activa** — Ruta `/wallet` conectada a DB con renderizado Skeuomorphic, encapsulación POO para filtrado de eventos, y generación perezosa (lazy load) de QRs reales con brillo automático.
 - **Validación y Control de Acceso** — Ruta para el *Staff* (`/validate-ticket/[token]`) que implementa una Máquina de Estados y **Actualizaciones Atómicas** en DB para prevenir fraudes por Doble Entrada.
-- **Panel de Administración (RBAC)** — Dashboard en `/admin` protegido con Middleware en el Edge para verificación $O(1)$ del rol y subrutas funcionales.
+- **Panel de Administración (RBAC)** — Dashboard protegido con Middleware Edge. Incluye CRUD de Artistas con Interfaz Optimista (`useOptimistic`) y CRUD de Eventos con validación de precios en JSONB.
+- **Editor de Inventario Atómico** — Administración de asientos en `/admin` utilizando operaciones por lote ($O(1)$) y transacciones atómicas para inicializar y bloquear zonas completas.
+- **Buscador Híbrido "Mega Search"** — Implementación con debounce del lado del cliente, filtrado local instantáneo (0ms latencia) y fallback SQL mediante operador `ILIKE` sobre vistas (`v_search_events`).
 - **Portal de Artista** — Dashboard en `/portal` con ventas e ingresos por artista
 - **Páginas Legales y Soporte** — Centro de Ayuda (`/help`) y Centro de Seguridad (`/security`) estáticos con UI Glassmorphism y FAQs interactivas nativas
 - **Protección de Rutas** — Enrutamiento protegido por middleware (`proxy.ts` de Next.js 16)
@@ -394,6 +396,9 @@ pnpm start
 | **Factory** | `lib/payment/PaymentContext.ts` | Selección de estrategia según env var |
 | **Edge RBAC** | `middleware.ts` | Verificación de acceso por rol en O(1) decodificando JWT sin consultas a DB |
 | **Atomic Update** | `app/validate-ticket/` | Condición de carrera evitada mediante validación atómica en el acceso físico |
+| **Optimistic UI** | `ArtistClient.tsx` | Predicción visual de mutaciones (toggle) sin bloqueo de hilo de red |
+| **Hybrid Search** | `SearchClient.tsx` | Reducción de latencia de I/O de DB con filtro en memoria y debounce |
+| **Batch Update** | `seats-admin.ts` | Reducción dramática de peticiones HTTP con clausuras SQL IN ($O(1)$) |
 
 ## 📈 Próximos Pasos
 

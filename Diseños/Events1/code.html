@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Eventos - StageFront Tickets</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#1c1b1d",
+                      "on-error": "#690005",
+                      "tertiary-container": "#e2e2e2",
+                      "on-secondary-container": "#b7b4b7",
+                      "outline-variant": "#444748",
+                      "on-primary-container": "#636565",
+                      "on-tertiary": "#2f3131",
+                      "on-tertiary-container": "#636565",
+                      "secondary-fixed-dim": "#c8c6c8",
+                      "error": "#ffb4ab",
+                      "surface-dim": "#141313",
+                      "surface-container-low": "#1c1b1b",
+                      "on-secondary-fixed-variant": "#474649",
+                      "on-primary-fixed-variant": "#454747",
+                      "background": "#141313",
+                      "surface-container-high": "#2a2a2a",
+                      "on-secondary": "#313032",
+                      "tertiary-fixed-dim": "#c6c6c7",
+                      "surface-variant": "#353434",
+                      "secondary-container": "#474649",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "on-error-container": "#ffdad6",
+                      "tertiary-fixed": "#e2e2e2",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "surface": "#141313",
+                      "on-primary-fixed": "#1a1c1c",
+                      "surface-tint": "#c6c6c7",
+                      "secondary": "#c8c6c8",
+                      "primary-fixed": "#e2e2e2",
+                      "on-background": "#e5e2e1",
+                      "surface-container-highest": "#353434",
+                      "surface-bright": "#3a3939",
+                      "error-container": "#93000a",
+                      "outline": "#8e9192",
+                      "surface-container-lowest": "#0e0e0e",
+                      "tertiary": "#ffffff",
+                      "primary": "#ffffff",
+                      "on-surface": "#e5e2e1",
+                      "on-primary": "#2f3131",
+                      "inverse-primary": "#5d5f5f",
+                      "surface-container": "#201f1f",
+                      "primary-container": "#e2e2e2",
+                      "primary-fixed-dim": "#c6c6c7",
+                      "on-surface-variant": "#c4c7c8",
+                      "inverse-on-surface": "#313030",
+                      "inverse-surface": "#e5e2e1",
+                      "secondary-fixed": "#e5e1e4",
+                      "accent-green": "#4ade80" 
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "48px",
+                      "gutter": "24px",
+                      "unit": "4px",
+                      "margin-mobile": "16px",
+                      "stack-md": "24px",
+                      "stack-lg": "48px",
+                      "container-max": "1280px",
+                      "stack-sm": "8px"
+              },
+              "fontFamily": {
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "display-xl": [
+                              "Space Grotesk"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Space Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Space Grotesk"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-xl": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel-hover:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .slide-over {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .slide-over.open {
+            transform: translateX(0);
+        }
+        
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141313;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353434;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #474649;
+        }
+        
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #4ade80;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #4ade80;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex overflow-hidden">
+<!-- SideNavBar Component -->
+<nav class="bg-zinc-950 border-r border-white/10 h-screen w-64 fixed left-0 top-0 z-50 shadow-2xl shadow-black/50 flex flex-col py-6 gap-2">
+<div class="px-6 pb-6 border-b border-white/10 mb-4">
+<h1 class="text-white font-black tracking-widest font-headline-md text-headline-md">NEXUS</h1>
+<p class="font-body-md text-body-md text-zinc-400 mt-1">Enterprise Portal</p>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary text-on-primary py-3 rounded-DEFAULT font-label-caps text-label-caps tracking-wider uppercase hover:opacity-90 transition-opacity">
+                New Event
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto flex flex-col gap-1">
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="bg-white text-zinc-950 rounded-lg flex items-center gap-3 px-4 py-3 mx-2" href="#">
+<span class="material-symbols-outlined">confirmation_number</span>
+<span class="font-body-md text-body-md font-semibold">Events</span>
+</a>
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-body-md text-body-md">Tickets</span>
+</a>
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Customers</span>
+</a>
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-body-md text-body-md">Analytics</span>
+</a>
+</div>
+<div class="mt-auto pt-4 border-t border-white/10 flex flex-col gap-1">
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">shield</span>
+<span class="font-body-md text-body-md">Security</span>
+</a>
+<a class="text-zinc-400 flex items-center gap-3 px-4 py-3 mx-2 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col h-screen relative bg-zinc-950 overflow-hidden">
+<!-- TopAppBar Component -->
+<header class="bg-zinc-950/80 backdrop-blur-md border-b border-white/10 flex justify-between items-center w-full px-6 h-16 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold tracking-tighter text-white font-headline-md">Nexus Admin</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-zinc-400">search</span>
+<input class="bg-white/5 border border-white/10 rounded-full py-1.5 pl-10 pr-4 text-sm font-body-md text-white focus:outline-none focus:border-white/30 focus:bg-white/10 transition-colors w-64 placeholder-zinc-500" placeholder="Search..." type="text"/>
+</div>
+<button class="text-zinc-400 hover:text-white hover:bg-white/5 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-zinc-400 hover:text-white hover:bg-white/5 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-zinc-400 hover:text-white hover:bg-white/5 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-variant border border-white/20 overflow-hidden ml-2 cursor-pointer">
+<img alt="Administrator Avatar" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQkKmHhLgmHCYYLqz9kB44ILKUAB-Ec_LwtCjyGnQf3BuZRJ10I38IWrNv7si9D-kXdx-x6paN4QHzz0KObETqXn_adoLcSuOwjgJpyCeUGRB-0CsZD6_vYOE2TGVqMU1f6gtWcoHCN1MGvdnU2lFky0rj9wDJhTozgk9GYxbTqUmh2pdMI0oT0CHUXYOxa91K-SuUKVBd82jWV5wevldU-vO0-zEUePQjy8GhaCwj76pWxz3oJEQijSc87P7_ejvz-QiAMir1mXU"/>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="flex-1 overflow-y-auto p-margin-desktop w-full max-w-container-max mx-auto relative z-10">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-stack-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-white mb-2">Gestión de Eventos</h2>
+<p class="font-body-md text-body-md text-zinc-400">Administra, crea y monitorea los eventos del ecosistema.</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-DEFAULT font-label-caps text-label-caps tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center gap-2" onclick="document.getElementById('slide-over-panel').classList.add('open')">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Nuevo Evento
+                </button>
+</div>
+<!-- Master Table (Glassmorphism) -->
+<div class="glass-panel rounded-xl overflow-hidden w-full">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-white/10 bg-black/20">
+<th class="p-4 font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest w-16">Img</th>
+<th class="p-4 font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest">Evento</th>
+<th class="p-4 font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest">Fecha</th>
+<th class="p-4 font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest">Estado</th>
+<th class="p-4 font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest text-right">Rango de Precio</th>
+<th class="p-4 font-label-caps text-label-caps text-zinc-400 uppercase tracking-widest text-right w-24">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5 font-body-md text-body-md">
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="p-4">
+<div class="w-12 h-12 rounded-DEFAULT overflow-hidden bg-surface-variant border border-white/10 relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A dynamic live concert scene illuminated by striking purple and blue neon stage lights cutting through atmospheric fog. The silhouette of an energetic performer is visible on stage against the bright backdrop. A massive, enthusiastic crowd fills the dark foreground, their hands raised in excitement. The overall aesthetic is a highly produced, premium, and moody concert experience." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCAfcFwML16kkBkJBAaYNFUJh0u7YZYZmTd6lTEYqkgdXeV28c3cIm6lFkIkWC64wInEuj7M1Z5AtQPg-Vcg6n6R6ztAlOQLSEONwCgBsyeqRidTNIe9Yy89L5DsrXkbhhx2WnPa54pmdcDpHLe5lK_aNKwtsyKZ6xaETK1WZW32ZIfMHTYtnWfPRIfkmwR7Lbys2mj6Ya38QcVWY04opqeMxTyns75sTxTrxmolF5w7vsh9MQuLCLA9v1wZ7SJoa8B-6AwFNqV7Fk');"></div>
+</div>
+</td>
+<td class="p-4">
+<div class="font-headline-md text-[18px] text-white">Neon Pulse Festival</div>
+<div class="text-sm text-zinc-500">Electronic / Dance</div>
+</td>
+<td class="p-4 text-zinc-300">
+<div class="font-headline-md text-[16px]">24 Oct, 2024</div>
+<div class="text-sm text-zinc-500">22:00 Hrs</div>
+</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-green/10 border border-accent-green/20 text-accent-green font-label-caps text-[10px] tracking-wider uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse"></span>
+                                        Activo
+                                    </span>
+</td>
+<td class="p-4 text-right text-zinc-300 font-headline-md text-[16px]">
+                                    $85 - $250
+                                </td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-DEFAULT transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1.5 text-zinc-400 hover:text-error hover:bg-error/10 rounded-DEFAULT transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="p-4">
+<div class="w-12 h-12 rounded-DEFAULT overflow-hidden bg-surface-variant border border-white/10 relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="An intimate jazz club setting featuring a grand piano on a dimly lit stage. The environment is sophisticated and moody, illuminated by a single warm spotlight cutting through a subtle haze. Deep crimson velvet curtains drape the background, enhancing the exclusive, high-end atmosphere. The overall tone is elegant, quiet, and deeply atmospheric." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCm8n_goqkoeSpkjrSsxKhh7VexHSU8khh1CVPHky5vjQ5ax7PpiWJApcXCVHlW965AxvIQvoRQCT4iafhEJfHxAsqIYECunu6rz82_zBaGnJYGcPi6n79rPcPArF6_z5syKiF_eXSUZv4UftNpiOeS8XnK5ARn3N_RGtZ7CHiIIG2rn3vnjSl6jbz7PPpH-uY10Bwhf38V-RcUN2dTow1rHkxEQ9Jeykec3K8VrYuDmtG9MJAoULQmenPT_RWFFtiw9u0SasrW_Pk');"></div>
+</div>
+</td>
+<td class="p-4">
+<div class="font-headline-md text-[18px] text-white">Midnight Jazz Quartet</div>
+<div class="text-sm text-zinc-500">Jazz / Blues</div>
+</td>
+<td class="p-4 text-zinc-300">
+<div class="font-headline-md text-[16px]">12 Nov, 2024</div>
+<div class="text-sm text-zinc-500">20:30 Hrs</div>
+</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-500/10 border border-zinc-500/20 text-zinc-400 font-label-caps text-[10px] tracking-wider uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
+                                        Inactivo
+                                    </span>
+</td>
+<td class="p-4 text-right text-zinc-300 font-headline-md text-[16px]">
+                                    $45 - $120
+                                </td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-DEFAULT transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1.5 text-zinc-400 hover:text-error hover:bg-error/10 rounded-DEFAULT transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-white/5 flex justify-between items-center text-sm text-zinc-500 font-body-md">
+<span>Mostrando 2 de 24 eventos</span>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-white/5 border border-white/10 rounded hover:bg-white/10 transition-colors disabled:opacity-50">Anterior</button>
+<button class="px-3 py-1 bg-white/5 border border-white/10 rounded hover:bg-white/10 transition-colors">Siguiente</button>
+</div>
+</div>
+</div>
+<!-- Atmospheric background element -->
+<div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-accent-green/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+</div>
+</main>
+<!-- Slide-over Panel (Creation/Edition) -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden transition-opacity" id="slide-over-backdrop" onclick="document.getElementById('slide-over-panel').classList.remove('open'); setTimeout(()=&gt;this.classList.add('hidden'), 300)"></div>
+<aside class="slide-over fixed inset-y-0 right-0 z-[70] w-full max-w-xl bg-surface-container-low border-l border-white/10 shadow-2xl flex flex-col h-screen" id="slide-over-panel">
+<!-- Header -->
+<div class="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-surface-container-low sticky top-0 z-10">
+<h3 class="font-headline-md text-headline-md text-white">Nuevo Evento</h3>
+<button class="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-white/5 transition-colors" onclick="document.getElementById('slide-over-panel').classList.remove('open')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-6 space-y-stack-md">
+<!-- Section 1: Basic Info -->
+<section class="space-y-4">
+<h4 class="font-label-caps text-label-caps text-zinc-500 uppercase tracking-widest border-b border-white/5 pb-2">Información Básica</h4>
+<div>
+<label class="block font-body-md text-sm text-zinc-400 mb-1.5">Nombre del Evento</label>
+<input class="w-full bg-white/5 border border-white/10 rounded-DEFAULT px-4 py-2.5 font-body-md text-white focus:outline-none focus:border-white/30 focus:bg-white/10 transition-colors placeholder-zinc-600" placeholder="Ej. Neon Pulse Festival" type="text"/>
+</div>
+<div>
+<label class="block font-body-md text-sm text-zinc-400 mb-1.5">Descripción</label>
+<textarea class="w-full bg-white/5 border border-white/10 rounded-DEFAULT px-4 py-2.5 font-body-md text-white focus:outline-none focus:border-white/30 focus:bg-white/10 transition-colors placeholder-zinc-600 resize-none" placeholder="Detalles del evento..." rows="4"></textarea>
+</div>
+</section>
+<!-- Section 2: Logistics -->
+<section class="space-y-4">
+<h4 class="font-label-caps text-label-caps text-zinc-500 uppercase tracking-widest border-b border-white/5 pb-2">Logística</h4>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-body-md text-sm text-zinc-400 mb-1.5">Fecha</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-500 text-[20px]">calendar_today</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-DEFAULT pl-10 pr-4 py-2.5 font-headline-md text-sm text-white focus:outline-none focus:border-white/30 focus:bg-white/10 transition-colors [color-scheme:dark]" type="date"/>
+</div>
+</div>
+<div>
+<label class="block font-body-md text-sm text-zinc-400 mb-1.5">Hora</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-500 text-[20px]">schedule</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-DEFAULT pl-10 pr-4 py-2.5 font-headline-md text-sm text-white focus:outline-none focus:border-white/30 focus:bg-white/10 transition-colors [color-scheme:dark]" type="time"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Image -->
+<section class="space-y-4">
+<h4 class="font-label-caps text-label-caps text-zinc-500 uppercase tracking-widest border-b border-white/5 pb-2">Arte del Evento</h4>
+<div class="w-full h-40 border-2 border-dashed border-white/10 rounded-lg bg-white/5 hover:bg-white/10 transition-colors flex flex-col items-center justify-center cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-zinc-500 group-hover:text-white transition-colors mb-2">cloud_upload</span>
+<p class="font-body-md text-sm text-zinc-400 group-hover:text-zinc-300">Arrastra una imagen o haz clic para subir</p>
+<p class="font-body-md text-xs text-zinc-600 mt-1">Recomendado: 1920x1080px (Max 5MB)</p>
+</div>
+</section>
+<!-- Section 4: Pricing Management -->
+<section class="space-y-4">
+<div class="flex justify-between items-end border-b border-white/5 pb-2">
+<h4 class="font-label-caps text-label-caps text-zinc-500 uppercase tracking-widest">Zonas y Precios</h4>
+<button class="text-xs font-label-caps text-white hover:text-accent-green transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">add</span> Añadir Zona
+                    </button>
+</div>
+<div class="space-y-3">
+<div class="flex gap-3 items-center bg-white/5 p-3 rounded-lg border border-white/5">
+<div class="flex-1">
+<input class="w-full bg-transparent border-b border-white/10 px-2 py-1 font-body-md text-sm text-white focus:outline-none focus:border-white/50 transition-colors" type="text" value="VIP General"/>
+</div>
+<div class="w-24 relative">
+<span class="absolute left-2 top-1 text-zinc-500 font-headline-md text-sm">$</span>
+<input class="w-full bg-transparent border-b border-white/10 pl-6 pr-2 py-1 font-headline-md text-sm text-white focus:outline-none focus:border-white/50 transition-colors" type="number" value="250"/>
+</div>
+<button class="text-zinc-500 hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="flex gap-3 items-center bg-white/5 p-3 rounded-lg border border-white/5">
+<div class="flex-1">
+<input class="w-full bg-transparent border-b border-white/10 px-2 py-1 font-body-md text-sm text-white focus:outline-none focus:border-white/50 transition-colors" type="text" value="General Access"/>
+</div>
+<div class="w-24 relative">
+<span class="absolute left-2 top-1 text-zinc-500 font-headline-md text-sm">$</span>
+<input class="w-full bg-transparent border-b border-white/10 pl-6 pr-2 py-1 font-headline-md text-sm text-white focus:outline-none focus:border-white/50 transition-colors" type="number" value="85"/>
+</div>
+<button class="text-zinc-500 hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Section 5: Status Toggle -->
+<section class="space-y-4 pt-2">
+<div class="flex items-center justify-between bg-white/5 p-4 rounded-lg border border-white/10">
+<div>
+<div class="font-body-md text-white font-medium">Estado del Evento</div>
+<div class="font-body-md text-xs text-zinc-500 mt-0.5">Visibilidad pública en la cartelera</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant checked:border-accent-green z-10 transition-all duration-200" id="toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-200" for="toggle"></label>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Actions -->
+<div class="p-6 border-t border-white/10 bg-surface-container-low mt-auto flex items-center justify-between sticky bottom-0">
+<button class="text-error font-body-md text-sm hover:underline hover:opacity-80 transition-opacity flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">delete</span> Eliminar
+            </button>
+<div class="flex gap-3">
+<button class="px-5 py-2.5 rounded-DEFAULT font-label-caps text-label-caps tracking-wider uppercase text-zinc-300 border border-white/20 hover:bg-white/5 transition-colors" onclick="document.getElementById('slide-over-panel').classList.remove('open')">
+                    Cancelar
+                </button>
+<button class="px-5 py-2.5 rounded-DEFAULT font-label-caps text-label-caps tracking-wider uppercase bg-primary text-on-primary hover:opacity-90 transition-opacity">
+                    Guardar Cambios
+                </button>
+</div>
+</div>
+</aside>
+<script>
+        // Simple script to handle backdrop visibility along with slide-over
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === "class") {
+                    const panel = mutation.target;
+                    const backdrop = document.getElementById('slide-over-backdrop');
+                    if (panel.classList.contains('open')) {
+                        backdrop.classList.remove('hidden');
+                    } else {
+                        // handled by inline onclick timeout for hiding backdrop
+                    }
+                }
+            });
+        });
+
+        observer.observe(document.getElementById('slide-over-panel'), {
+            attributes: true
+        });
+    </script>
+</body></html>
