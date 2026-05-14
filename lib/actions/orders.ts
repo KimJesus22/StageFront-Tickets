@@ -42,23 +42,30 @@ export interface OrderConfirmation {
 
 export async function getUserTickets() {
   const session = await getSession();
-  if (!session?.email) {
+  if (!session?.id) {
     return [];
   }
 
+  // Consulta Optimizada (Joins) y Seguridad (Server-Side)
   const { data, error } = await insforge.database
     .from("orders")
     .select(`
-      *,
+      id,
       tickets_inventory (
-        *,
+        id,
+        seat_number,
+        zone,
+        status,
         events (
-          *,
-          artists (*)
+          id,
+          title,
+          date,
+          venue,
+          image_url
         )
       )
     `)
-    .eq("user_email", session.email)
+    .eq("user_id", session.id)
     .order("created_at", { ascending: false });
 
   if (error) {

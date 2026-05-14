@@ -41,6 +41,15 @@ export async function login(formData: FormData) {
     // ── Login exitoso → resetear contador de intentos ────────────────────
     await clearRateLimit(clientIP, email);
 
+    // ── Consultar el Rol del Usuario para la sesión ───────────────────────
+    const { data: profile } = await insforge.database
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    const userRole = profile?.role || "user";
+
     // Guardar la sesión en cookies para el middleware y server actions
     const cookieStore = await cookies();
     cookieStore.set("insforge_session", JSON.stringify({
@@ -48,6 +57,7 @@ export async function login(formData: FormData) {
       email: data.user.email,
       name: data.user.profile?.name || email.split("@")[0],
       accessToken: data.accessToken,
+      role: userRole,
     }), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -155,6 +165,32 @@ export async function getSession() {
   } catch {
     return null;
   }
+}
+
+export async function verifyAdmin() {
+  const session = await getSession();
+  
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  // Validación rápida si el rol está en la cookie
+  if (session.role === "admin") {
+    return true;
+  }
+
+  // Si no está en la cookie (sesiones viejas), lo verificamos contra la BD
+  const { data: profile } = await insforge.database
+    .from("profiles")
+    .select("role")
+    .eq("id", session.id)
+    .single();
+
+  if (profile?.role !== "admin") {
+    throw new Error("Unauthorized");
+  }
+
+  return true;
 }
 
 // ============================================================================

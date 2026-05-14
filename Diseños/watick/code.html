@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Wallet - StageFront Tickets</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#690005",
+                    "surface-tint": "#c6c6c7",
+                    "outline": "#8e9192",
+                    "tertiary": "#ffffff",
+                    "secondary": "#c8c6c8",
+                    "on-primary": "#2f3131",
+                    "surface-dim": "#141313",
+                    "background": "#141313",
+                    "surface": "#141313",
+                    "on-surface": "#e5e2e1",
+                    "on-tertiary": "#2f3131",
+                    "surface-variant": "#353434",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "tertiary-fixed": "#e2e2e2",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "inverse-surface": "#e5e2e1",
+                    "tertiary-container": "#e2e2e2",
+                    "surface-container": "#201f1f",
+                    "primary-container": "#e2e2e2",
+                    "on-surface-variant": "#c4c7c8",
+                    "on-tertiary-container": "#636565",
+                    "on-primary-fixed": "#1a1c1c",
+                    "surface-container-low": "#1c1b1b",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "on-primary-container": "#636565",
+                    "surface-bright": "#3a3939",
+                    "on-error-container": "#ffdad6",
+                    "secondary-fixed": "#e5e1e4",
+                    "primary-fixed-dim": "#c6c6c7",
+                    "primary-fixed": "#e2e2e2",
+                    "inverse-on-surface": "#313030",
+                    "secondary-container": "#474649",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface-container-high": "#2a2a2a",
+                    "on-secondary": "#313032",
+                    "error-container": "#93000a",
+                    "surface-container-highest": "#353434",
+                    "on-secondary-fixed-variant": "#474649",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-secondary-fixed": "#1c1b1d",
+                    "on-background": "#e5e2e1",
+                    "on-secondary-container": "#b7b4b7",
+                    "outline-variant": "#444748",
+                    "on-primary-fixed-variant": "#454747",
+                    "primary": "#ffffff",
+                    "inverse-primary": "#5d5f5f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "24px",
+                    "stack-lg": "48px",
+                    "margin-desktop": "48px",
+                    "stack-sm": "8px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "unit": "4px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "headline-md": [
+                            "Space Grotesk"
+                    ],
+                    "headline-lg": [
+                            "Space Grotesk"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "display-xl": [
+                            "Space Grotesk"
+                    ]
+            },
+            "fontSize": {
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-xl": [
+                            "64px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-surface/80 backdrop-blur-md flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 docked full-width top-0 sticky z-50 border-b border-outline-variant/20 flat no shadows">
+<div class="flex items-center gap-8">
+<a class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter" href="#">StageFront</a>
+<div class="hidden md:flex gap-6">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 rounded-lg duration-300 px-3 py-2" href="#">Events</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 rounded-lg duration-300 px-3 py-2" href="#">Venues</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 rounded-lg duration-300 px-3 py-2" href="#">Artists</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">Membership</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full object-cover border border-outline-variant/30" data-alt="A cinematic portrait of a young woman bathed in moody, high-contrast neon lighting against a deep black background. The image has a premium, tech-forward aesthetic suitable for a high-end digital concierge avatar. The color palette emphasizes the ethereal and futuristic mood of the overarching UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-Kw-UYUweZGyh20TWblAB2EfsbaGa8SuHurtKTWavpLTygJ8xxeR1u73gwr60-yDbj21oZgaL7djp0tud6mrUVJ6hFs5syCxTRJs7bOx8p-1nokGjysZneHv6qlZse0mUIxhkpyZRUM22nCiXT-orH0RJ5zdekVm_e9iSH5ZNLxMc8bX6dmNibzR_SSeCc6iAm8FdZZOBkqfe_CSb979BlyvlVIDG6DMj2HD2-XepxKH1AuGU7llMXCBLPcxY9zy1tD95vqF4OVQ"/>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<!-- Header -->
+<header class="mb-stack-lg">
+<h1 class="font-display-xl text-display-xl text-primary mb-stack-sm">Tus Boletos, @usuario</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">3 Boletos Activos</p>
+</header>
+<!-- Filters -->
+<div class="flex gap-4 mb-stack-lg border-b border-outline-variant/20 pb-unit">
+<button class="font-body-md text-body-md text-primary border-b-2 border-primary pb-2 px-2 transition-colors">Próximos Eventos</button>
+<button class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface pb-2 px-2 transition-colors">Historial</button>
+</div>
+<!-- Ticket List (Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mb-stack-lg">
+<!-- Active Ticket Card -->
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden flex flex-col md:flex-row group hover:border-white/20 transition-all duration-300 shadow-[0_0_40px_rgba(255,255,255,0.05)] hover:shadow-[0_0_60px_rgba(255,255,255,0.1)]">
+<!-- Left: Event Art -->
+<div class="md:w-2/5 h-48 md:h-auto relative">
+<img alt="Event Poster" class="w-full h-full object-cover filter brightness-75 group-hover:brightness-100 transition-all duration-500" data-alt="A highly stylized, cinematic concert poster image featuring abstract geometric light beams cutting through deep, atmospheric smoke. The color palette is dominated by intense neon accents against an absolute black void, creating a premium, mysterious, and cutting-edge visual perfect for a high-tech ticketing ecosystem." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4mogg717Caebi3hYmv96-r8GwxFk4iaxU4xtYQJzmvtFU6ptiIZZ6Ld2RdqsFXHrynexR8E0nOZtT1fqGjjZWTW32v_XXip4iH_KCrGZo3fvSNwf6RVcLvCmvQAaF_sNx2hGhPxU82EwjoUTwg28s7Ti3DL1EmCL5Hzow-E4cvso0TDDwJCAQ5MPCvZzF9OnVWCZpR9OstbqLM_MxtRYq9m_w1RsVBuAuVKDuGoBBIgmCcDumW3__edszShlkdpSWhyugBDfOJlw"/>
+<div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-surface-container-lowest/80 to-transparent"></div>
+</div>
+<!-- Right: Details -->
+<div class="p-stack-md flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">INFINITY World Tour</h2>
+<span class="px-3 py-1 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full font-label-caps text-label-caps shadow-[0_0_12px_rgba(74,222,128,0.2)]">Activo</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">12 de Mayo, 2026</p>
+<div class="grid grid-cols-3 gap-4 mb-6">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Recinto</p>
+<p class="font-body-md text-body-md text-primary">Estadio Neo</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Zona</p>
+<p class="font-body-md text-body-md text-primary">VIP Access</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Asiento</p>
+<p class="font-body-md text-body-md text-primary">Fila 4 - As. 12</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary font-body-md text-body-md font-semibold py-3 rounded-lg hover:bg-white/90 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="qr_code">qr_code</span>
+                        Ver Código QR
+                    </button>
+</div>
+</div>
+<!-- Used Ticket Card -->
+<div class="bg-white/5 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden flex flex-col md:flex-row opacity-60">
+<div class="md:w-2/5 h-48 md:h-auto relative">
+<img alt="Event Poster" class="w-full h-full object-cover filter grayscale" data-alt="A dramatic, monochromatic concert scene showing a silhouetted crowd against a massive stage lighting rig. The image is rendered entirely in shades of deep charcoal and silver, emphasizing the past-tense, archival nature of the event within the high-end digital ecosystem. The mood is nostalgic yet premium." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYWv-5kCOq1_wd-szqaekGxmITliYWmnDB10yyu7FnvW7wspFz4jpvgD-o7YpcOboLRItHLIMqi4z_2b1iSqGY8VVIEFY8GIem26zgcdAEbc0ShNafyvZq0AkLylpZRngGu46_hz9QP7SYQ8k2NIJWmb3pzKGL5rm4k98EWP_PPBwjX_M3Xfag5LNS36fujIZfWIajjUsbD4vzz5CKR2Y9YV_OKHC3dkA_4XRxWXcuxu2Zz9MpQsIdjGWQWRvZzJW_I2WRntDqMpU"/>
+<div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-surface-container-lowest/90 to-transparent"></div>
+</div>
+<div class="p-stack-md flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface-variant tracking-tight">ECHOES Fest</h2>
+<span class="px-3 py-1 bg-surface-variant text-on-surface-variant border border-outline-variant/30 rounded-full font-label-caps text-label-caps">Usado</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">3 de Marzo, 2024</p>
+<div class="grid grid-cols-3 gap-4 mb-6">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant/70 mb-1">Recinto</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Arena Cyber</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant/70 mb-1">Zona</p>
+<p class="font-body-md text-body-md text-on-surface-variant">General A</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-transparent text-on-surface-variant border border-outline-variant/30 font-body-md text-body-md py-3 rounded-lg cursor-not-allowed">
+                        Completado
+                    </button>
+</div>
+</div>
+<!-- Expired Ticket Card -->
+<div class="bg-error-container/10 backdrop-blur-xl border border-error/20 rounded-3xl overflow-hidden flex flex-col md:flex-row opacity-80">
+<div class="md:w-2/5 h-48 md:h-auto relative">
+<div class="w-full h-full bg-gradient-to-br from-surface-variant to-surface-container-lowest flex items-center justify-center">
+<span class="material-symbols-outlined text-display-xl text-outline-variant" data-icon="event_busy">event_busy</span>
+</div>
+</div>
+<div class="p-stack-md flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface-variant tracking-tight">Underground Sessions</h2>
+<span class="px-3 py-1 bg-error-container text-on-error-container border border-error/30 rounded-full font-label-caps text-label-caps shadow-[0_0_12px_rgba(255,180,171,0.1)]">Expirado</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">15 de Nov, 2023</p>
+<p class="font-body-md text-body-md text-on-surface-variant/70 italic mb-6">Este boleto ya no es válido para ingreso.</p>
+</div>
+<button class="w-full bg-transparent text-error border border-error/30 font-body-md text-body-md py-3 rounded-lg hover:bg-error-container/20 transition-colors">
+                        Ver Detalles
+                    </button>
+</div>
+</div>
+</div>
+<!-- Empty State Section -->
+<div class="mt-stack-lg flex flex-col items-center justify-center py-stack-lg bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl text-center px-4">
+<div class="w-24 h-24 rounded-full bg-surface-variant flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(255,255,255,0.05)]">
+<span class="material-symbols-outlined text-display-xl text-on-surface-variant" data-icon="confirmation_number">confirmation_number</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-2">Estado Vacío</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-md">No tienes boletos en este momento. Descubre los próximos eventos en tu ciudad.</p>
+<button class="bg-primary text-on-primary font-body-md text-body-md font-semibold px-8 py-3 rounded-lg hover:bg-white/90 transition-colors">
+                Explorar Eventos
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-stack-md max-w-container-max mx-auto full-width bottom border-t border-outline-variant/10 flat no shadows mt-auto">
+<a class="font-headline-md text-headline-md text-primary mb-4 md:mb-0" href="#">StageFront</a>
+<div class="flex flex-wrap justify-center gap-6 mb-4 md:mb-0">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Cookie Policy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Accessibility</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 StageFront Tickets. All rights reserved.</p>
+</footer>
+</body></html>
