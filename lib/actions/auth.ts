@@ -6,10 +6,19 @@ import { redirect } from "next/navigation";
 import { PasswordPolicy } from "@/lib/utils/PasswordPolicy";
 import { getAuthErrorMessage } from "@/lib/utils/ErrorMapper";
 import { getClientIP, checkRateLimit, clearRateLimit } from "@/lib/services/rateLimiter";
+import { logEvent } from "@/lib/services/logger";
+import { emailSchema, nameSchema } from "@/lib/validations/schemas";
 
 export async function login(formData: FormData) {
-  const email = formData.get("email") as string;
+  const emailRaw = formData.get("email") as string;
   const password = formData.get("password") as string;
+
+  // ── 0. Validación de Esquema (Fail-Fast) ──────────────────────────────
+  const emailResult = emailSchema.safeParse(emailRaw);
+  if (!emailResult.success) {
+    return { error: emailResult.error.errors[0].message };
+  }
+  const email = emailResult.data; // Email sanitizado (trim + lowercase)
 
   // ── 0. Rate Limiting — PRIMERA línea de defensa ───────────────────────
   // Si el usuario excede 5 intentos en 15 min, la ejecución se detiene
@@ -35,8 +44,11 @@ export async function login(formData: FormData) {
 
     // ── Traducción en vuelo: error del SDK → mensaje amigable ──────────
     if (error || !data?.user) {
+      logEvent(null, "LOGIN_FAILED", `Login failed for ${email}: ${error?.message || "unknown"}`);
       return { error: getAuthErrorMessage(error?.message || "unknown_error") };
     }
+
+    logEvent(data.user.id, "LOGIN_SUCCESS", `User logged in successfully`);
 
     // ── Login exitoso → resetear contador de intentos ────────────────────
     await clearRateLimit(clientIP, email);
@@ -72,6 +84,7 @@ export async function login(formData: FormData) {
     }
     // ── Retorno seguro: nunca exponer el objeto de error completo ───────
     console.error("[login] Error inesperado:", err);
+    logEvent(null, "LOGIN_FAILED", `Unexpected error during login for ${email}`);
     return { error: getAuthErrorMessage(
       err instanceof Error ? err.message : "unknown_error"
     ) };
@@ -81,9 +94,19 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const email = formData.get("email") as string;
+  const emailRaw = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const name = formData.get("name") as string;
+  const nameRaw = formData.get("name") as string;
+
+  // ── 0. Validación de Esquema (Fail-Fast) ──────────────────────────────
+  const emailResult = emailSchema.safeParse(emailRaw);
+  const nameResult = nameSchema.safeParse(nameRaw);
+
+  if (!emailResult.success) return { error: emailResult.error.errors[0].message };
+  if (!nameResult.success) return { error: nameResult.error.errors[0].message };
+
+  const email = emailResult.data;
+  const name = nameResult.data;
 
   // ── Server-side validation (Defense in Depth) ────────────────────────
   // Nunca confiar en el cliente: un atacante puede enviar FormData
@@ -108,10 +131,12 @@ export async function signup(formData: FormData) {
 
     // Si requiere verificación de email, no hay accessToken
     if (data?.requireEmailVerification) {
+      logEvent(data.user?.id || null, "REGISTER", `User registered, pending email verification`);
       return { success: "Cuenta creada. Por favor, verifica tu correo electrónico." };
     }
 
     if (data?.user) {
+      logEvent(data.user.id, "REGISTER", `User registered successfully`);
       const cookieStore = await cookies();
       cookieStore.set("insforge_session", JSON.stringify({
         id: data.user.id,
@@ -238,18 +263,14 @@ export async function verifyAdmin() {
 //
 // ============================================================================
 
-const EMAIL_FORMAT_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-export async function checkEmailExists(
-  email: string
-): Promise<{ exists: boolean }> {
-  // ── 1. Sanitización ────────────────────────────────────────────────────
-  const sanitized = email?.trim().toLowerCase();
-
-  // ── 2. Validación de formato (Coste 0 — no toca la DB) ────────────────
-  if (!sanitized || !EMAIL_FORMAT_REGEX.test(sanitized)) {
+  // ── 1. Validación y Sanitización via Zod ─────────────────────────────
+  const result = emailSchema.safeParse(email);
+  
+  if (!result.success) {
     return { exists: false };
   }
+
+  const sanitized = result.data;
 
   // ── 3. Consulta indexada — O(1) ───────────────────────────────────────
   try {

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Acceso Restringido - StageFront</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#e5e2e1",
+                        "secondary-fixed": "#e5e1e4",
+                        "secondary-container": "#474649",
+                        "on-primary-fixed-variant": "#454747",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "surface-dim": "#141313",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "inverse-on-surface": "#313030",
+                        "tertiary": "#ffffff",
+                        "surface": "#141313",
+                        "inverse-primary": "#5d5f5f",
+                        "on-secondary-fixed": "#1c1b1d",
+                        "primary-container": "#e2e2e2",
+                        "tertiary-container": "#e2e2e2",
+                        "outline-variant": "#444748",
+                        "primary": "#ffffff",
+                        "background": "#141313",
+                        "on-surface-variant": "#c4c7c8",
+                        "surface-tint": "#c6c6c7",
+                        "on-primary-container": "#636565",
+                        "on-secondary-fixed-variant": "#474649",
+                        "surface-container": "#201f1f",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed": "#e2e2e2",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#1a1c1c",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface-variant": "#353434",
+                        "surface-container-highest": "#353434",
+                        "on-tertiary": "#2f3131",
+                        "surface-container-high": "#2a2a2a",
+                        "inverse-surface": "#e5e2e1",
+                        "outline": "#8e9192",
+                        "on-secondary": "#313032",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-primary": "#2f3131",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "surface-bright": "#3a3939",
+                        "secondary": "#c8c6c8",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-container": "#b7b4b7",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#e2e2e2",
+                        "on-tertiary-container": "#636565",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin-desktop": "48px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "display-xl": ["Space Grotesk"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "display-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glitch-effect {
+            position: relative;
+        }
+        .glitch-effect::before,
+        .glitch-effect::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+        .glitch-effect::before {
+            left: 2px;
+            text-shadow: -1px 0 rgba(255, 180, 171, 0.5); /* using error color */
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+            clip: rect(44px, 450px, 56px, 0);
+        }
+        .glitch-effect::after {
+            left: -2px;
+            text-shadow: -1px 0 rgba(255, 255, 255, 0.5);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+            clip: rect(44px, 450px, 56px, 0);
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-on-background min-h-screen flex flex-col items-center justify-center relative overflow-hidden font-body-md text-body-md selection:bg-surface-tint selection:text-surface">
+<!-- Ambient Glow / Background -->
+<div class="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
+<div class="w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full bg-error/5 blur-[120px]"></div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 w-full max-w-[600px] px-margin-mobile md:px-0 flex flex-col items-center text-center">
+<!-- Security Container (Glassmorphism) -->
+<div class="w-full bg-surface-container/30 backdrop-blur-[40px] border border-white/10 rounded-xl p-8 md:p-12 flex flex-col items-center shadow-2xl relative overflow-hidden">
+<!-- Subtle internal glow -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-error/30 to-transparent"></div>
+<!-- Icon -->
+<div class="relative w-32 h-32 flex items-center justify-center mb-8">
+<!-- Outer Pulse/Glow -->
+<div class="absolute inset-0 bg-error/10 rounded-full blur-xl animate-pulse"></div>
+<!-- Core Icon -->
+<span class="material-symbols-outlined text-[80px] text-error relative z-10 glitch-effect drop-shadow-[0_0_15px_rgba(255,180,171,0.5)]" data-text="lock" style="font-variation-settings: 'FILL' 0, 'wght' 200;">lock</span>
+<!-- Glitch decorative elements -->
+<div class="absolute -right-4 top-4 w-8 h-px bg-error/40"></div>
+<div class="absolute -left-2 bottom-8 w-12 h-px bg-error/40"></div>
+</div>
+<!-- Typography -->
+<h1 class="font-display-xl text-display-xl text-tertiary mb-stack-sm tracking-tight">Acceso Restringido</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[420px] mx-auto mb-stack-lg leading-relaxed">
+                No tienes las credenciales o el nivel de autorización necesario para acceder a esta zona de la plataforma.
+            </p>
+<!-- Actions -->
+<div class="w-full flex flex-col sm:flex-row gap-4 justify-center">
+<a class="inline-flex items-center justify-center h-12 px-8 rounded-full bg-primary text-on-primary font-label-caps text-label-caps hover:bg-white/90 transition-colors duration-300" href="#">
+                    Volver al Inicio
+                </a>
+<a class="inline-flex items-center justify-center h-12 px-8 rounded-full bg-transparent border border-white/20 text-tertiary font-label-caps text-label-caps hover:bg-white/5 hover:border-white/40 backdrop-blur-[20px] transition-all duration-300" href="#">
+                    Cambiar de Cuenta
+                </a>
+</div>
+<!-- Meta info (Status code) -->
+<div class="mt-12 pt-6 border-t border-white/10 w-full flex justify-between items-center text-on-surface-variant/50">
+<span class="font-label-caps text-label-caps uppercase">Error 403</span>
+<span class="font-label-caps text-label-caps uppercase flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error block animate-pulse"></span>
+                    Security Protocol Active
+                </span>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 bg-transparent absolute bottom-0 left-0 z-20">
+<div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-white/5 pt-6">
+<div class="text-lg font-bold text-tertiary font-headline-md tracking-tight">StageFront</div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="font-body-md text-sm text-on-surface-variant hover:text-tertiary transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="font-body-md text-sm text-on-surface-variant hover:text-tertiary transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="font-body-md text-sm text-on-surface-variant hover:text-tertiary transition-colors opacity-80 hover:opacity-100" href="#">Support</a>
+</nav>
+<div class="font-body-md text-sm text-on-surface-variant/50">
+                © 2024 StageFront Ecosystem. All Rights Reserved.
+            </div>
+</div>
+</footer>
+</body></html>

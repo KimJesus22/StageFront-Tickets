@@ -39,6 +39,11 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Perfil de Usuario Avanzado** — Módulo integral en `/profile` con subrutas protegidas para Billetera (`/profile/tickets`) y Favoritos (`/profile/favorites`), gestionado bajo un layout anidado e identidad extraída vía SSR.
 - **Gestión Global de Errores (404)** — Interceptación automática de rutas inexistentes en el App Router (`not-found.tsx`) con estética *Ethereal Tech* y recuperación segura mediante navegación cliente (`Link`).
 - **Gestión Segura de Sesión y Perfil** — Flujos defensivos en el cliente para cambio de contraseña (`updateUser`) y cierre de sesión limpio a través de Server Actions (`signOutUser`) para borrar cookies.
+- **Auditoría Centralizada Asíncrona** — Sistema de logging asíncrono (`lib/services/logger.ts`) que captura IP, User Agent y eventos críticos (Auth, Ventas, Admin) con persistencia silenciosa en `audit_logs`.
+- **Protección de Rutas (Edge Middleware)** — Implementación de `middleware.ts` para seguridad perimetral de alto rendimiento, protegiendo rutas privadas, administrativas y dinámicas con validación de roles ($O(1)$).
+- **Validación Estricta (Zero-Trust)** — Capa de validación secuencial en `checkout.ts` que verifica Autenticación, Autorización, Integridad Relacional, Disponibilidad Concurrente y Límites Anti-Scalping.
+- **Esquemas de Sanitización Zod** — Capa de defensa AppSec que aplica `.trim()`, `.toLowerCase()` y filtrado de tags HTML (XSS) a todos los inputs del sistema antes de tocar la lógica de negocio.
+- **Notificación de Errores Ethereal Tech** — Componente `ErrorToast` premium con animaciones CSS (`slideInRight`, `shrinkProgress`) y barra de progreso de 5 segundos.
 - **Código Maestro Dev** — OTP bypass (`741963`) disponible solo en `NODE_ENV=development` para pruebas rápidas
 
 ---
@@ -204,6 +209,7 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   ├── layout.tsx               → Layout fijo con barra lateral para el administrador
 │   │   ├── page.tsx                 → Dashboard general con tarjetas de métricas y tabla de ventas
 │   │   ├── artists/                 → CRUD de Artistas (Client Optimista)
+│   │   ├── logs/                    → Visualizador de Auditoría Centralizada (Audit Logs UI)
 │   │   └── inventory/               → Editor de Inventario de Asientos (Batch Updates)
 │   ├── (artist)/
 │   │   ├── components/
@@ -224,6 +230,8 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   │   └── tickets/             → Subruta Mis Boletos (WalletClient)
 │   │   └── wallet/
 │   │       └── page.tsx             → Billetera digital de boletos con diseño premium
+│   ├── unauthenticated/
+│   │   └── page.tsx                 → Página de error 403 Forbidden (Ethereal Tech Design)
 │   ├── (fandoms)/
 │   │   └── [slug]/page.tsx          → Perfil del artista dinámico (/bts, /txt, etc.)
 │   ├── (checkout)/
@@ -276,6 +284,8 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   ├── AdminDashboard.tsx           → Panel admin con métricas + SalesEfficiencyPanel
 │   ├── SalesEfficiencyPanel.tsx     → KPIs de eficiencia (Conversión, Cycle Time, Bottleneck)
 │   ├── FavoriteButton.tsx           → Corazón interactivo de favoritos (useOptimistic)
+│   ├── ui/
+│   │   └── ErrorToast.tsx           → Notificación de error animada con barra de progreso
 │   └── Footer.tsx                   → Pie de página
 ├── hooks/
 │   ├── useIntegrityFilter.ts        → Hook de filtro anti-bot (collector + clasificación)
@@ -286,6 +296,11 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   ├── integrity/
 │   │   ├── BehaviorCollector.ts     → Recolector de señales biométricas (click, mouse, keyboard)
 │   │   └── BotClassifier.ts         → Clasificador de 9 reglas heurísticas ponderadas
+│   ├── services/
+│   │   ├── notifications.ts         → Sistema de notificaciones Realtime
+│   │   └── logger.ts                → Servicio de Auditoría Centralizada (Audit Logger)
+│   ├── validations/
+│   │   └── schemas.ts               → Esquemas Zod para validación y sanitización AppSec
 │   ├── graph/
 │   │   └── SeatGraph.ts             → Grafo de adyacencia con detección de asientos huérfanos
 │   ├── payment/
@@ -312,7 +327,8 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │       └── database.ts              → Tipos TypeScript del esquema SQL
 ├── tailwind.config.ts               → Tokens del sistema de diseño Ethereal Tech
 ├── next.config.ts                   → Dominios de imágenes permitidos
-├── proxy.ts                         → Middleware de autorización para rutas sensibles
+├── middleware.ts                    → Middleware de protección de rutas y RBAC ($O(1)$)
+├── proxy.ts                         → Proxy secundario de enrutamiento legacy
 ├── .env.local                       → Variables de entorno (no versionado)
 └── .env.example                     → Plantilla de variables de entorno
 ```
@@ -425,6 +441,9 @@ pnpm start
 | **Batch Update** | `seats-admin.ts` | Reducción dramática de peticiones HTTP con clausuras SQL IN ($O(1)$) |
 | **URL State Sync** | `FilterClient.tsx` | Preservación de estado de navegación sin side-effects locales pesados |
 | **Silent Constraint Catch** | `favorites.ts` | Prevención de caídas 500 ignorando violaciones UNIQUE 23505 |
+| **Audit Logging** | `logger.ts` | Registro asíncrono "fire-and-forget" de eventos de seguridad forense |
+| **Fail-Fast Validation** | `schemas.ts` | Rechazo inmediato de datos malformados en el borde de la Server Action |
+| **Zero-Trust Pipeline** | `checkout.ts` | Validación multi-capa (Integridad, Concurrencia, Límites) antes de DB |
 
 ## 📈 Próximos Pasos
 
@@ -442,6 +461,8 @@ pnpm start
 - **Promesas en Server Components (Next.js 15+)**: Se ajustó `app/events/page.tsx` para procesar `searchParams` de forma asíncrona, resolviendo un error de Prerenderizado de Turbopack (`TypeError: Cannot convert a Symbol value to a string`).
 - **Arquitectura de Notificaciones Realtime**: Creación de la tabla de notificaciones mediante el MCP de Insforge (`app_notifications`), habilitando Row Level Security (RLS) en PostgreSQL, y diseñando triggers reactivos inyectados en flujos como *Event Creation*, *Queue Cycling* y *Checkout Fulfillment*.
 - **Construcción del Client-Side Profile**: Desarrollo del Layout con barra lateral de estado activo basado en `usePathname()`, extracción dinámica de identidades con `Intl.DateTimeFormat` y refactorización de los componentes `WalletClient` y `ArtistGrid` como micro-frontends en `/profile`.
+- **Implementación de Auditoría y AppSec**: Creación del servicio de logging centralizado, middleware de protección de rutas RBAC, validador Zero-Trust para compras y esquemas de sanitización Zod para protección contra XSS e inyecciones.
+- **UI de Error Transaccional**: Integración del componente `ErrorToast` con animaciones CSS personalizadas para notificar fallos de validación de forma premium.
 
 ## 📄 Licencia
 

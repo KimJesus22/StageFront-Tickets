@@ -4,11 +4,19 @@ import { insforge } from "@/lib/insforge";
 import { redirect } from "next/navigation";
 import { getSession } from "./auth";
 import { sendAppNotification } from "../services/notifications";
+import { logEvent } from "../services/logger";
+import { uuidSchema } from "../validations/schemas";
 
 /**
  * Procesa el pago de un boleto simulando una pasarela y confirma la orden.
  */
 export async function processPayment(ticketId: string, formData: FormData) {
+  // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
+  const ticketIdResult = uuidSchema.safeParse(ticketId);
+  if (!ticketIdResult.success) {
+    throw new Error(ticketIdResult.error.errors[0].message);
+  }
+
   const session = await getSession();
   
   if (!session?.email || !session?.name) {
@@ -143,15 +151,102 @@ export interface PurchaseData {
 }
 
 /**
+ * Validaciones Zero-Trust para garantizar integridad antes de cualquier pago.
+ */
+export async function validatePurchaseIntent(userId: string, eventId: string, seatIds: string[]) {
+  // 1. Autenticación: Verificar token JWT en el SSR
+  const { data: { user }, error: authError } = await insforge.auth.getUser();
+  if (authError || !user) {
+    throw new Error("AUTH_FAILED: Token JWT inválido o ausente.");
+  }
+
+  // 2. Autorización (Rol/Permisos)
+  // Verificamos si el usuario está suspendido
+  if (user.user_metadata?.can_purchase === false) {
+    throw new Error("AUTHZ_FAILED: Usuario suspendido o baneado del sistema de compras.");
+  }
+
+  // 3. Integridad Relacional
+  // Validamos estrictamente que TODOS los asientos pertenezcan al eventId de la URL
+  const { data: seatsData, error: seatsError } = await insforge.database
+    .from("seats")
+    .select("id, event_id, status")
+    .in("id", seatIds);
+
+  if (seatsError || !seatsData) {
+    throw new Error("DATA_ERROR: Inconsistencia al verificar los asientos en la base de datos.");
+  }
+
+  if (seatsData.length !== seatIds.length) {
+    throw new Error("DATA_ERROR: Inconsistencia de datos. Algunos asientos no existen.");
+  }
+
+  for (const seat of seatsData) {
+    if (seat.event_id !== eventId) {
+      throw new Error("DATA_ERROR: Inconsistencia de datos. Un hacker intentó pasar asientos de otro evento.");
+    }
+  }
+
+  // 4. Disponibilidad Concurrente (O(1))
+  for (const seat of seatsData) {
+    if (seat.status !== "available") {
+      throw new Error(`CONCURRENCY_ERROR: El asiento ${seat.id} ya no está disponible.`);
+    }
+  }
+
+  // Verificamos que no existan holds activos de otros usuarios para estos asientos
+  const { data: holdsData, error: holdsError } = await insforge.database
+    .from("seat_holds")
+    .select("id, user_id")
+    .in("seat_id", seatIds)
+    .eq("status", "active")
+    .gt("expires_at", new Date().toISOString());
+
+  if (!holdsError && holdsData && holdsData.length > 0) {
+    const foreignHolds = holdsData.filter((hold: any) => hold.user_id !== userId);
+    if (foreignHolds.length > 0) {
+      throw new Error("CONCURRENCY_ERROR: Uno o más asientos están retenidos por otro usuario en este momento.");
+    }
+  }
+
+  // 5. Límite de Compra (Anti-Scalping)
+  const MAX_TICKETS = 4;
+  const { data: userOrders, error: orderCheckError } = await insforge.database
+    .from("orders")
+    .select(`
+      ticket_id,
+      tickets_inventory!inner(event_id)
+    `)
+    .eq("user_email", user.email || "")
+    .eq("tickets_inventory.event_id", eventId);
+
+  const currentCount = userOrders ? userOrders.length : 0;
+  if (currentCount + seatIds.length > MAX_TICKETS) {
+    throw new Error("SCALPING_ERROR: Límite de compra excedido. Máximo 4 boletos por usuario para este evento.");
+  }
+}
+
+/**
  * simulatePurchase — Transacción principal de compra simulada.
  */
 export async function simulatePurchase(orderData: PurchaseData) {
   const { userId, eventId, seatIds, totalAmount } = orderData;
+
+  // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
+  const userIdResult = uuidSchema.safeParse(userId);
+  const eventIdResult = uuidSchema.safeParse(eventId);
+  
+  if (!userIdResult.success) throw new Error(userIdResult.error.errors[0].message);
+  if (!eventIdResult.success) throw new Error(eventIdResult.error.errors[0].message);
+
   const session = await getSession();
 
   if (!session?.email || !session?.name) {
     throw new Error("Debes iniciar sesión para completar la compra.");
   }
+
+  // Ejecutamos la validación Zero-Trust ANTES de cualquier lógica de pago o base de datos
+  await validatePurchaseIntent(userId, eventId, seatIds);
 
   // 1. Simulación de Red (Banco)
   await new Promise(resolve => setTimeout(resolve, 2500));
@@ -174,6 +269,8 @@ export async function simulatePurchase(orderData: PurchaseData) {
     if (orderError || !order) {
       throw new Error("Error al procesar el pago y crear la orden.");
     }
+
+    await logEvent(userId, "ORDER_CREATED", `Order created successfully: ${order.id}`);
 
     // 3. Generar Boletos (Manejo de Unique Constraint)
     for (const seatId of seatIds) {
@@ -200,6 +297,8 @@ export async function simulatePurchase(orderData: PurchaseData) {
         throw new Error("Error interno al emitir los boletos.");
       }
     }
+
+    await logEvent(userId, "TICKET_GENERATED", `Tickets generated for order: ${order.id}`, { eventId, seatIds });
 
     // 4. Confirmar Holds (Actualizar seat_holds)
     const { error: holdsError } = await insforge.database

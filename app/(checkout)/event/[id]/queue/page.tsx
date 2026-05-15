@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { insforge } from '@/lib/insforge';
+import { logEvent } from '@/lib/services/logger';
 
 // 🔑 Dev-only master OTP code (bypasses real verification)
 const DEV_MASTER_CODE = '741963';
@@ -154,6 +155,7 @@ export default function VirtualQueuePage() {
         });
 
         if (error) {
+          await logEvent(null, "OTP_FAILED", `OTP verification failed for ${userEmail}: ${error.message}`);
           setAuthError(error.message || 'Código inválido.');
           setIsVerifying(false);
           return;

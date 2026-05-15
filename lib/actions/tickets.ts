@@ -2,6 +2,8 @@
 
 import { insforge } from "@/lib/insforge";
 import type { TicketInventory, Event } from "@/lib/types/database";
+import { logEvent } from "@/lib/services/logger";
+import { getSession } from "./auth";
 
 /**
  * Obtiene la información del evento por su ID.
@@ -60,6 +62,11 @@ export async function lockTicket(ticketId: string): Promise<{ success: boolean; 
       success: false, 
       message: "¡Lo sentimos! Este asiento ya no está disponible. Alguien más lo reservó." 
     };
+  }
+
+  const session = await getSession();
+  if (session?.id) {
+    await logEvent(session.id, "SEAT_RESERVED", `Seat reserved successfully: ${ticketId}`);
   }
 
   return { 

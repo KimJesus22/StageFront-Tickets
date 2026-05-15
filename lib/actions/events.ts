@@ -4,8 +4,10 @@ import { insforge } from "@/lib/insforge";
 import type { Event, Artist, EventWithArtist } from "@/lib/types/database";
 import { getArtistBySlug } from "./artists";
 import { revalidatePath } from "next/cache";
-import { verifyAdmin } from "./auth";
+import { verifyAdmin, getSession } from "./auth";
 import { sendAppNotification } from "../services/notifications";
+import { logEvent } from "../services/logger";
+import { uuidSchema } from "../validations/schemas";
 
 /**
  * Obtiene todos los eventos programados para un artista basado en su slug.
@@ -203,8 +205,13 @@ export async function createEvent(formData: FormData) {
   const date = formData.get("date") as string; // Fecha completa o ISO string
   const image_url = formData.get("image_url") as string;
   const is_active = formData.get("is_active") === "true";
-  const priceMapStr = formData.get("price_map") as string;
   const artist_id = formData.get("artist_id") as string; // Requerido para relacionarlo
+
+  // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
+  const artistIdResult = uuidSchema.safeParse(artist_id);
+  if (!artistIdResult.success) {
+    throw new Error(artistIdResult.error.errors[0].message);
+  }
 
   const price_map = validatePriceMap(priceMapStr);
 
@@ -256,6 +263,12 @@ export async function createEvent(formData: FormData) {
  * Actualiza un evento existente.
  */
 export async function updateEvent(eventId: string, formData: FormData) {
+  // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
+  const eventIdResult = uuidSchema.safeParse(eventId);
+  if (!eventIdResult.success) {
+    throw new Error(eventIdResult.error.errors[0].message);
+  }
+
   // Seguridad: RBAC - Lanza error si no es admin
   await verifyAdmin();
 
@@ -265,6 +278,13 @@ export async function updateEvent(eventId: string, formData: FormData) {
   const image_url = formData.get("image_url") as string;
   const is_active = formData.get("is_active") === "true";
   const priceMapStr = formData.get("price_map") as string;
+
+  // Obtener estado anterior para el audit log
+  const { data: previousEvent } = await insforge.database
+    .from("events")
+    .select("*")
+    .eq("id", eventId)
+    .single();
 
   const updates: any = {};
   if (title) updates.title = title;
@@ -286,6 +306,14 @@ export async function updateEvent(eventId: string, formData: FormData) {
     throw new Error("Error al actualizar el evento.");
   }
 
+  const session = await getSession();
+  if (session?.id) {
+    await logEvent(session.id, "ADMIN_EDIT_EVENT", `Admin edited event: ${title || eventId}`, {
+      before: previousEvent,
+      after: data
+    });
+  }
+
   // Caché y revalidación
   revalidatePath("/admin/events");
   revalidatePath("/events");
@@ -298,6 +326,12 @@ export async function updateEvent(eventId: string, formData: FormData) {
  * Mutación rápida para alternar el estado activo/inactivo de un evento.
  */
 export async function toggleEventStatus(eventId: string, currentStatus: boolean) {
+  // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
+  const eventIdResult = uuidSchema.safeParse(eventId);
+  if (!eventIdResult.success) {
+    throw new Error(eventIdResult.error.errors[0].message);
+  }
+
   // Seguridad: RBAC - Lanza error si no es admin
   await verifyAdmin();
 
