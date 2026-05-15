@@ -3,6 +3,7 @@
 import { insforge } from "@/lib/insforge";
 import { redirect } from "next/navigation";
 import { getSession } from "./auth";
+import { sendAppNotification } from "../services/notifications";
 
 /**
  * Procesa el pago de un boleto simulando una pasarela y confirma la orden.
@@ -213,6 +214,24 @@ export async function simulatePurchase(orderData: PurchaseData) {
       // No lanzamos error para no arruinar la compra ya pagada, 
       // pero se registra para monitoreo de integridad.
     }
+
+    // --- NOTIFICACIONES EN TIEMPO REAL ---
+    await sendAppNotification(
+      userId,
+      "success",
+      `Compra confirmada #${order.id.split("-")[0]}`,
+      "Transacción completada exitosamente.",
+      `/wallet`
+    );
+
+    await sendAppNotification(
+      userId,
+      "info",
+      "Boleto generado",
+      "Tu acceso digital ha sido encriptado y asegurado en tu wallet.",
+      `/wallet`
+    );
+
 
   } catch (err: any) {
     console.error("[simulatePurchase] Transaction Error:", err);

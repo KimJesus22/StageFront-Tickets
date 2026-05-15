@@ -5,6 +5,7 @@ import type { Event, Artist, EventWithArtist } from "@/lib/types/database";
 import { getArtistBySlug } from "./artists";
 import { revalidatePath } from "next/cache";
 import { verifyAdmin } from "./auth";
+import { sendAppNotification } from "../services/notifications";
 
 /**
  * Obtiene todos los eventos programados para un artista basado en su slug.
@@ -226,6 +227,22 @@ export async function createEvent(formData: FormData) {
   if (error) {
     console.error("[createEvent] Error:", error);
     throw new Error("Error al crear el evento en la base de datos.");
+  }
+
+  // --- BROADCAST NOTIFICATION ---
+  // Obtener todos los usuarios para enviarles la notificación
+  const { data: users } = await insforge.database.from("users").select("id");
+  if (users && users.length > 0) {
+    // Para evitar bloqueos, disparamos las promesas sin esperar a que terminen todas
+    users.forEach((user) => {
+      sendAppNotification(
+        user.id,
+        "info",
+        "Nuevo evento anunciado",
+        `¡Se ha anunciado un nuevo evento: ${title}!`,
+        `/event/${data.id}`
+      );
+    });
   }
 
   // Caché: Revalidar ambas rutas para impacto inmediato

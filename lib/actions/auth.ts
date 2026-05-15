@@ -155,6 +155,17 @@ export async function logout() {
   redirect("/");
 }
 
+export async function signOutUser() {
+  try {
+    await insforge.auth.signOut();
+  } catch (err) {
+    console.error("[signOutUser] Error:", err);
+  }
+  const cookieStore = await cookies();
+  cookieStore.delete("insforge_session");
+  redirect("/login");
+}
+
 export async function getSession() {
   const cookieStore = await cookies();
   const sessionData = cookieStore.get("insforge_session")?.value;

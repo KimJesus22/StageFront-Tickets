@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getSession } from "@/lib/actions/auth";
 import UserDropdown from "@/components/UserDropdown";
+import NotificationCenter from "./NotificationCenter";
 
 export default async function Navbar() {
   const session = await getSession();
@@ -59,6 +60,7 @@ export default async function Navbar() {
           
           {session ? (
             <div className="flex items-center gap-4 ml-4">
+              <NotificationCenter userId={session.id} />
               <div className="hidden sm:flex flex-col items-end mr-2">
                 <span className="text-white text-sm font-semibold">{session.name}</span>
                 <span className="text-zinc-500 text-xs">{session.email}</span>

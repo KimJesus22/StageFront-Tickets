@@ -9,6 +9,7 @@ import {
   getQueueStats,
   CYCLE_INTERVAL_MS,
 } from "@/lib/queue-engine";
+import { sendAppNotification } from "@/lib/services/notifications";
 
 // ---------------------------------------------------------------------------
 // Helper: obtener sesión del cookie
@@ -88,6 +89,17 @@ export async function POST(req: NextRequest) {
     reportLatency(eventId, simulatedLatency);
 
     const admittedIds = executeCycle(eventId);
+
+    // Enviar notificaciones de "Es tu turno"
+    for (const admittedId of admittedIds) {
+      sendAppNotification( // Sin await para no bloquear el ciclo
+        admittedId,
+        "warning",
+        "¡Tu turno está cerca!",
+        "Prepárate, eres el siguiente en la fila para la zona VIP.",
+        `/event/${eventId}/seats`
+      );
+    }
 
     return NextResponse.json({
       cycleExecuted: true,

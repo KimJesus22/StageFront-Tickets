@@ -35,6 +35,10 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Server Actions** — Consultas a la base de datos desde Server Components de Next.js
 - **Tipado Estricto** — Interfaces TypeScript que reflejan el esquema SQL
 - **Diseño Responsivo** — Adaptado para móvil, tablet y escritorio
+- **Notificaciones en Tiempo Real** — Sistema asíncrono impulsado por Supabase Realtime / Insforge Channels. Incluye un `NotificationCenter` interactivo con Toasts emergentes (`sonner`) disparados desde Server Actions atómicas.
+- **Perfil de Usuario Avanzado** — Módulo integral en `/profile` con subrutas protegidas para Billetera (`/profile/tickets`) y Favoritos (`/profile/favorites`), gestionado bajo un layout anidado e identidad extraída vía SSR.
+- **Gestión Global de Errores (404)** — Interceptación automática de rutas inexistentes en el App Router (`not-found.tsx`) con estética *Ethereal Tech* y recuperación segura mediante navegación cliente (`Link`).
+- **Gestión Segura de Sesión y Perfil** — Flujos defensivos en el cliente para cambio de contraseña (`updateUser`) y cierre de sesión limpio a través de Server Actions (`signOutUser`) para borrar cookies.
 - **Código Maestro Dev** — OTP bypass (`741963`) disponible solo en `NODE_ENV=development` para pruebas rápidas
 
 ---
@@ -211,8 +215,16 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   │   └── page.tsx             → Vista de inicio de sesión (Client Component)
 │   │   └── register/
 │   │       └── page.tsx             → Vista de creación de cuenta (Client Component)
+│   ├── (user)/
+│   │   ├── profile/
+│   │   │   ├── layout.tsx           → Layout anidado interactivo (ProfileSidebar)
+│   │   │   ├── page.tsx             → Vista General (Identity Card via SSR)
+│   │   │   ├── favorites/           → Subruta Mis Favoritos (ArtistGrid)
+│   │   │   ├── security/            → Subruta Cambio de Contraseña segura
+│   │   │   └── tickets/             → Subruta Mis Boletos (WalletClient)
+│   │   └── wallet/
+│   │       └── page.tsx             → Billetera digital de boletos con diseño premium
 │   ├── (fandoms)/
-│   │   ├── wallet/page.tsx          → Billetera digital de boletos con diseño premium
 │   │   └── [slug]/page.tsx          → Perfil del artista dinámico (/bts, /txt, etc.)
 │   ├── (checkout)/
 │   │   ├── event/[id]/
@@ -254,9 +266,11 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   └── page.tsx                 → Centro de ayuda y FAQs (Server Component estático)
 │   ├── globals.css
 │   ├── layout.tsx                   → Layout raíz (fuentes, metadatos, dark mode)
+│   ├── not-found.tsx                → Gestor global de errores 404 (Ethereal Tech)
 │   └── page.tsx                     → Landing page (async, datos dinámicos)
 ├── components/
 │   ├── Navbar.tsx                   → Barra de navegación con control de sesión
+│   ├── NotificationCenter.tsx       → Campana interactiva con suscripción Realtime
 │   ├── HeroSection.tsx              → Sección hero con búsqueda
 │   ├── ArtistGrid.tsx               → Grid Bento dinámico (recibe Artist[])
 │   ├── AdminDashboard.tsx           → Panel admin con métricas + SalesEfficiencyPanel
@@ -426,6 +440,8 @@ pnpm start
 - **Filtros SQL Dinámicos**: Se ajustó la consulta condicional en `lib/actions/events.ts` previniendo un `ParserError` del tipado estricto de Supabase/InsForge.
 - **SDK de Autenticación**: Se corrigió el llamado inexistente a `insforge.auth.getUser()` utilizando nuestra propia función de sesión `getSession()` en `lib/actions/favorites.ts`.
 - **Promesas en Server Components (Next.js 15+)**: Se ajustó `app/events/page.tsx` para procesar `searchParams` de forma asíncrona, resolviendo un error de Prerenderizado de Turbopack (`TypeError: Cannot convert a Symbol value to a string`).
+- **Arquitectura de Notificaciones Realtime**: Creación de la tabla de notificaciones mediante el MCP de Insforge (`app_notifications`), habilitando Row Level Security (RLS) en PostgreSQL, y diseñando triggers reactivos inyectados en flujos como *Event Creation*, *Queue Cycling* y *Checkout Fulfillment*.
+- **Construcción del Client-Side Profile**: Desarrollo del Layout con barra lateral de estado activo basado en `usePathname()`, extracción dinámica de identidades con `Intl.DateTimeFormat` y refactorización de los componentes `WalletClient` y `ArtistGrid` como micro-frontends en `/profile`.
 
 ## 📄 Licencia
 
