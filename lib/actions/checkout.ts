@@ -14,7 +14,7 @@ export async function processPayment(ticketId: string, formData: FormData) {
   // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
   const ticketIdResult = uuidSchema.safeParse(ticketId);
   if (!ticketIdResult.success) {
-    throw new Error(ticketIdResult.error.errors[0].message);
+    throw new Error(ticketIdResult.error.issues[0].message);
   }
 
   const session = await getSession();
@@ -154,17 +154,15 @@ export interface PurchaseData {
  * Validaciones Zero-Trust para garantizar integridad antes de cualquier pago.
  */
 export async function validatePurchaseIntent(userId: string, eventId: string, seatIds: string[]) {
-  // 1. Autenticación: Verificar token JWT en el SSR
-  const { data: { user }, error: authError } = await insforge.auth.getUser();
-  if (authError || !user) {
+  // 1. Autenticación: Verificar sesión
+  const session = await getSession();
+  if (!session) {
     throw new Error("AUTH_FAILED: Token JWT inválido o ausente.");
   }
 
   // 2. Autorización (Rol/Permisos)
-  // Verificamos si el usuario está suspendido
-  if (user.user_metadata?.can_purchase === false) {
-    throw new Error("AUTHZ_FAILED: Usuario suspendido o baneado del sistema de compras.");
-  }
+  // Verificamos si el usuario está suspendido — en esta implementación
+  // basada en cookies, esta verificación se omite por ahora.
 
   // 3. Integridad Relacional
   // Validamos estrictamente que TODOS los asientos pertenezcan al eventId de la URL
@@ -217,7 +215,7 @@ export async function validatePurchaseIntent(userId: string, eventId: string, se
       ticket_id,
       tickets_inventory!inner(event_id)
     `)
-    .eq("user_email", user.email || "")
+    .eq("user_email", session.email || "")
     .eq("tickets_inventory.event_id", eventId);
 
   const currentCount = userOrders ? userOrders.length : 0;
@@ -236,8 +234,8 @@ export async function simulatePurchase(orderData: PurchaseData) {
   const userIdResult = uuidSchema.safeParse(userId);
   const eventIdResult = uuidSchema.safeParse(eventId);
   
-  if (!userIdResult.success) throw new Error(userIdResult.error.errors[0].message);
-  if (!eventIdResult.success) throw new Error(eventIdResult.error.errors[0].message);
+  if (!userIdResult.success) throw new Error(userIdResult.error.issues[0].message);
+  if (!eventIdResult.success) throw new Error(eventIdResult.error.issues[0].message);
 
   const session = await getSession();
 

@@ -35,16 +35,20 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Server Actions** — Consultas a la base de datos desde Server Components de Next.js
 - **Tipado Estricto** — Interfaces TypeScript que reflejan el esquema SQL
 - **Diseño Responsivo** — Adaptado para móvil, tablet y escritorio
-- **Notificaciones en Tiempo Real** — Sistema asíncrono impulsado por Supabase Realtime / Insforge Channels. Incluye un `NotificationCenter` interactivo con Toasts emergentes (`sonner`) disparados desde Server Actions atómicas.
+- **Notificaciones en Tiempo Real** — Sistema asíncrono impulsado por InsForge Realtime SDK (WebSockets). Incluye un `NotificationCenter` interactivo con suscripción vía `insforge.realtime.subscribe()` y Toasts emergentes (`sonner`) disparados desde Server Actions atómicas.
 - **Perfil de Usuario Avanzado** — Módulo integral en `/profile` con subrutas protegidas para Billetera (`/profile/tickets`) y Favoritos (`/profile/favorites`), gestionado bajo un layout anidado e identidad extraída vía SSR.
 - **Gestión Global de Errores (404)** — Interceptación automática de rutas inexistentes en el App Router (`not-found.tsx`) con estética *Ethereal Tech* y recuperación segura mediante navegación cliente (`Link`).
-- **Gestión Segura de Sesión y Perfil** — Flujos defensivos en el cliente para cambio de contraseña (`updateUser`) y cierre de sesión limpio a través de Server Actions (`signOutUser`) para borrar cookies.
+- **Gestión Segura de Sesión y Perfil** — Flujo de cambio de contraseña vía `sendResetPasswordEmail()` (el SDK no expone `updateUser`) y cierre de sesión limpio a través de Server Actions (`signOutUser`) para borrar cookies.
 - **Auditoría Centralizada Asíncrona** — Sistema de logging asíncrono (`lib/services/logger.ts`) que captura IP, User Agent y eventos críticos (Auth, Ventas, Admin) con persistencia silenciosa en `audit_logs`.
-- **Protección de Rutas (Edge Middleware)** — Implementación de `middleware.ts` para seguridad perimetral de alto rendimiento, protegiendo rutas privadas, administrativas y dinámicas con validación de roles ($O(1)$).
+- **Protección de Rutas (Edge Proxy)** — Implementación de `proxy.ts` (Next.js 16 reemplazó `middleware.ts` por Proxy) para seguridad perimetral de alto rendimiento, protegiendo rutas privadas, administrativas y dinámicas con validación de roles ($O(1)$).
 - **Validación Estricta (Zero-Trust)** — Capa de validación secuencial en `checkout.ts` que verifica Autenticación, Autorización, Integridad Relacional, Disponibilidad Concurrente y Límites Anti-Scalping.
-- **Esquemas de Sanitización Zod** — Capa de defensa AppSec que aplica `.trim()`, `.toLowerCase()` y filtrado de tags HTML (XSS) a todos los inputs del sistema antes de tocar la lógica de negocio.
+- **Esquemas de Sanitización Zod v4** — Capa de defensa AppSec que aplica `.trim()`, `.toLowerCase()` y filtrado de tags HTML (XSS) a todos los inputs del sistema antes de tocar la lógica de negocio. Usa API de Zod v4 (`{ error }` en lugar de `{ required_error }`, `.issues[]` en lugar de `.errors[]`).
 - **Notificación de Errores Ethereal Tech** — Componente `ErrorToast` premium con animaciones CSS (`slideInRight`, `shrinkProgress`) y barra de progreso de 5 segundos.
 - **Código Maestro Dev** — OTP bypass (`741963`) disponible solo en `NODE_ENV=development` para pruebas rápidas
+- **Security Headers HTTP (AppSec)** — Capa de seguridad en `next.config.ts` con HSTS (2 años + preload), CSP estricto, X-Frame-Options, Permissions-Policy (bloqueo de cámara/micro/GPS), X-Content-Type-Options y Referrer-Policy
+- **Skeleton Loaders (Suspense)** — Componentes reutilizables (`EventCardSkeleton`, `TicketSkeleton`) con diseño Ethereal Tech (glassmorphism + animate-pulse). Integrados con `loading.tsx` (global) y `<Suspense>` (granular)
+- **Empty State Premium** — Componente `WalletEmptyState` con anillos orbitales animados, ícono glassmorphic, gradient text y CTA esmeralda con efecto shimmer. Props configurables para reutilización en Favoritos/Historial
+- **Leyenda de Asientos (SeatLegend)** — Componente flotante tipo pill con glassmorphism y dots LED neon para estados del mapa de asientos (Disponible, Seleccionado, Ocupado, Bloqueado)
 
 ---
 
@@ -209,8 +213,11 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   ├── layout.tsx               → Layout fijo con barra lateral para el administrador
 │   │   ├── page.tsx                 → Dashboard general con tarjetas de métricas y tabla de ventas
 │   │   ├── artists/                 → CRUD de Artistas (Client Optimista)
+│   │   ├── events/                  → CRUD de Eventos con validación JSONB
 │   │   ├── logs/                    → Visualizador de Auditoría Centralizada (Audit Logs UI)
-│   │   └── inventory/               → Editor de Inventario de Asientos (Batch Updates)
+│   │   ├── orders/                  → Gestión y visualización de pedidos
+│   │   ├── tickets/                 → Editor de Inventario de Asientos (Batch Updates)
+│   │   └── users/                   → Gestión de usuarios del sistema
 │   ├── (artist)/
 │   │   ├── components/
 │   │   │   └── Sidebar.tsx          → Navegación lateral del panel del artista
@@ -254,6 +261,7 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   └── page.tsx                 → Directorio de todos los artistas
 │   ├── events/
 │   │   ├── page.tsx                 → Cartelera con Filtro URL (Server-Side + Suspense)
+│   │   ├── loading.tsx              → Skeleton global de ruta (Next.js inyecta como Suspense fallback)
 │   │   ├── FilterClient.tsx         → Sincronización inmutable de URL para filtros
 │   │   └── search/                  → Buscador Híbrido "Mega Search" con debounce
 │   ├── api/
@@ -278,12 +286,27 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   └── page.tsx                     → Landing page (async, datos dinámicos)
 ├── components/
 │   ├── Navbar.tsx                   → Barra de navegación con control de sesión
-│   ├── NotificationCenter.tsx       → Campana interactiva con suscripción Realtime
+│   ├── NotificationCenter.tsx       → Campana interactiva con suscripción InsForge Realtime (WebSockets)
 │   ├── HeroSection.tsx              → Sección hero con búsqueda
+│   ├── HeroSearch.tsx               → Componente de búsqueda del hero
 │   ├── ArtistGrid.tsx               → Grid Bento dinámico (recibe Artist[])
 │   ├── AdminDashboard.tsx           → Panel admin con métricas + SalesEfficiencyPanel
 │   ├── SalesEfficiencyPanel.tsx     → KPIs de eficiencia (Conversión, Cycle Time, Bottleneck)
 │   ├── FavoriteButton.tsx           → Corazón interactivo de favoritos (useOptimistic)
+│   ├── SeatLegend.tsx               → Leyenda flotante glassmorphic del mapa de asientos (LED dots)
+│   ├── OrderSummary.tsx             → Resumen lateral reactivo de la selección de asientos
+│   ├── ReservationTimer.tsx         → Temporizador de reserva temporal (MM:SS)
+│   ├── ConfettiEffect.tsx           → Efecto de confetti CSS puro para confirmaciones
+│   ├── ProfileTabs.tsx              → Tabs del perfil de usuario
+│   ├── SecureTicketQR.tsx           → Modal de QR seguro con brillo automático
+│   ├── UserDropdown.tsx             → Dropdown de usuario en navbar
+│   ├── skeletons/
+│   │   ├── EventCardSkeleton.tsx    → Skeleton de tarjeta de evento (individual + grid)
+│   │   └── TicketSkeleton.tsx       → Skeleton de boleto digital (individual + lista)
+│   ├── empty-states/
+│   │   └── WalletEmptyState.tsx     → Estado vacío reutilizable (anillos orbitales + shimmer CTA)
+│   ├── admin/
+│   │   └── AdminTable.tsx           → Tabla reutilizable para panel administrativo
 │   ├── ui/
 │   │   └── ErrorToast.tsx           → Notificación de error animada con barra de progreso
 │   └── Footer.tsx                   → Pie de página
@@ -298,7 +321,11 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   └── BotClassifier.ts         → Clasificador de 9 reglas heurísticas ponderadas
 │   ├── services/
 │   │   ├── notifications.ts         → Sistema de notificaciones Realtime
-│   │   └── logger.ts                → Servicio de Auditoría Centralizada (Audit Logger)
+│   │   ├── logger.ts                → Servicio de Auditoría Centralizada (Audit Logger)
+│   │   ├── qrService.ts             → Generación de códigos QR (lazy load)
+│   │   ├── rateLimiter.ts           → Rate limiting Anti-Fuerza Bruta
+│   │   ├── authService.ts           → Servicios auxiliares de autenticación
+│   │   └── adminService.ts          → Servicios auxiliares del panel admin
 │   ├── validations/
 │   │   └── schemas.ts               → Esquemas Zod para validación y sanitización AppSec
 │   ├── graph/
@@ -315,20 +342,26 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   ├── admin.ts                 → Server Actions (getDashboardStats)
 │   │   ├── artists.ts               → Server Actions (getArtists, getArtistBySlug)
 │   │   ├── auth.ts                  → Server Actions (login, signup, logout, getSession)
-│   │   ├── events.ts                → Server Actions (getEventsByArtistSlug)
+│   │   ├── events.ts                → Server Actions (getEventsByArtistSlug, CRUD admin)
 │   │   ├── tickets.ts               → Server Actions (getEventById, getTicketsByEventId, lockTicket)
 │   │   ├── checkout.ts              → Server Actions (processPayment y redirección)
 │   │   ├── payment.ts               → Server Action (processCheckout — Strategy wrapper)
-│   │   ├── orders.ts                → Server Actions (getUserTickets, getOrderConfirmation, getRelatedOrders)
+│   │   ├── orders.ts                → Server Actions (getUserTickets, getOrderConfirmation)
 │   │   ├── search.ts                → Action del Buscador Híbrido (ILIKE dinámico)
+│   │   ├── seats.ts                 → Server Actions (getSeats, lazy release mapping)
 │   │   ├── seats-admin.ts           → Transacciones O(1) para inventario masivo
+│   │   ├── holds.ts                 → Server Actions (createHold, cleanExpiredHolds)
+│   │   ├── otp.ts                   → Máquina de estados OTP (SHA-256 + anti-replay)
+│   │   ├── portal.ts                → Server Actions (getArtistDashboardData)
+│   │   ├── support.ts               → Server Actions (submitSupportTicket)
+│   │   ├── user.ts                  → Server Actions (getUserProfile, updateProfile)
 │   │   └── favorites.ts             → Motor resiliente de favoritos (Ignora colisiones UNIQUE)
 │   └── types/
 │       └── database.ts              → Tipos TypeScript del esquema SQL
 ├── tailwind.config.ts               → Tokens del sistema de diseño Ethereal Tech
-├── next.config.ts                   → Dominios de imágenes permitidos
-├── middleware.ts                    → Middleware de protección de rutas y RBAC ($O(1)$)
-├── proxy.ts                         → Proxy secundario de enrutamiento legacy
+├── next.config.ts                   → Dominios de imágenes + Security Headers HTTP (HSTS, CSP, etc.)
+├── proxy.ts                         → Proxy de protección de rutas y RBAC (Next.js 16, reemplaza middleware.ts)
+├── AGENTS.md                        → Reglas del stack para agentes AI (InsForge ≠ Supabase, Zod v4, Next.js 16)
 ├── .env.local                       → Variables de entorno (no versionado)
 └── .env.example                     → Plantilla de variables de entorno
 ```
@@ -434,7 +467,7 @@ pnpm start
 | **Adjacency Graph** | `lib/graph/SeatGraph.ts` | Detección de asientos huérfanos en O(V+E) |
 | **Observer (hooks)** | `hooks/useIntegrityFilter.ts` | Recolección reactiva de señales biométricas |
 | **Factory** | `lib/payment/PaymentContext.ts` | Selección de estrategia según env var |
-| **Edge RBAC** | `middleware.ts` | Verificación de acceso por rol en O(1) decodificando JWT sin consultas a DB |
+| **Edge RBAC** | `proxy.ts` | Verificación de acceso por rol en O(1) decodificando JWT sin consultas a DB |
 | **Atomic Update** | `app/validate-ticket/` | Condición de carrera evitada mediante validación atómica en el acceso físico |
 | **Optimistic UI** | `ArtistClient.tsx` | Predicción visual de mutaciones (toggle) sin bloqueo de hilo de red |
 | **Hybrid Search** | `SearchClient.tsx` | Reducción de latencia de I/O de DB con filtro en memoria y debounce |
@@ -454,15 +487,25 @@ pnpm start
 
 ## 🔧 Actualizaciones Recientes (Resolución de Build)
 
-- **Conflictos de Middleware**: Se eliminó `middleware.ts` en favor de `proxy.ts` resolviendo colisiones durante el build en Next.js.
+- **Conflictos de Middleware**: Se eliminó `middleware.ts` en favor de `proxy.ts` resolviendo colisiones durante el build en Next.js 16.
 - **Tipados de Base de Datos**: Se actualizaron propiedades faltantes (`description` e `is_active`) en la interfaz `Artist` dentro de `lib/types/database.ts`.
-- **Filtros SQL Dinámicos**: Se ajustó la consulta condicional en `lib/actions/events.ts` previniendo un `ParserError` del tipado estricto de Supabase/InsForge.
-- **SDK de Autenticación**: Se corrigió el llamado inexistente a `insforge.auth.getUser()` utilizando nuestra propia función de sesión `getSession()` en `lib/actions/favorites.ts`.
-- **Promesas en Server Components (Next.js 15+)**: Se ajustó `app/events/page.tsx` para procesar `searchParams` de forma asíncrona, resolviendo un error de Prerenderizado de Turbopack (`TypeError: Cannot convert a Symbol value to a string`).
+- **Filtros SQL Dinámicos**: Se ajustó la consulta condicional en `lib/actions/events.ts` previniendo un `ParserError` del tipado estricto de InsForge.
+- **SDK de Autenticación**: Se corrigió el llamado inexistente a `insforge.auth.getUser()` utilizando nuestra propia función de sesión `getSession()` en múltiples archivos (`profile/page.tsx`, `checkout.ts`, `favorites.ts`).
+- **Promesas en Server Components (Next.js 16)**: Se ajustó `app/events/page.tsx` para procesar `searchParams` de forma asíncrona, resolviendo un error de Prerenderizado de Turbopack (`TypeError: Cannot convert a Symbol value to a string`).
 - **Arquitectura de Notificaciones Realtime**: Creación de la tabla de notificaciones mediante el MCP de Insforge (`app_notifications`), habilitando Row Level Security (RLS) en PostgreSQL, y diseñando triggers reactivos inyectados en flujos como *Event Creation*, *Queue Cycling* y *Checkout Fulfillment*.
 - **Construcción del Client-Side Profile**: Desarrollo del Layout con barra lateral de estado activo basado en `usePathname()`, extracción dinámica de identidades con `Intl.DateTimeFormat` y refactorización de los componentes `WalletClient` y `ArtistGrid` como micro-frontends en `/profile`.
-- **Implementación de Auditoría y AppSec**: Creación del servicio de logging centralizado, middleware de protección de rutas RBAC, validador Zero-Trust para compras y esquemas de sanitización Zod para protección contra XSS e inyecciones.
+- **Implementación de Auditoría y AppSec**: Creación del servicio de logging centralizado, proxy de protección de rutas RBAC, validador Zero-Trust para compras y esquemas de sanitización Zod v4 para protección contra XSS e inyecciones.
 - **UI de Error Transaccional**: Integración del componente `ErrorToast` con animaciones CSS personalizadas para notificar fallos de validación de forma premium.
+- **Migración a Zod v4**: Reemplazo global de `{ required_error }` → `{ error }`, `{ invalid_type_error }` → `{ error }`, y `.error.errors[]` → `.error.issues[]` en todos los esquemas y Server Actions.
+- **Migración de Realtime SDK**: Reescritura de `NotificationCenter.tsx` de `insforge.channel()` (patrón Supabase) a `insforge.realtime.connect()` / `.subscribe()` / `.on()` (API real de InsForge).
+- **Null-checks de insforgeAdmin**: Validación defensiva en `logger.ts`, `admin/logs/page.tsx` y servicios que usan el cliente admin (tipo `InsforgeClient | null`).
+- **PromiseLike Fix**: El SDK retorna `PromiseLike` (no `Promise`), se envolvieron cadenas `.catch()` en `Promise.resolve()` para compatibilidad.
+- **Security Headers HTTP**: Implementación de 7 cabeceras de seguridad en `next.config.ts` (HSTS, CSP, X-Frame-Options, Permissions-Policy, etc.).
+- **Skeleton Loaders**: Componentes `EventCardSkeleton` y `TicketSkeleton` integrados con `loading.tsx` (global) y `<Suspense>` granular en `/profile/tickets`.
+- **Empty State Premium**: Componente `WalletEmptyState` con early return en Server Component para zero-JS cuando la billetera está vacía.
+- **SeatLegend**: Leyenda flotante glassmorphic del mapa de asientos con dots LED neon.
+- **FormData Fix**: Variable `priceMapStr` faltante en `createEvent()` corregida.
+- **AGENTS.md**: Archivo de reglas para agentes AI con documentación del stack real (InsForge ≠ Supabase, Zod v4, Next.js 16 Proxy).
 
 ## 📄 Licencia
 

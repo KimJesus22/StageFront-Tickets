@@ -20,6 +20,10 @@ export default async function AuditLogsPage({
 
   const { type, time } = await searchParams;
 
+  if (!insforgeAdmin) {
+    throw new Error("Admin client not configured");
+  }
+
   // Construir la consulta a la tabla de logs
   let query = insforgeAdmin.database
     .from("audit_logs")

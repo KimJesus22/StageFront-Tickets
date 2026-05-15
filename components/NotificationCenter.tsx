@@ -36,18 +36,16 @@ export default function NotificationCenter({ userId }: { userId: string }) {
     };
     fetchNotifications();
 
-    // 2. Suscribirse a cambios en tiempo real
-    const channel = insforge.channel('app_notifications_channel')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'app_notifications',
-          filter: `user_id=eq.${userId}`
-        },
-        (payload) => {
-          const newNotif = payload.new as AppNotification;
+    // 2. Suscribirse a cambios en tiempo real via InsForge Realtime SDK
+    const channelName = `notifications:${userId}`;
+
+    const setupRealtime = async () => {
+      try {
+        await insforge.realtime.connect();
+        await insforge.realtime.subscribe(channelName);
+
+        insforge.realtime.on('new_notification', (payload) => {
+          const newNotif = payload as unknown as AppNotification;
           setNotifications(prev => [newNotif, ...prev]);
           toast(newNotif.title, {
             description: newNotif.message,
@@ -56,12 +54,16 @@ export default function NotificationCenter({ userId }: { userId: string }) {
               onClick: () => window.location.href = newNotif.link,
             } : undefined,
           });
-        }
-      )
-      .subscribe();
+        });
+      } catch (err) {
+        console.error("[NotificationCenter] Realtime connection error:", err);
+      }
+    };
+
+    setupRealtime();
 
     return () => {
-      insforge.removeChannel(channel);
+      insforge.realtime.unsubscribe(channelName);
     };
   }, [userId]);
 

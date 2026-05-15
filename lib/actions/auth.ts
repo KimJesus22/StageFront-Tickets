@@ -16,7 +16,7 @@ export async function login(formData: FormData) {
   // ── 0. Validación de Esquema (Fail-Fast) ──────────────────────────────
   const emailResult = emailSchema.safeParse(emailRaw);
   if (!emailResult.success) {
-    return { error: emailResult.error.errors[0].message };
+    return { error: emailResult.error.issues[0].message };
   }
   const email = emailResult.data; // Email sanitizado (trim + lowercase)
 
@@ -102,8 +102,8 @@ export async function signup(formData: FormData) {
   const emailResult = emailSchema.safeParse(emailRaw);
   const nameResult = nameSchema.safeParse(nameRaw);
 
-  if (!emailResult.success) return { error: emailResult.error.errors[0].message };
-  if (!nameResult.success) return { error: nameResult.error.errors[0].message };
+  if (!emailResult.success) return { error: emailResult.error.issues[0].message };
+  if (!nameResult.success) return { error: nameResult.error.issues[0].message };
 
   const email = emailResult.data;
   const name = nameResult.data;
@@ -263,6 +263,7 @@ export async function verifyAdmin() {
 //
 // ============================================================================
 
+export async function checkEmailExists(email: string) {
   // ── 1. Validación y Sanitización via Zod ─────────────────────────────
   const result = emailSchema.safeParse(email);
   

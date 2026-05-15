@@ -1,16 +1,16 @@
-import { insforge } from "@/lib/insforge";
+import { getSession } from "@/lib/actions/auth";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
-  const { data: { user }, error } = await insforge.auth.getUser();
+  const session = await getSession();
 
-  if (error || !user) {
+  if (!session) {
     redirect("/login");
   }
 
-  const name = user.user_metadata?.name || user.email?.split("@")[0] || "User";
+  const name = session.name || session.email?.split("@")[0] || "User";
   const initials = name.substring(0, 2).toUpperCase();
-  const joinedDate = new Intl.DateTimeFormat('es', { month: 'long', year: 'numeric' }).format(new Date(user.created_at));
+  const joinedDate = "";
 
   return (
     <>
@@ -29,7 +29,7 @@ export default async function ProfilePage() {
         
         <div className="flex flex-col items-center md:items-start text-center md:text-left z-10 flex-1">
           <h3 className="font-headline-md text-2xl font-bold text-white mb-1">{name}</h3>
-          <p className="text-zinc-400 mb-4">{user.email}</p>
+          <p className="text-zinc-400 mb-4">{session.email}</p>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-white/5">
             <span className="material-symbols-outlined text-[16px] text-zinc-300">verified_user</span>
             <span className="font-label-caps text-xs text-zinc-300 tracking-wider uppercase">Miembro desde: {joinedDate}</span>

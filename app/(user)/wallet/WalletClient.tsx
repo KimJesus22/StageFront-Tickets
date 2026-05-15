@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { QRGeneratorService } from "@/lib/services/qrService";
+import WalletEmptyState from "@/components/empty-states/WalletEmptyState";
 
 // POO - Clase Ticket
 export class Ticket {
@@ -348,19 +349,16 @@ export default function WalletClient({ session, rawTickets }: WalletClientProps)
             ))}
           </div>
         ) : (
-          /* Empty State Section */
-          <div className="mt-8 flex flex-col items-center justify-center py-16 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl text-center px-4">
-            <div className="w-24 h-24 rounded-full bg-surface-variant flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(255,255,255,0.05)]">
-              <span className="material-symbols-outlined text-6xl text-on-surface-variant">confirmation_number</span>
-            </div>
-            <h3 className="font-['Space_Grotesk'] text-3xl font-bold text-primary mb-2">Estado Vacío</h3>
-            <p className="text-lg text-on-surface-variant mb-8 max-w-md">
-              No tienes boletos en esta sección. Descubre los próximos eventos en tu ciudad.
-            </p>
-            <Link href="/events" className="bg-primary text-on-primary font-semibold px-8 py-3 rounded-lg hover:bg-white/90 transition-colors inline-block">
-              Explorar Eventos
-            </Link>
-          </div>
+          /* Empty State — Componente reutilizable con props contextuales */
+          <WalletEmptyState
+            title={filter === "upcoming" ? "Sin próximos eventos" : "Sin historial aún"}
+            description={
+              filter === "upcoming"
+                ? "No tienes boletos para eventos futuros. Descubre los próximos eventos en tu ciudad."
+                : "Todavía no has asistido a ningún evento. ¡Tu primer concierto te espera!"
+            }
+            icon={filter === "upcoming" ? "confirmation_number" : "history"}
+          />
         )}
       </main>
 

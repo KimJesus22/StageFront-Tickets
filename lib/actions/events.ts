@@ -210,8 +210,10 @@ export async function createEvent(formData: FormData) {
   // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
   const artistIdResult = uuidSchema.safeParse(artist_id);
   if (!artistIdResult.success) {
-    throw new Error(artistIdResult.error.errors[0].message);
+    throw new Error(artistIdResult.error.issues[0].message);
   }
+
+  const priceMapStr = formData.get("price_map") as string;
 
   const price_map = validatePriceMap(priceMapStr);
 
@@ -266,7 +268,7 @@ export async function updateEvent(eventId: string, formData: FormData) {
   // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
   const eventIdResult = uuidSchema.safeParse(eventId);
   if (!eventIdResult.success) {
-    throw new Error(eventIdResult.error.errors[0].message);
+    throw new Error(eventIdResult.error.issues[0].message);
   }
 
   // Seguridad: RBAC - Lanza error si no es admin
@@ -329,7 +331,7 @@ export async function toggleEventStatus(eventId: string, currentStatus: boolean)
   // ── Validación de Esquema (Fail-Fast) ──────────────────────────────
   const eventIdResult = uuidSchema.safeParse(eventId);
   if (!eventIdResult.success) {
-    throw new Error(eventIdResult.error.errors[0].message);
+    throw new Error(eventIdResult.error.issues[0].message);
   }
 
   // Seguridad: RBAC - Lanza error si no es admin

@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { getFilteredEvents } from "@/lib/actions/events";
 import FilterClient from "./FilterClient";
 import { Suspense } from "react";
+import { EventCardSkeletonGrid } from "@/components/skeletons/EventCardSkeleton";
 
 export const metadata = {
   title: "StageFront — Cartelera y Filtrado",
@@ -155,23 +156,7 @@ async function EventsGrid({ searchParams }: { searchParams: { [key: string]: str
   );
 }
 
-function GridSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-        <div key={i} className="h-[420px] rounded-xl bg-white/5 border border-white/10 animate-pulse overflow-hidden flex flex-col">
-          <div className="h-64 bg-white/5 w-full shrink-0" />
-          <div className="p-6 flex flex-col flex-grow -mt-12 z-20">
-            <div className="w-24 h-3 bg-white/10 rounded mb-4" />
-            <div className="w-3/4 h-6 bg-white/10 rounded mb-2" />
-            <div className="w-1/2 h-4 bg-white/10 rounded mb-6" />
-            <div className="mt-auto w-full h-10 bg-white/10 rounded" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+// GridSkeleton ahora importado como EventCardSkeletonGrid desde @/components/skeletons/EventCardSkeleton
 
 export default async function EventsPage(props: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -200,7 +185,7 @@ export default async function EventsPage(props: {
         </div>
 
         {/* ─── Suspense Grid with Skeleton ─── */}
-        <Suspense key={suspenseKey} fallback={<GridSkeleton />}>
+        <Suspense key={suspenseKey} fallback={<EventCardSkeletonGrid count={8} />}>
           <EventsGrid searchParams={searchParams} />
         </Suspense>
       </main>

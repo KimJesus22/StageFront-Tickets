@@ -67,8 +67,6 @@
   }
 }
 
-}
-
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -86,5 +84,15 @@
   }
   to {
     width: 0%;
+  }
+}
+
+/* Shimmer sweep effect — used in CTA buttons (Empty States) */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
   }
 }
