@@ -20,6 +20,8 @@ export interface Artist {
   fandom_name: string | null;
   image_url: string | null;
   display_order: number;
+  description: string | null;
+  is_active: boolean;
   created_at: string;
 }
 

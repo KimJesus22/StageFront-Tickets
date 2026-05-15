@@ -198,7 +198,9 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 ├── app/
 │   ├── admin/
 │   │   ├── layout.tsx               → Layout fijo con barra lateral para el administrador
-│   │   └── page.tsx                 → Dashboard general con tarjetas de métricas y tabla de ventas
+│   │   ├── page.tsx                 → Dashboard general con tarjetas de métricas y tabla de ventas
+│   │   ├── artists/                 → CRUD de Artistas (Client Optimista)
+│   │   └── inventory/               → Editor de Inventario de Asientos (Batch Updates)
 │   ├── (artist)/
 │   │   ├── components/
 │   │   │   └── Sidebar.tsx          → Navegación lateral del panel del artista
@@ -231,7 +233,9 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   ├── artists/
 │   │   └── page.tsx                 → Directorio de todos los artistas
 │   ├── events/
-│   │   └── page.tsx                 → Cartelera completa de próximos eventos
+│   │   ├── page.tsx                 → Cartelera con Filtro URL (Server-Side + Suspense)
+│   │   ├── FilterClient.tsx         → Sincronización inmutable de URL para filtros
+│   │   └── search/                  → Buscador Híbrido "Mega Search" con debounce
 │   ├── api/
 │   │   ├── insforge/route.ts        → Health-check del backend
 │   │   ├── session/route.ts         → Endpoint GET para exponer datos de sesión a Client Components
@@ -257,6 +261,7 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   ├── ArtistGrid.tsx               → Grid Bento dinámico (recibe Artist[])
 │   ├── AdminDashboard.tsx           → Panel admin con métricas + SalesEfficiencyPanel
 │   ├── SalesEfficiencyPanel.tsx     → KPIs de eficiencia (Conversión, Cycle Time, Bottleneck)
+│   ├── FavoriteButton.tsx           → Corazón interactivo de favoritos (useOptimistic)
 │   └── Footer.tsx                   → Pie de página
 ├── hooks/
 │   ├── useIntegrityFilter.ts        → Hook de filtro anti-bot (collector + clasificación)
@@ -285,7 +290,10 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 │   │   ├── tickets.ts               → Server Actions (getEventById, getTicketsByEventId, lockTicket)
 │   │   ├── checkout.ts              → Server Actions (processPayment y redirección)
 │   │   ├── payment.ts               → Server Action (processCheckout — Strategy wrapper)
-│   │   └── orders.ts                → Server Actions (getUserTickets, getOrderConfirmation, getRelatedOrders)
+│   │   ├── orders.ts                → Server Actions (getUserTickets, getOrderConfirmation, getRelatedOrders)
+│   │   ├── search.ts                → Action del Buscador Híbrido (ILIKE dinámico)
+│   │   ├── seats-admin.ts           → Transacciones O(1) para inventario masivo
+│   │   └── favorites.ts             → Motor resiliente de favoritos (Ignora colisiones UNIQUE)
 │   └── types/
 │       └── database.ts              → Tipos TypeScript del esquema SQL
 ├── tailwind.config.ts               → Tokens del sistema de diseño Ethereal Tech
@@ -410,6 +418,14 @@ pnpm start
 2. **Persistencia Redis** — Migrar el motor de fila y analytics a Redis para sobrevivir reinicios
 3. **QA de Carga** — Pruebas de estrés en el Min-Heap y Strategy under high concurrency
 4. **Dashboard Realtime** — WebSocket para actualizar KPIs de eficiencia sin polling
+
+## 🔧 Actualizaciones Recientes (Resolución de Build)
+
+- **Conflictos de Middleware**: Se eliminó `middleware.ts` en favor de `proxy.ts` resolviendo colisiones durante el build en Next.js.
+- **Tipados de Base de Datos**: Se actualizaron propiedades faltantes (`description` e `is_active`) en la interfaz `Artist` dentro de `lib/types/database.ts`.
+- **Filtros SQL Dinámicos**: Se ajustó la consulta condicional en `lib/actions/events.ts` previniendo un `ParserError` del tipado estricto de Supabase/InsForge.
+- **SDK de Autenticación**: Se corrigió el llamado inexistente a `insforge.auth.getUser()` utilizando nuestra propia función de sesión `getSession()` en `lib/actions/favorites.ts`.
+- **Promesas en Server Components (Next.js 15+)**: Se ajustó `app/events/page.tsx` para procesar `searchParams` de forma asíncrona, resolviendo un error de Prerenderizado de Turbopack (`TypeError: Cannot convert a Symbol value to a string`).
 
 ## 📄 Licencia
 

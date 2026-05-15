@@ -173,11 +173,11 @@ function GridSkeleton() {
   );
 }
 
-export default function EventsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | undefined };
+export default async function EventsPage(props: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
+  const searchParams = await props.searchParams;
+
   // Construimos una llave para el Suspense basada en los parámetros para forzar re-render y loader
   const suspenseKey = new URLSearchParams(searchParams as any).toString();
 

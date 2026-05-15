@@ -72,11 +72,11 @@ export async function getFilteredEvents(params: {
   
   let query = insforge.database
     .from("events")
-    .select(`
-      *,
-      artists!inner (*)
-      ${hasPriceFilter ? ", zones!inner(price)" : ""}
-    `);
+    .select(
+      hasPriceFilter
+        ? "*, artists!inner (*), zones!inner(price)"
+        : "*, artists!inner (*)"
+    );
 
   // Estatus
   if (params.status === 'ON_SALE') {
@@ -119,7 +119,7 @@ export async function getFilteredEvents(params: {
   // Deduplicamos los eventos en memoria por ID (O(n)).
   if (hasPriceFilter && data) {
     const uniqueEvents = new Map();
-    for (const item of data) {
+    for (const item of (data as any[])) {
       if (!uniqueEvents.has(item.id)) {
         uniqueEvents.set(item.id, item);
       }
@@ -127,7 +127,7 @@ export async function getFilteredEvents(params: {
     return Array.from(uniqueEvents.values()) as EventWithArtist[];
   }
 
-  return (data as EventWithArtist[]) ?? [];
+  return (data as any as EventWithArtist[]) ?? [];
 }
 
 /**

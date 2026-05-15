@@ -3,6 +3,8 @@
 import { insforge } from "@/lib/insforge";
 import { revalidatePath } from "next/cache";
 
+import { getSession } from "@/lib/actions/auth";
+
 /**
  * Alterna el estado de favorito para una entidad.
  * Si existe, la borra (DELETE). Si no, la crea (INSERT).
@@ -10,11 +12,12 @@ import { revalidatePath } from "next/cache";
  */
 export async function toggleFavorite(entityType: "artist" | "event" | "venue", entityId: string) {
   // 1. Verificación de sesión del usuario
-  const { data: { user }, error: authError } = await insforge.auth.getUser();
+  const session = await getSession();
   
-  if (authError || !user) {
+  if (!session) {
     throw new Error("No estás autenticado. Por favor inicia sesión.");
   }
+  const user = session;
 
   // 2. Consulta para ver si ya existe
   const { data: existing, error: findError } = await insforge.database
@@ -76,8 +79,8 @@ export async function getUserFavorites(userId?: string) {
   let targetUserId = userId;
   
   if (!targetUserId) {
-    const { data } = await insforge.auth.getUser();
-    targetUserId = data?.user?.id;
+    const session = await getSession();
+    targetUserId = session?.id;
   }
 
   if (!targetUserId) return { artists: [], events: [] };
