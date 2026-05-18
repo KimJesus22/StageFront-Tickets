@@ -65,7 +65,7 @@ export async function getUserTickets() {
         )
       )
     `)
-    .eq("user_id", session.id)
+    .eq("user_email", session.email)
     .order("created_at", { ascending: false });
 
   if (error) {

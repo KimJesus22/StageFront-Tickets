@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useTransition } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { insforge } from '@/lib/insforge';
-import { logEvent } from '@/lib/services/logger';
+import {
+  sendQueueOtp,
+  verifyOtpAndJoinQueue,
+  getQueueStatus,
+  triggerQueueCycle,
+} from '@/lib/actions/queue';
 
 // 🔑 Dev-only master OTP code (bypasses real verification)
 const DEV_MASTER_CODE = '741963';
@@ -118,12 +122,11 @@ export default function VirtualQueuePage() {
         console.log(`[DEV] Código maestro OTP: ${DEV_MASTER_CODE}`);
         setShowAuthModal(true);
       } else {
-        const { error } = await insforge.auth.resendVerificationEmail({
-          email: userEmail,
-        });
+        // ✅ Server Action — evita "Failed to fetch" del SDK en el cliente
+        const result = await sendQueueOtp();
 
-        if (error) {
-          setAuthError(error.message || 'No se pudo enviar el código.');
+        if (!result.success) {
+          setAuthError(result.error);
           setIsSending(false);
           return;
         }
@@ -144,66 +147,36 @@ export default function VirtualQueuePage() {
     setIsVerifying(true);
 
     try {
-      // Dev bypass: accept master code without calling the API
-      const isDevBypass = IS_DEV && otpCode === DEV_MASTER_CODE;
-      const isFastBypass = IS_DEV && otpCode === DEV_FAST_CODE;
+      // ✅ Server Action — verifica OTP (incluyendo códigos DEV) + se une a la fila
+      const result = await verifyOtpAndJoinQueue(params.id, otpCode);
 
-      if (!isDevBypass && !isFastBypass) {
-        const { error } = await insforge.auth.verifyEmail({
-          email: userEmail,
-          otp: otpCode,
-        });
-
-        if (error) {
-          await logEvent(null, "OTP_FAILED", `OTP verification failed for ${userEmail}: ${error.message}`);
-          setAuthError(error.message || 'Código inválido.');
-          setIsVerifying(false);
-          return;
-        }
+      if (!result.success) {
+        setAuthError(result.error);
+        setIsVerifying(false);
+        return;
       }
 
-      // Success → close modal & join queue via engine
+      // OTP válido + encolado exitoso
       setShowAuthModal(false);
       setIsQueued(true);
       setQueueId(generateQueueId());
-
-      try {
-        const res = await fetch('/api/queue', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'join', eventId: params.id }),
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setQueuePosition(data.position);
-          setInitialQueuePosition(data.position);
-          setBatchNumber(data.batchNumber);
-          setCurrentK(data.cycleState?.currentK ?? 150);
-          setCycleCountdown(data.cycleState?.secondsUntilNextCycle ?? 60);
-          setHealthStatus(data.cycleState?.healthStatus ?? 'optimal');
-          setStatusMessage(data.statusMessage);
-          setTotalInQueue(data.totalInQueue);
-          setEstimatedWaitSeconds(data.estimatedWaitSeconds);
-          setLastBatchSize(data.cycleState?.lastBatchSize ?? 0);
-        } else {
-          // Fallback: simulated position
-          const pos = isFastBypass ? Math.floor(Math.random() * 50) + 1 : Math.floor(Math.random() * 1000) + 1;
-          setQueuePosition(pos);
-          setInitialQueuePosition(pos);
-        }
-      } catch {
-        const pos = Math.floor(Math.random() * 500) + 1;
-        setQueuePosition(pos);
-        setInitialQueuePosition(pos);
-      }
-
+      setQueuePosition(result.data.position);
+      setInitialQueuePosition(result.data.position);
+      setBatchNumber(result.data.batchNumber);
+      setCurrentK(result.data.cycleState?.currentK ?? 150);
+      setCycleCountdown(result.data.cycleState?.secondsUntilNextCycle ?? 60);
+      setHealthStatus((result.data.cycleState?.healthStatus as 'optimal' | 'degraded' | 'critical') ?? 'optimal');
+      setStatusMessage(result.data.statusMessage);
+      setTotalInQueue(result.data.totalInQueue);
+      setEstimatedWaitSeconds(result.data.estimatedWaitSeconds);
+      setLastBatchSize(result.data.cycleState?.lastBatchSize ?? 0);
       setIsInActiveQueue(true);
     } catch {
       setAuthError('Error de red. Intenta de nuevo.');
     } finally {
       setIsVerifying(false);
     }
-  }, [isVerifying, userEmail, otpCode]);
+  }, [isVerifying, userEmail, otpCode, params.id]);
 
   // ------ Resend OTP ------
   const handleResendCode = useCallback(async () => {
@@ -211,7 +184,11 @@ export default function VirtualQueuePage() {
     setAuthError(null);
     setIsSending(true);
     try {
-      await insforge.auth.resendVerificationEmail({ email: userEmail });
+      // ✅ Server Action — evita "Failed to fetch" del SDK en el cliente
+      const result = await sendQueueOtp();
+      if (!result.success) {
+        setAuthError(result.error);
+      }
     } catch { /* ignore */ }
     setIsSending(false);
   }, [isSending, userEmail]);
@@ -220,16 +197,12 @@ export default function VirtualQueuePage() {
   useEffect(() => {
     if (!isInActiveQueue || isAdmitted) return;
 
-    // Poll queue status every 5 seconds
+    // Poll queue status every 5 seconds via Server Action
     const pollInterval = setInterval(async () => {
       try {
-        const res = await fetch('/api/queue', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'status', eventId: params.id }),
-        });
-        if (res.ok) {
-          const data = await res.json();
+        const result = await getQueueStatus(params.id);
+        if (result.success) {
+          const data = result.data;
           if (data.admitted) {
             setIsAdmitted(true);
             setQueuePosition(0);
@@ -240,7 +213,7 @@ export default function VirtualQueuePage() {
           setBatchNumber(data.batchNumber);
           setCurrentK(data.cycleState?.currentK ?? currentK);
           setCycleCountdown(data.cycleState?.secondsUntilNextCycle ?? 60);
-          setHealthStatus(data.cycleState?.healthStatus ?? 'optimal');
+          setHealthStatus((data.cycleState?.healthStatus as 'optimal' | 'degraded' | 'critical') ?? 'optimal');
           setStatusMessage(data.statusMessage);
           setTotalInQueue(data.totalInQueue);
           setEstimatedWaitSeconds(data.estimatedWaitSeconds);
@@ -256,23 +229,19 @@ export default function VirtualQueuePage() {
   useEffect(() => {
     if (!isInActiveQueue || isAdmitted) return;
 
-    const ticker = setInterval(() => {
-      setCycleCountdown((prev) => {
-        if (prev <= 1) {
-          // Trigger a cycle execution (in a real app, a cron/serverless function would do this)
-          fetch('/api/queue', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'cycle', eventId: params.id }),
-          }).catch(() => {});
-          return 60;
-        }
-        return prev - 1;
-      });
+    if (cycleCountdown <= 0) {
+      // ✅ Server Action para ejecutar ciclo de desfogue
+      triggerQueueCycle(params.id).catch(() => {});
+      setCycleCountdown(60);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setCycleCountdown((prev) => prev - 1);
     }, 1000);
 
-    return () => clearInterval(ticker);
-  }, [isInActiveQueue, isAdmitted, params.id]);
+    return () => clearTimeout(timer);
+  }, [cycleCountdown, isInActiveQueue, isAdmitted, params.id]);
 
   // ------ Redirect when admitted ------
   useEffect(() => {

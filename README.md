@@ -506,6 +506,9 @@ pnpm start
 - **SeatLegend**: Leyenda flotante glassmorphic del mapa de asientos con dots LED neon.
 - **FormData Fix**: Variable `priceMapStr` faltante en `createEvent()` corregida.
 - **AGENTS.md**: Archivo de reglas para agentes AI con documentación del stack real (InsForge ≠ Supabase, Zod v4, Next.js 16 Proxy).
+- **Aislamiento de Memoria en Fila Virtual**: Se refactorizó el código maestro de pruebas (`741963`) directo hacia la Server Action `verifyOtpAndJoinQueue`, eliminando el fallback a la ruta API antigua y resolviendo colisiones de memoria en el entorno de desarrollo (Next.js Node isolation).
+- **Corrección de Side-Effects en React**: Se solucionó el error `Cannot update a component ('Router')` al extraer las llamadas a Server Actions (`triggerQueueCycle`) fuera de los updaters de estado de React, moviéndolos a un ciclo `setTimeout` limpio en un efecto.
+- **Esquema Relacional de Órdenes**: Corrección en `getUserTickets` (`lib/actions/orders.ts`) para consultar las órdenes usando la columna `user_email` (según el esquema real en DB) en lugar de una columna `user_id` inexistente, evitando bloqueos (500) en la billetera (`/wallet`).
 
 ## 📄 Licencia
 

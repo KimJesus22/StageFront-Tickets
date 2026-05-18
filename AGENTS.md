@@ -57,3 +57,7 @@ const session = await getSession();
 // insforge.auth.getUser()
 // insforge.auth.getSession()
 ```
+
+## 5. Git Commit Workflow
+
+- **Always use `git add .`** before committing. Do not add files individually. This ensures all relevant changes (including new files) are properly tracked in the commit.
