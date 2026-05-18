@@ -49,7 +49,7 @@ El ecosistema de boletos premium para los eventos más esperados. Un servicio de
 - **Skeleton Loaders (Suspense)** — Componentes reutilizables (`EventCardSkeleton`, `TicketSkeleton`) con diseño Ethereal Tech (glassmorphism + animate-pulse). Integrados con `loading.tsx` (global) y `<Suspense>` (granular)
 - **Empty State Premium** — Componente `WalletEmptyState` con anillos orbitales animados, ícono glassmorphic, gradient text y CTA esmeralda con efecto shimmer. Props configurables para reutilización en Favoritos/Historial
 - **Leyenda de Asientos (SeatLegend)** — Componente flotante tipo pill con glassmorphism y dots LED neon para estados del mapa de asientos (Disponible, Seleccionado, Ocupado, Bloqueado)
-
+- **Estabilidad de Interfaz y Red** — Sustitución completa de tipografías de íconos por SVGs nativos para evitar fallos de renderizado, y manejo estricto de errores de conexión WebSocket para prevenir caídas de servidor.
 ---
 
 ## 🧠 Arquitectura Avanzada
@@ -204,6 +204,13 @@ El validador de OTPs para la Fila Virtual está diseñado mediante Programación
 | **Tailwind CSS** | 3.4.17 | Sistema de diseño y estilos |
 | **InsForge SDK** | 1.2.6 | Backend-as-a-Service |
 | **pnpm** | 10.x | Gestor de paquetes |
+
+## 📜 Normativas de Desarrollo
+
+- **Gestor de Paquetes Exclusivo:** El proyecto utiliza **pnpm** de forma estricta. Está prohibido el uso de `npm` o `yarn` para evitar inconsistencias en el árbol de dependencias.
+- **Flujo de Versionamiento:** Todo flujo de commit debe incluir `git add .` previamente para asegurar que la trazabilidad de los archivos modificados o creados se incluya íntegramente.
+- **Independencia Visual (SVGs vs Fuentes):** Se eliminó el uso de tipografías con ligaduras (como *Material Symbols*) debido a caídas de renderizado de fuentes. Cualquier ícono nuevo debe ser un **SVG Inline** incrustado directamente en el componente para garantizar carga a 0ms.
+- **Resiliencia de Conexiones (WebSockets):** Las implementaciones Realtime (como el `NotificationCenter`) cuentan con manejadores de errores de conexión y reconexión que silencian los errores para que no crasheen el hilo principal del servidor Next.js.
 
 ## 📁 Estructura del Proyecto
 

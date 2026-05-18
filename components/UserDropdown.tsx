@@ -123,13 +123,9 @@ export default function UserDropdown({ session }: UserDropdownProps) {
         </span>
 
         {/* Chevron animado */}
-        <span
-          className={`material-symbols-outlined text-on-surface-variant ml-1 text-sm transition-transform duration-300 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        >
-          expand_more
-        </span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-on-surface-variant ml-1 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
       </button>
 
       {/* ── Dropdown Container (Glassmorphism Level 2) ──────────────── */}
@@ -153,14 +149,31 @@ export default function UserDropdown({ session }: UserDropdownProps) {
         <div className="py-2 flex flex-col">
           <Link
             id="dropdown-profile"
-            href="/portal"
+            href="/profile"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 px-4 py-3 font-body-md text-sm text-on-surface-variant hover:bg-white/5 hover:text-primary transition-colors"
             role="menuitem"
           >
-            <span className="material-symbols-outlined text-lg">person</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
             Mi Perfil
           </Link>
+
+          {session.email === "jesus@top.com.mx" && (
+            <Link
+              id="dropdown-portal"
+              href="/portal"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 font-body-md text-sm text-on-surface-variant hover:bg-white/5 hover:text-primary transition-colors"
+              role="menuitem"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+              </svg>
+              Portal Artista
+            </Link>
+          )}
 
           <Link
             id="dropdown-tickets"
@@ -169,9 +182,10 @@ export default function UserDropdown({ session }: UserDropdownProps) {
             className="flex items-center gap-3 px-4 py-3 font-body-md text-sm text-on-surface-variant hover:bg-white/5 hover:text-primary transition-colors"
             role="menuitem"
           >
-            <span className="material-symbols-outlined text-lg">
-              confirmation_number
-            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+              <path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>
+            </svg>
             Mis Boletos
           </Link>
         </div>
@@ -188,9 +202,13 @@ export default function UserDropdown({ session }: UserDropdownProps) {
             className="w-full flex items-center gap-3 px-4 py-3 font-body-md text-sm text-error hover:bg-error/10 transition-colors text-left cursor-pointer disabled:opacity-50 disabled:cursor-wait"
             role="menuitem"
           >
-            <span className="material-symbols-outlined text-lg">
-              {isLoggingOut ? "hourglass_empty" : "logout"}
-            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {isLoggingOut ? (
+                <path d="M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
+              ) : (
+                <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>
+              )}
+            </svg>
             {isLoggingOut ? "Cerrando sesión..." : "Cerrar Sesión"}
           </button>
         </div>

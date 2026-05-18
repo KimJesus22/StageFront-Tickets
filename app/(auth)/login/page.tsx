@@ -57,12 +57,10 @@ export default function LoginPage() {
         {/* Brand Header */}
         <header className="p-8 lg:p-12 w-full flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-primary">
-            <span
-              className="material-symbols-outlined text-[28px]"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              confirmation_number
-            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+              <path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>
+            </svg>
             <span className="font-headline-md text-headline-md tracking-tighter">
               StageFront
             </span>
@@ -116,7 +114,9 @@ export default function LoginPage() {
 
           {error && (
             <div className="bg-red-500/10 backdrop-blur-md border border-red-500/20 text-red-400 px-4 py-3 rounded-xl font-body-md text-sm mb-6 relative z-10 flex items-center gap-3 animate-[fadeIn_0.3s_ease-out]">
-              <span className="material-symbols-outlined text-lg shrink-0">warning</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+              </svg>
               <span>{error}</span>
             </div>
           )}
@@ -138,9 +138,9 @@ export default function LoginPage() {
                   Nombre
                 </label>
                 <div className="relative group">
-                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">
-                    person
-                  </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
                   <input
                     className="w-full bg-white/[0.02] border border-white/10 rounded-DEFAULT py-4 pl-12 pr-4 text-primary font-body-md text-body-md placeholder-on-surface-variant/50 focus:outline-none focus:bg-white/5 focus:border-white/30 focus:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all duration-300"
                     id="name"
@@ -162,9 +162,9 @@ export default function LoginPage() {
                 Email
               </label>
               <div className="relative group">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">
-                  mail
-                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">
+                  <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
                 <input
                   className="w-full bg-white/[0.02] border border-white/10 rounded-DEFAULT py-4 pl-12 pr-4 text-primary font-body-md text-body-md placeholder-on-surface-variant/50 focus:outline-none focus:bg-white/5 focus:border-white/30 focus:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all duration-300"
                   id="email"
@@ -195,9 +195,9 @@ export default function LoginPage() {
                 )}
               </div>
               <div className="relative group">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">
-                  lock
-                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
                 <input
                   className="w-full bg-white/[0.02] border border-white/10 rounded-DEFAULT py-4 pl-12 pr-12 text-primary font-body-md text-body-md placeholder-on-surface-variant/50 focus:outline-none focus:bg-white/5 focus:border-white/30 focus:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all duration-300"
                   id="password"
@@ -216,18 +216,18 @@ export default function LoginPage() {
               type="submit"
             >
               {isLoading ? (
-                <span className="material-symbols-outlined animate-spin">
-                  progress_activity
-                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
               ) : isLogin ? (
                 "Entrar"
               ) : (
                 "Registrarse"
               )}
               {!isLoading && (
-                <span className="material-symbols-outlined text-[18px]">
-                  arrow_forward
-                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                </svg>
               )}
             </button>
           </form>

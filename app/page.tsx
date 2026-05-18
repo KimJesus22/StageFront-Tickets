@@ -448,9 +448,9 @@ export default async function Home() {
         <section className="border-t border-white/5 bg-zinc-950 py-12">
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="flex flex-col items-center gap-3">
-              <span className="material-symbols-outlined text-4xl text-white opacity-80">
-                verified_user
-              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 text-white">
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>
+              </svg>
               <h4 className="font-headline-md text-white">
                 Boletos 100% Verificados
               </h4>
@@ -460,9 +460,9 @@ export default async function Home() {
               </p>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="material-symbols-outlined text-4xl text-white opacity-80">
-                security
-              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 text-white">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+              </svg>
               <h4 className="font-headline-md text-white">
                 Fila Virtual Segura
               </h4>
@@ -472,9 +472,9 @@ export default async function Home() {
               </p>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="material-symbols-outlined text-4xl text-white opacity-80">
-                support_agent
-              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 text-white">
+                <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/>
+              </svg>
               <h4 className="font-headline-md text-white">Soporte 24/7</h4>
               <p className="text-on-surface-variant font-body-md text-sm max-w-xs">
                 Asistencia premium disponible en todo momento para tu

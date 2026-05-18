@@ -79,14 +79,14 @@ export default async function ArtistPortalPage() {
           </div>
           <div className="flex items-center gap-6">
             <button className="text-zinc-500 hover:opacity-80 transition-opacity">
-              <span className="material-symbols-outlined" data-icon="notifications">
-                notifications
-              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+              </svg>
             </button>
             <button className="text-zinc-500 hover:opacity-80 transition-opacity">
-              <span className="material-symbols-outlined" data-icon="help">
-                help
-              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+              </svg>
             </button>
             <div className="flex items-center gap-3 pl-4 border-l border-white/10 cursor-pointer hover:opacity-80 transition-opacity">
               <Image
@@ -121,18 +121,18 @@ export default async function ArtistPortalPage() {
                 <span className="font-label-caps text-label-caps text-surface-tint">
                   Ingresos Totales
                 </span>
-                <span className="material-symbols-outlined text-surface-tint" data-icon="account_balance_wallet">
-                  account_balance_wallet
-                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-surface-tint">
+                  <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+                </svg>
               </div>
               <div>
                 <div className="font-headline-lg text-headline-lg text-white tracking-tight">
                   {formatCurrency(data.totalIncome)}
                 </div>
                 <div className="flex items-center gap-1 mt-2 text-green-400 font-label-caps text-label-caps">
-                  <span className="material-symbols-outlined text-[16px]" data-icon="trending_up">
-                    trending_up
-                  </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+                  </svg>
                   +12.5% vs mes anterior
                 </div>
               </div>
@@ -145,9 +145,10 @@ export default async function ArtistPortalPage() {
                 <span className="font-label-caps text-label-caps text-surface-tint">
                   Boletos Vendidos
                 </span>
-                <span className="material-symbols-outlined text-surface-tint" data-icon="confirmation_number">
-                  confirmation_number
-                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-surface-tint">
+                  <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+                  <path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>
+                </svg>
               </div>
               <div>
                 <div className="font-headline-lg text-headline-lg text-white tracking-tight">
@@ -166,9 +167,9 @@ export default async function ArtistPortalPage() {
                 <span className="font-label-caps text-label-caps text-surface-tint">
                   Status Global de Venta
                 </span>
-                <span className="material-symbols-outlined text-surface-tint" data-icon="local_fire_department">
-                  local_fire_department
-                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-surface-tint">
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                </svg>
               </div>
               <div>
                 <div className="font-headline-lg text-headline-lg text-white tracking-tight">

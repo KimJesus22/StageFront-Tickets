@@ -41,6 +41,14 @@ export default function NotificationCenter({ userId }: { userId: string }) {
 
     const setupRealtime = async () => {
       try {
+        insforge.realtime.on('error', (error: any) => {
+          console.warn("[NotificationCenter] Realtime error:", error?.message || error);
+        });
+
+        insforge.realtime.on('connect_error', (error: any) => {
+          console.warn("[NotificationCenter] Connection failed:", error?.message || error);
+        });
+
         await insforge.realtime.connect();
         await insforge.realtime.subscribe(channelName);
 
@@ -56,7 +64,7 @@ export default function NotificationCenter({ userId }: { userId: string }) {
           });
         });
       } catch (err) {
-        console.error("[NotificationCenter] Realtime connection error:", err);
+        console.warn("[NotificationCenter] Realtime setup aborted:", err);
       }
     };
 
@@ -85,7 +93,9 @@ export default function NotificationCenter({ userId }: { userId: string }) {
         onClick={handleOpen}
         className="relative p-2 rounded-full text-on-surface-variant hover:text-primary transition-colors duration-300 group focus:outline-none"
       >
-        <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 0" }}>notifications</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        </svg>
         {unreadCount > 0 && (
           <>
             <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#ef4444] text-[10px] font-bold text-white z-10 border-2 border-surface">
@@ -126,9 +136,13 @@ export default function NotificationCenter({ userId }: { userId: string }) {
                   )}
                   <div className="flex gap-3 pl-3 items-start">
                     <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${!notif.is_read ? 'bg-[#10b981]/10 border border-[#10b981]/30 text-[#10b981]' : 'bg-white/10 border border-white/20 text-white'}`}>
-                      <span className="material-symbols-outlined text-sm">
-                        {notif.type === 'success' ? 'check_circle' : notif.type === 'warning' ? 'bolt' : 'info'}
-                      </span>
+                      {notif.type === 'success' ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                      ) : notif.type === 'warning' ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                      )}
                     </div>
                     <div className="flex-1">
                       <p className={`font-body-md text-[14px] leading-tight mb-1 ${!notif.is_read ? 'font-semibold text-white group-hover:text-[#10b981]' : 'text-zinc-300'}`}>

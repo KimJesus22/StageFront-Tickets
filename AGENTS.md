@@ -58,6 +58,10 @@ const session = await getSession();
 // insforge.auth.getSession()
 ```
 
-## 5. Git Commit Workflow
+## 5. Package Manager
+
+- **ALWAYS use `pnpm`**. This project uses `pnpm` exclusively. Do not use `npm` or `yarn` for installing dependencies or running scripts (e.g., use `pnpm install`, `pnpm dev`, `pnpm add`).
+
+## 6. Git Commit Workflow
 
 - **Always use `git add .`** before committing. Do not add files individually. This ensures all relevant changes (including new files) are properly tracked in the commit.
